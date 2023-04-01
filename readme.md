@@ -63,3 +63,6 @@ Sort by priority
 1. `OpenSSLConfig.cmake` generation
 1. Support for BSDs
 1. Support for mips(64) and arm(64) Linux
+1. Other uncommon platform
+
+Note: I won't support building **ON** OpenVMS provided CMake can't be run on it. However cross build for OpenVMS should be supported when I start working on uncommon platform.
