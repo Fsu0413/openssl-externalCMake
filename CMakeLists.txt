@@ -1,0 +1,250 @@
+cmake_minimum_required(VERSION 3.22)
+
+project(OpenSSL
+    VERSION 1.0.2.21
+    DESCRIPTION "TLS/SSL and crypto library"
+    HOMEPAGE_URL "https://www.openssl.org/"
+    LANGUAGES C
+)
+
+if (WIN32)
+    set(CMAKE_SHARED_LIBRARY_PREFIX "")
+    set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS YES)
+endif()
+
+set(CMAKE_C_STANDARD 99)
+
+# check if some file exists
+# our CMake won't work if the file exists, need to remove some of the generated file from packaged source (tarball)
+foreach (_UNNEEDED_GENERATED_FILE IN ITEMS
+    ${CMAKE_CURRENT_LIST_DIR}/openssl/Makefile
+    ${CMAKE_CURRENT_LIST_DIR}/openssl/apps/CA.pl
+    ${CMAKE_CURRENT_LIST_DIR}/openssl/crypto/opensslconf.h
+    ${CMAKE_CURRENT_LIST_DIR}/openssl/test/evptests.txt
+    ${CMAKE_CURRENT_LIST_DIR}/openssl/tools/c_rehash
+)
+    if (EXISTS ${_UNNEEDED_GENERATED_FILE})
+        message(FATAL_ERROR ${_UNNEEDED_GENERATED_FILE} " exists and we don't expect this file exist during our build. Please remove them before proceeding.")
+    endif()
+endforeach()
+
+include(GNUInstallDirs)
+include(CMakeDependentOption)
+
+# --openssldir
+# option(OPENSSL_OPENSSLDIR "OpenSSL SSL install directory, relative to CMAKE_INSTALL_PREFIX" "ssl")
+set(OPENSSL_OPENSSLDIR "ssl" CACHE STRING "OpenSSL SSL install directory, relative to CMAKE_INSTALL_PREFIX")
+
+# [no-]threads
+option(OPENSSL_THREADS "Build with threads supported" ON)
+
+# [no-]shared
+option(BUILD_SHARED_LIBS "Build Shared Libraries" ON)
+
+# no-dso
+option(OPENSSL_DSO "use dymamic shared object loader code" ON)
+
+# fips (OpenSSL 1.0.2 series doesn't bundle the FIPS module)
+# option(OPENSSL_FIPS "use FIPS" OFF)
+set(OPENSSL_FIPS OFF CACHE BOOL "use FIPS")
+
+# [no-]zlib
+option(OPENSSL_ZLIB "build with ZLIB" OFF)
+
+# zlib-dynamic
+cmake_dependent_option(OPENSSL_ZLIB_DYNAMIC "build ZLIB as dynamic loaded object" OFF "OPENSSL_ZLIB" OFF)
+
+# --with-krb5-*
+OPTION(OPENSSL_KRB5 "build OpenSSL with Kerberos 5" OFF)
+
+# 386
+option(OPENSSL_386 "generate 80386 code in assembly modules" OFF)
+if (OPENSSL_386)
+    set(OPENSSL_USE_386 "386" CACHE STRING "" FORCE)
+endif()
+
+# no-sse2
+cmake_dependent_option(OPENSSL_SSE2 "Enable SSE2 instructions in assembly" ON "NOT OPENSSL_386" OFF)
+
+# static_engine
+cmake_dependent_option(OPENSSL_STATIC_ENGINE "generate static engine library" OFF "BUILD_SHARED_LIBS" ON)
+
+foreach (_OPTION IN ITEMS hw hw-4758-cca hw-aep hw-atalla hw-chil hw-cswift hw-ibmca hw-ncipher hw-nuron hw-padlock hw-sureware hw-ubsec hw-zencod asm err)
+    string(TOUPPER ${_OPTION} _OPTION_UPPER)
+    string(REPLACE "-" "_" _OPTION_SYMBOL ${_OPTION_UPPER})
+    string(CONCAT _OPTION_STR "OPENSSL_" ${_OPTION_SYMBOL})
+    string(CONCAT _OPTION_HELP "enable OpenSSL option " ${_OPTION})
+    option(${_OPTION_STR} ${_OPTION_HELP} ON)
+    string(CONCAT _OPTION_NO_STR "OPENSSL_NO_" ${_OPTION_SYMBOL})
+    string(CONCAT _OPTION_NO_HELP "disable OpenSSL option " ${_OPTION})
+    set(${_OPTION_NO_STR} ON CACHE BOOL ${_OPTION_NO_HELP})
+    if (${_OPTION_STR})
+        unset(${_OPTION_NO_STR} CACHE)
+        set(${_OPTION_NO_STR} OFF CACHE BOOL ${_OPTION_NO_HELP})
+    endif()
+    unset(_OPTION_NO_HELP)
+    unset(_OPTION_NO_STR)
+    unset(_OPTION_HELP)
+    unset(_OPTION_STR)
+    unset(_OPTION_SYMBOL)
+    unset(_OPTION_UPPER)
+endforeach()
+
+if (OPENSSL_ASM)
+    if (APPLE AND NOT IOS)
+        list(LENGTH CMAKE_OSX_ARCHITECTURES OPENSSL_ASM_ARCHITECTURES_LENGTH)
+        if (OPENSSL_ASM_ARCHITECTURES_LENGTH GREATER 1)
+            message(FATAL_ERROR "OPENSSL_ASM is incompatible with more than one CMAKE_OSX_ARCHITECTURES on macOS. If a multi-architecture should be built, "
+                                "either build the all-in-one package without ASM or build them separately with ASM and combile them using lipo provided by Apple.")
+        elseif(OPENSSL_ASM_ARCHITECTURES_LENGTH EQUAL 1)
+            # todo
+        else()
+            # use CMAKE_SYSTEM_NAME directly
+        endif()
+        unset(OPENSSL_ASM_ARCHITECTURES_LENGTH)
+    endif()
+    if (MSVC)
+        enable_language(ASM_MASM)
+        set(OPENSSL_ASM_PREPROCESSED ".asm")
+    else()
+        enable_language(ASM)
+        set(OPENSSL_ASM_PREPROCESSED ".s")
+    endif()
+endif()
+
+# no-<cipher>
+set(OPENSSL_DEFAULT_DISABLED_CIPHERS ec-nistp-64-gcc-128 gmp md2 rc5 rfc3779 sctp ssl-trace ssl2 unit-test weak-ssl-ciphers jpake libunbound store)
+set(OPENSSL_EXPERIMENTAL_CIPHERS jpake libunbound store)
+
+foreach (_CIPHER IN ITEMS
+        ssl tls ssl3-method # meta-cipher
+        des ec md5 rsa sha dsa dh tlsext # dependent
+        aes asn1 bf bio bn buf-freelists buffer camellia capieng cast chain-verify cmac cms comp conf deprecated descbcm dgram dso dtls dtls1 ec-nistp-64-gcc-128 ec2m ecdh ecdsa
+        engine evp fp-api gmp gost hash-comp heartbeats hmac idea jpake lhash libunbound locking md2 md4 mdc2 modes multibyte nextprotoneg object objects ocsp pem pkcs7 pkcs12
+        posix-io pqueue psk rand rc2 rc4 rc5 rdrand rfc3779 ripemd ripemd160 rmd160 sctp seed setvbuf-ionbf sha0 sha1 sha256 sha512 sock speed srp srtp ssl-intern ssl-trace ssl2
+        ssl2-method ssl3 stack stdio store tls1 ts txt-db ui unit-test weak-ssl-ciphers whirlpool x509 x509-verify x509v3
+)
+    list(FIND OPENSSL_DEFAULT_DISABLED_CIPHERS ${_CIPHER} _CIPHER_IS_DEFAULT_DISABLED)
+    set(_CIPHER_DEFAULT ON)
+    if (NOT _CIPHER_IS_DEFAULT_DISABLED EQUAL -1)
+        set(_CIPHER_DEFAULT OFF)
+    endif()
+    string(TOUPPER ${_CIPHER} _CIPHER_UPPER)
+    string(REPLACE "-" "_" _CIPHER_SYMBOL ${_CIPHER_UPPER})
+    string(CONCAT _CIPHER_STR "OPENSSL_" ${_CIPHER_SYMBOL})
+    string(CONCAT _CIPHER_HELP "enable OpenSSL cipher " ${_CIPHER})
+    if (_CIPHER STREQUAL "mdc2")
+        cmake_dependent_option(${_CIPHER_STR} ${_CIPHER_HELP} ${_CIPHER_DEFAULT} "OPENSSL_DES" OFF)
+    elseif (_CIPHER STREQUAL "ecdsa")
+        cmake_dependent_option(${_CIPHER_STR} ${_CIPHER_HELP} ${_CIPHER_DEFAULT} "OPENSSL_EC" OFF)
+    elseif (_CIPHER STREQUAL "ecdh")
+        cmake_dependent_option(${_CIPHER_STR} ${_CIPHER_HELP} ${_CIPHER_DEFAULT} "OPENSSL_EC" OFF)
+    elseif (_CIPHER STREQUAL "ssl2")
+        cmake_dependent_option(${_CIPHER_STR} ${_CIPHER_HELP} ${_CIPHER_DEFAULT} "OPENSSL_SSL;OPENSSL_MD5;OPENSSL_RSA" OFF)
+    elseif (_CIPHER STREQUAL "rsax")
+        cmake_dependent_option(${_CIPHER_STR} ${_CIPHER_HELP} ${_CIPHER_DEFAULT} "OPENSSL_FIPS" OFF)
+    elseif (_CIPHER STREQUAL "ssl3")
+        cmake_dependent_option(${_CIPHER_STR} ${_CIPHER_HELP} ${_CIPHER_DEFAULT}
+            "OPENSSL_SSL;OPENSSL_SSL3_METHOD;OPENSSL_MD5;OPENSSL_SHA;( OPENSSL_RSA OR ( OPENSSL_DSA AND OPENSSL_DH ) )" OFF)
+    elseif (_CIPHER STREQUAL "tls1")
+        cmake_dependent_option(${_CIPHER_STR} ${_CIPHER_HELP} ${_CIPHER_DEFAULT} "OPENSSL_TLS;OPENSSL_MD5;OPENSSL_SHA;( OPENSSL_RSA OR ( OPENSSL_DSA AND OPENSSL_DH ) )" OFF)
+    elseif (_CIPHER STREQUAL "gost")
+        cmake_dependent_option(${_CIPHER_STR} ${_CIPHER_HELP} ${_CIPHER_DEFAULT} "OPENSSL_EC;OPENSSL_DSA;OPENSSL_DH" OFF)
+    elseif (_CIPHER STREQUAL "srp")
+        cmake_dependent_option(${_CIPHER_STR} ${_CIPHER_HELP} ${_CIPHER_DEFAULT} "OPENSSL_TLSEXT" OFF)
+    elseif (_CIPHER STREQUAL "heartbeats")
+        cmake_dependent_option(${_CIPHER_STR} ${_CIPHER_HELP} ${_CIPHER_DEFAULT} "OPENSSL_TLSEXT" OFF)
+    else()
+        option(${_CIPHER_STR} ${_CIPHER_HELP} ${_CIPHER_DEFAULT})
+    endif()
+    string(CONCAT _CIPHER_NO_STR "OPENSSL_NO_" ${_CIPHER_SYMBOL})
+    string(CONCAT _CIPHER_NO_HELP "disable OpenSSL cipher " ${_CIPHER})
+    list(FIND OPENSSL_EXPERIMENTAL_CIPHERS ${_CIPHER} _CIPHER_IS_EXPERIMENTAL)
+    if (${_CIPHER_STR} AND NOT _CIPHER_IS_EXPERIMENTAL EQUAL -1)
+        string(CONCAT _CIPHER_FORCE_STR "OPENSSL_EXPERIMENTAL_" ${_CIPHER_SYMBOL})
+        string(CONCAT _CIPHER_FORCE_HELP "force enable experimental OpenSSL cipher " ${_CIPHER})
+        cmake_dependent_option(${_CIPHER_FORCE_STR} ${_CIPHER_FORCE_HELP} OFF ${_CIPHER_STR} OFF)
+        if (NOT ${_CIPHER_FORCE_STR})
+            message(FATAL_ERROR "You are enabling experimental cipher " ${_CIPHER} ". Please use -D" ${_CIPHER_FORCE_STR} "=1 to proceed with experimental setting.")
+        endif()
+    endif()
+    set(${_CIPHER_NO_STR} ON CACHE BOOL ${_CIPHER_NO_HELP})
+    if (${_CIPHER_STR})
+        unset(${_CIPHER_NO_STR} CACHE)
+        set(${_CIPHER_NO_STR} OFF CACHE BOOL ${_CIPHER_NO_HELP})
+    endif()
+    unset(_CIPHER_NO_HELP)
+    unset(_CIPHER_NO_STR)
+    unset(_CIPHER_HELP)
+    unset(_CIPHER_STR)
+    unset(_CIPHER_SYMBOL)
+    unset(_CIPHER_UPPER)
+    unset(_CIPHER_DEFAULT)
+    unset(_CIPHER_IS_EXPERIMENTAL)
+    unset(_CIPHER_IS_DEFAULT_DISABLED)
+endforeach()
+
+# HACK
+set (OPENSSL_HW_CAPI ${OPENSSL_CAPIENG} CACHE BOOL "")
+set (OPENSSL_NO_HW_CAPI ${OPENSSL_NO_CAPIENG} CACHE BOOL "")
+set (OPENSSL_HW_CCGOST ${OPENSSL_GOST} CACHE BOOL "")
+set (OPENSSL_NO_HW_CCGOST ${OPENSSL_NO_GOST} CACHE BOOL "")
+set (OPENSSL_HW_GMP ${OPENSSL_GMP} CACHE BOOL "")
+set (OPENSSL_NO_HW_GMP ${OPENSSL_NO_GMP} CACHE BOOL "")
+
+if (OPENSSL_KRB5)
+    # let's just find MIT krb5 temporarily
+    # ... then using PkgConfig::MIT_KRB5 for further linking is fine, it is an imported target
+    # TODO: cflags = -DKRB5_MIT_OLD11 (if krb5 version is older than 1.1)
+    find_package(PkgConfig REQUIRED)
+    pkg_search_module(MIT_KRB5 REQUIRED IMPORTED_TARGET GLOBAL mit-krb5 krb5)
+    set(OPENSSL_NO_KRB5 OFF CACHE BOOL "build OpenSSL without Kerberos 5")
+else()
+    set(OPENSSL_NO_KRB5 ON CACHE BOOL "build OpenSSL without Kerberos 5")
+endif()
+
+if (NOT OPENSSL_COMP AND OPENSSL_ZLIB)
+    message(AUTHOR_WARNING "comp cipher is not included and zlib is meaningless. Original OpenSSL desided to directly disable zlib build. "
+                           "Let's just copy their behavior.")
+    unset(OPENSSL_ZLIB CACHE)
+    set(OPENSSL_ZLIB OFF CACHE BOOL "build with ZLIB")
+endif()
+
+if (OPENSSL_ZLIB)
+    find_package(ZLIB REQUIRED)
+    if (OPENSSL_ZLIB_DYNAMIC)
+        set(OPENSSL_NO_ZLIB_DYNAMIC "build ZLIB not as dynamic loaded object" OFF)
+    else()
+        set(OPENSSL_NO_ZLIB_DYNAMIC "build ZLIB not as dynamic loaded object" ON)
+    endif()
+    set(OPENSSL_NO_ZLIB OFF CACHE BOOL "build without ZLIB")
+else()
+    set(OPENSSL_NO_ZLIB ON CACHE BOOL "build without ZLIB")
+endif()
+
+if (OPENSSL_STATIC_ENGINE)
+    set(OPENSSL_NO_DYNAMIC_ENGINE ON CACHE BOOL "generate static engine library")
+    set(OPENSSL_NO_STATIC_ENGINE OFF CACHE BOOL "generate dynamic engine library")
+    set(OPENSSL_DYNAMIC_ENGINE OFF CACHE BOOL "generate dynamic engine library")
+else()
+    set(OPENSSL_NO_DYNAMIC_ENGINE OFF CACHE BOOL "generate static engine library")
+    set(OPENSSL_NO_STATIC_ENGINE ON CACHE BOOL "generate dynamic engine library")
+    set(OPENSSL_DYNAMIC_ENGINE ON CACHE BOOL "generate dynamic engine library")
+endif()
+
+if (OPENSSL_THREADS)
+    find_package(Threads REQUIRED)
+endif()
+
+# TODO: uplink platforms (if not 386)
+# cflags = -DOPENSSL_USE_APPLINK
+# cpuid_obj += uplink.o uplink-x86.o
+
+configure_file(${CMAKE_SOURCE_DIR}/openssl/e_os2.h ${CMAKE_BINARY_DIR}/include/openssl/e_os2.h COPYONLY)
+
+add_subdirectory(crypto)
+add_subdirectory(ssl)
+add_subdirectory(apps)
+add_subdirectory(engines)
+add_subdirectory(tools)
+add_subdirectory(test)

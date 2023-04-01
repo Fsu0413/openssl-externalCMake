@@ -1,0 +1,70 @@
+
+get_filename_component(LIBCRYPTO_CURRENTDIR ${CMAKE_CURRENT_LIST_FILE} NAME_WE)
+
+set(LIBCRYPTO_${LIBCRYPTO_CURRENTDIR}_SOURCES
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/encode.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/digest.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/evp_enc.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/evp_key.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/evp_acnf.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/evp_cnf.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/e_des.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/e_bf.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/e_idea.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/e_des3.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/e_camellia.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/e_rc4.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/e_aes.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/names.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/e_seed.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/e_xcbc_d.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/e_rc2.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/e_cast.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/e_rc5.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/m_null.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/m_md2.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/m_md4.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/m_md5.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/m_sha.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/m_sha1.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/m_wp.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/m_dss.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/m_dss1.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/m_mdc2.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/m_ripemd.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/m_ecdsa.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/p_open.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/p_seal.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/p_sign.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/p_verify.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/p_lib.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/p_enc.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/p_dec.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/bio_md.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/bio_b64.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/bio_enc.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/evp_err.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/e_null.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/c_all.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/c_allc.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/c_alld.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/evp_lib.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/bio_ok.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/evp_pkey.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/evp_pbe.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/p5_crpt.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/p5_crpt2.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/e_old.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/pmeth_lib.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/pmeth_fn.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/pmeth_gn.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/m_sigver.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/e_aes_cbc_hmac_sha1.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/e_aes_cbc_hmac_sha256.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/e_rc4_hmac_md5.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/evp.h
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/evp_locl.h
+)
+
+set(LIBCRYPTO_SOURCES ${LIBCRYPTO_SOURCES} ${LIBCRYPTO_${LIBCRYPTO_CURRENTDIR}_SOURCES})
+unset(LIBCRYPTO_CURRENTDIR)

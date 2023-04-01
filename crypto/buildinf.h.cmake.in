@@ -1,0 +1,5 @@
+/* no include guard? */
+
+#define CFLAGS "dummy"
+#define PLATFORM "debug"
+#define DATE "Wed Mar 29 15:30:59 2023"

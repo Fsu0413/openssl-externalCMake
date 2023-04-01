@@ -1,0 +1,194 @@
+
+# TODO: DO NOT USE CMAKE_C_FLAGS, USE CRYPTO_C_FLAGS INSTEAD WHEN READY
+perlasm_generate_src(bn-586${OPENSSL_ASM_PREPROCESSED} ${CMAKE_SOURCE_DIR}/openssl/crypto/bn/asm/bn-586.pl
+    DEPENDENCIES ${CMAKE_SOURCE_DIR}/openssl/crypto/perlasm/x86asm.pl
+    FLAGS ${OPENSSL_PERLASM_SCHEME} ${LIBCRYPTO_CFLAGS} ${OPENSSL_USE_386}
+)
+perlasm_generate_src(co-586${OPENSSL_ASM_PREPROCESSED} ${CMAKE_SOURCE_DIR}/openssl/crypto/bn/asm/co-586.pl
+    DEPENDENCIES ${CMAKE_SOURCE_DIR}/openssl/crypto/perlasm/x86asm.pl
+    FLAGS ${OPENSSL_PERLASM_SCHEME} ${LIBCRYPTO_CFLAGS} ${OPENSSL_USE_386}
+)
+perlasm_generate_src(x86-mont${OPENSSL_ASM_PREPROCESSED} ${CMAKE_SOURCE_DIR}/openssl/crypto/bn/asm/x86-mont.pl
+    DEPENDENCIES ${CMAKE_SOURCE_DIR}/openssl/crypto/perlasm/x86asm.pl
+    FLAGS ${OPENSSL_PERLASM_SCHEME} ${LIBCRYPTO_CFLAGS} ${OPENSSL_USE_386}
+)
+perlasm_generate_src(x86-gf2m${OPENSSL_ASM_PREPROCESSED} ${CMAKE_SOURCE_DIR}/openssl/crypto/bn/asm/x86-gf2m.pl
+    DEPENDENCIES ${CMAKE_SOURCE_DIR}/openssl/crypto/perlasm/x86asm.pl
+    FLAGS ${OPENSSL_PERLASM_SCHEME} ${LIBCRYPTO_CFLAGS} ${OPENSSL_USE_386}
+)
+perlasm_generate_src(sparcv9a-mont${OPENSSL_ASM_PREPROCESSED} ${CMAKE_SOURCE_DIR}/openssl/crypto/bn/asm/sparcv9a-mont.pl
+    FLAGS ${LIBCRYPTO_CFLAGS}
+)
+perlasm_generate_src(sparcv9-mont${OPENSSL_ASM_PREPROCESSED} ${CMAKE_SOURCE_DIR}/openssl/crypto/bn/asm/sparcv9-mont.pl
+    FLAGS ${LIBCRYPTO_CFLAGS}
+)
+perlasm_generate_src(vis3-mont${OPENSSL_ASM_PREPROCESSED} ${CMAKE_SOURCE_DIR}/openssl/crypto/bn/asm/vis3-mont.pl
+    FLAGS ${LIBCRYPTO_CFLAGS}
+)
+perlasm_generate_src(sparct4-mont.S ${CMAKE_SOURCE_DIR}/openssl/crypto/bn/asm/sparct4-mont.pl
+    FLAGS ${LIBCRYPTO_CFLAGS}
+)
+perlasm_generate_src(sparcv9-gf2m.S ${CMAKE_SOURCE_DIR}/openssl/crypto/bn/asm/sparcv9-gf2m.pl
+    FLAGS ${LIBCRYPTO_CFLAGS}
+)
+# asm/mips3.s - use alternate compiler for compiling when GCC is used
+perlasm_generate_src(bn-mips${OPENSSL_ASM_PREPROCESSED} ${CMAKE_SOURCE_DIR}/openssl/crypto/bn/asm/mips.pl
+    FLAGS ${OPENSSL_PERLASM_SCHEME}
+    NO_STDOUT
+)
+perlasm_generate_src(mips-mont${OPENSSL_ASM_PREPROCESSED} ${CMAKE_SOURCE_DIR}/openssl/crypto/bn/asm/mips-mont.pl
+    FLAGS ${OPENSSL_PERLASM_SCHEME}
+    NO_STDOUT
+)
+perlasm_generate_src(s390x-gf2m${OPENSSL_ASM_PREPROCESSED} ${CMAKE_SOURCE_DIR}/openssl/crypto/bn/asm/s390x-gf2m.pl
+    FLAGS ${OPENSSL_PERLASM_SCHEME}
+    NO_STDOUT
+)
+perlasm_generate_src(x86_64-mont${OPENSSL_ASM_PREPROCESSED} ${CMAKE_SOURCE_DIR}/openssl/crypto/bn/asm/x86_64-mont.pl
+    FLAGS ${OPENSSL_PERLASM_SCHEME}
+)
+perlasm_generate_src(x86_64-mont5${OPENSSL_ASM_PREPROCESSED} ${CMAKE_SOURCE_DIR}/openssl/crypto/bn/asm/x86_64-mont5.pl
+    FLAGS ${OPENSSL_PERLASM_SCHEME}
+)
+perlasm_generate_src(x86_64-gf2m${OPENSSL_ASM_PREPROCESSED} ${CMAKE_SOURCE_DIR}/openssl/crypto/bn/asm/x86_64-gf2m.pl
+    FLAGS ${OPENSSL_PERLASM_SCHEME}
+)
+perlasm_generate_src(rsaz-x86_64${OPENSSL_ASM_PREPROCESSED} ${CMAKE_SOURCE_DIR}/openssl/crypto/bn/asm/rsaz-x86_64.pl
+    FLAGS ${OPENSSL_PERLASM_SCHEME}
+)
+perlasm_generate_src(rsaz-avx2${OPENSSL_ASM_PREPROCESSED} ${CMAKE_SOURCE_DIR}/openssl/crypto/bn/asm/rsaz-avx2.pl
+    FLAGS ${OPENSSL_PERLASM_SCHEME}
+)
+perlasm_generate_src(ia64-mont${OPENSSL_ASM_PREPROCESSED} ${CMAKE_SOURCE_DIR}/openssl/crypto/bn/asm/ia64-mont.pl
+    FLAGS ${LIBCRYPTO_CFLAGS}
+    NO_STDOUT BEFORE
+)
+perlasm_generate_src(parisc-mont${OPENSSL_ASM_PREPROCESSED} ${CMAKE_SOURCE_DIR}/openssl/crypto/bn/asm/parisc-mont.pl
+    FLAGS ${OPENSSL_PERLASM_SCHEME}
+    NO_STDOUT
+)
+perlasm_generate_src(bn-ppc${OPENSSL_ASM_PREPROCESSED} ${CMAKE_SOURCE_DIR}/openssl/crypto/bn/asm/ppc.pl
+    FLAGS ${OPENSSL_PERLASM_SCHEME}
+    NO_STDOUT
+)
+perlasm_generate_src(ppc-mont${OPENSSL_ASM_PREPROCESSED} ${CMAKE_SOURCE_DIR}/openssl/crypto/bn/asm/ppc-mont.pl
+    FLAGS ${OPENSSL_PERLASM_SCHEME}
+    NO_STDOUT
+)
+perlasm_generate_src(ppc64-mont${OPENSSL_ASM_PREPROCESSED} ${CMAKE_SOURCE_DIR}/openssl/crypto/bn/asm/ppc64-mont.pl
+    FLAGS ${OPENSSL_PERLASM_SCHEME}
+    NO_STDOUT
+)
+perlasm_generate_src(alpha-mont.S ${CMAKE_SOURCE_DIR}/openssl/crypto/bn/asm/alpha-mont.pl
+)
+perlasm_generate_src(armv4-mont.S ${CMAKE_SOURCE_DIR}/openssl/crypto/bn/asm/armv4-mont.pl
+    FLAGS ${OPENSSL_PERLASM_SCHEME}
+    NO_STDOUT
+)
+perlasm_generate_src(mips3-mont.S ${CMAKE_SOURCE_DIR}/openssl/crypto/bn/asm/mips3-mont.pl
+    FLAGS ${OPENSSL_PERLASM_SCHEME}
+    NO_STDOUT
+)
+perlasm_generate_src(via-mont.S ${CMAKE_SOURCE_DIR}/openssl/crypto/bn/asm/via-mont.pl
+    FLAGS ${OPENSSL_PERLASM_SCHEME}
+    NO_STDOUT
+)
+perlasm_generate_src(armv4-gf2m.S ${CMAKE_SOURCE_DIR}/openssl/crypto/bn/asm/armv4-gf2m.pl
+    FLAGS ${OPENSSL_PERLASM_SCHEME}
+    NO_STDOUT
+)
+
+get_filename_component(LIBCRYPTO_CURRENTDIR ${CMAKE_CURRENT_LIST_FILE} NAME_WE)
+
+set(LIBCRYPTO_${LIBCRYPTO_CURRENTDIR}_SOURCES
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/bn/bn_add.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/bn/bn_div.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/bn/bn_exp.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/bn/bn_lib.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/bn/bn_ctx.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/bn/bn_mul.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/bn/bn_mod.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/bn/bn_print.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/bn/bn_rand.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/bn/bn_shift.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/bn/bn_word.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/bn/bn_blind.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/bn/bn_kron.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/bn/bn_sqrt.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/bn/bn_gcd.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/bn/bn_prime.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/bn/bn_err.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/bn/bn_sqr.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/bn/bn_recp.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/bn/bn_mont.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/bn/bn_mpi.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/bn/bn_exp2.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/bn/bn_gf2m.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/bn/bn_nist.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/bn/bn_depr.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/bn/bn_const.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/bn/bn_x931p.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/bn/bn.h
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/bn/bn_lcl.h
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/bn/bn_prime.h
+)
+
+set(LIBCRYPTO_${LIBCRYPTO_CURRENTDIR}_ASM_SOURCES
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/bn/bn_asm.c
+)
+if (OPENSSL_ASM)
+    if ( ( ( CMAKE_SYSTEM_PROCESSOR MATCHES "[Xx]86[_\\-]64" ) OR ( CMAKE_SYSTEM_PROCESSOR MATCHES "[Aa][Mm][Dd]64" ) AND (
+               ( CMAKE_SYSTEM_NAME MATCHES "BSD" )
+            OR CYGWIN
+            OR ( WIN32 AND NOT MSVC )
+            OR ( APPLE AND NOT IOS )
+    ) ) OR ( OPENSSL_PERLASM_MSVC_X86_64 ) )
+        set(LIBCRYPTO_${LIBCRYPTO_CURRENTDIR}_ASM_SOURCES
+            ${CMAKE_SOURCE_DIR}/openssl/crypto/bn/asm/x86_64-gcc.c
+            x86_64-mont${OPENSSL_ASM_PREPROCESSED}
+            x86_64-mont5${OPENSSL_ASM_PREPROCESSED}
+            x86_64-gf2m${OPENSSL_ASM_PREPROCESSED}
+            ${CMAKE_SOURCE_DIR}/openssl/crypto/bn/rsaz_exp.c
+            ${CMAKE_SOURCE_DIR}/openssl/crypto/bn/rsaz_exp.h
+            rsaz-x86_64${OPENSSL_ASM_PREPROCESSED}
+            rsaz-avx2${OPENSSL_ASM_PREPROCESSED}
+        )
+        set(LIBCRYPTO_CFLAGS ${LIBCRYPTO_CFLAGS} "-DOPENSSL_IA32_SSE2" "-DOPENSSL_BN_ASM_MONT" "-DOPENSSL_BN_ASM_MONT5" "-DOPENSSL_BN_ASM_GF2m")
+    elseif ( ( ( CMAKE_SYSTEM_PROCESSOR MATCHES "i[2-7]86" ) OR ( CMAKE_SYSTEM_PROCESSOR MATCHES "[Xx]86" ) AND (
+               ( CMAKE_SYSTEM_NAME MATCHES "BSD" )
+            OR CYGWIN
+            OR ( WIN32 AND NOT MSVC )
+            OR ANDROID
+    ) ) OR ( OPENSSL_PERLASM_MSVC_I386 ) )
+        set(LIBCRYPTO_${LIBCRYPTO_CURRENTDIR}_ASM_SOURCES
+            bn-586${OPENSSL_ASM_PREPROCESSED}
+            co-586${OPENSSL_ASM_PREPROCESSED}
+            x86-mont${OPENSSL_ASM_PREPROCESSED}
+            x86-gf2m${OPENSSL_ASM_PREPROCESSED}
+        )
+        set(LIBCRYPTO_CFLAGS ${LIBCRYPTO_CFLAGS} "-DOPENSSL_BN_ASM_PART_WORDS" "-DOPENSSL_IA32_SSE2" "-DOPENSSL_BN_ASM_MONT" "-DOPENSSL_BN_ASM_GF2m")
+    elseif (( CMAKE_SYSTEM_PROCESSOR MATCHES "armv\\d(-a)?") AND (
+               ANDROID
+            OR ( CMAKE_SYSTEM_NAME MATCHES "[Ll]inux")
+    ) )
+        set(LIBCRYPTO_${LIBCRYPTO_CURRENTDIR}_ASM_SOURCES
+            ${CMAKE_SOURCE_DIR}/openssl/crypto/bn/bn_asm.c
+            armv4-mont.S
+            armv4-gf2m.S
+        )
+        set(LIBCRYPTO_CFLAGS ${LIBCRYPTO_CFLAGS} "-DOPENSSL_BN_ASM_MONT" "-DOPENSSL_BN_ASM_GF2m")
+    elseif (( CMAKE_SYSTEM_PROCESSOR MATCHES "aarch64" ) AND (
+               ANDROID
+            OR ( CMAKE_SYSTEM_NAME MATCHES "[Ll]inux" )
+    ) )
+        # no-asm
+    endif()
+endif()
+
+set(LIBCRYPTO_${LIBCRYPTO_CURRENTDIR}_SOURCES
+    ${LIBCRYPTO_${LIBCRYPTO_CURRENTDIR}_SOURCES}
+    ${LIBCRYPTO_${LIBCRYPTO_CURRENTDIR}_ASM_SOURCES}
+)
+
+set(LIBCRYPTO_SOURCES ${LIBCRYPTO_SOURCES} ${LIBCRYPTO_${LIBCRYPTO_CURRENTDIR}_SOURCES})
+unset(LIBCRYPTO_CURRENTDIR)

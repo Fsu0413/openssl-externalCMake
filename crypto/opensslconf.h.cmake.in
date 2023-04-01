@@ -1,0 +1,662 @@
+/* Original file has no include guard */
+
+/* opensslconf.h */
+/* WARNING: Generated automatically from opensslconf.h.in by CMake. */
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+/* OpenSSL was configured with the following options: */
+
+#cmakedefine EXTERNALCMAKE_HAS_SYSDEFINE
+#ifdef EXTERNALCMAKE_HAS_SYSDEFINE
+#ifndef @OPENSSL_SYS_DEFINE@
+#define @OPENSSL_SYS_DEFINE@
+#endif
+#undef EXTERNALCMAKE_HAS_SYSDEFINE
+#endif
+
+#ifndef OPENSSL_DOING_MAKEDEPEND
+
+/* Manually define the experimental thing here */
+#ifndef OPENSSL_EXPERIMENTAL_JPAKE
+#define OPENSSL_NO_JPAKE
+#endif
+
+#ifndef OPENSSL_EXPERIMENTAL_LIBUNBOUND
+#define OPENSSL_NO_LIBUNBOUND
+#endif
+
+#ifndef OPENSSL_EXPERIMENTAL_STORE
+#define OPENSSL_NO_STORE
+#endif
+
+#cmakedefine OPENSSL_NO_KRB5
+#cmakedefine OPENSSL_NO_SSL
+#cmakedefine OPENSSL_NO_TLS
+#cmakedefine OPENSSL_NO_SSL3_METHOD
+#cmakedefine OPENSSL_NO_DES
+#cmakedefine OPENSSL_NO_EC
+#cmakedefine OPENSSL_NO_MD5
+#cmakedefine OPENSSL_NO_RSA
+#cmakedefine OPENSSL_NO_SHA
+#cmakedefine OPENSSL_NO_DSA
+#cmakedefine OPENSSL_NO_DH
+#cmakedefine OPENSSL_NO_GOST
+#cmakedefine OPENSSL_NO_TLSEXT
+#cmakedefine OPENSSL_NO_AES
+#cmakedefine OPENSSL_NO_ASN1
+#cmakedefine OPENSSL_NO_BF
+#cmakedefine OPENSSL_NO_BIO
+#cmakedefine OPENSSL_NO_BN
+#cmakedefine OPENSSL_NO_BUF_FREELISTS
+#cmakedefine OPENSSL_NO_BUFFER
+#cmakedefine OPENSSL_NO_CAMELLIA
+#cmakedefine OPENSSL_NO_CAPIENG
+#cmakedefine OPENSSL_NO_CAST
+#cmakedefine OPENSSL_NO_CHAIN_VERIFY
+#cmakedefine OPENSSL_NO_CMAC
+#cmakedefine OPENSSL_NO_CMS
+#cmakedefine OPENSSL_NO_COMP
+#cmakedefine OPENSSL_NO_CONF
+#cmakedefine OPENSSL_NO_DEPRECATED
+#cmakedefine OPENSSL_NO_DESCBCM
+#cmakedefine OPENSSL_NO_DGRAM
+#cmakedefine OPENSSL_NO_DSO
+#cmakedefine OPENSSL_NO_DTLS
+#cmakedefine OPENSSL_NO_DTLS1
+#cmakedefine OPENSSL_NO_EC_NISTP_64_GCC_128
+#cmakedefine OPENSSL_NO_EC2M
+#cmakedefine OPENSSL_NO_ECDH
+#cmakedefine OPENSSL_NO_ECDSA
+#cmakedefine OPENSSL_NO_ENGINE
+#cmakedefine OPENSSL_NO_EVP
+#cmakedefine OPENSSL_NO_FP_API
+#cmakedefine OPENSSL_NO_GMP
+#cmakedefine OPENSSL_NO_HASH_COMP
+#cmakedefine OPENSSL_NO_HEARTBEATS
+#cmakedefine OPENSSL_NO_HMAC
+#cmakedefine OPENSSL_NO_IDEA
+#ifndef OPENSSL_NO_JPAKE
+#cmakedefine OPENSSL_NO_JPAKE
+#endif
+#cmakedefine OPENSSL_NO_LHASH
+#ifndef OPENSSL_NO_LIBUNBOUND
+#cmakedefine OPENSSL_NO_LIBUNBOUND
+#endif
+#cmakedefine OPENSSL_NO_LOCKING
+#cmakedefine OPENSSL_NO_MD2
+#cmakedefine OPENSSL_NO_MD4
+#cmakedefine OPENSSL_NO_MDC2
+#cmakedefine OPENSSL_NO_MODES
+#cmakedefine OPENSSL_NO_MULTIBYTE
+#cmakedefine OPENSSL_NO_NEXTPROTONEG
+#cmakedefine OPENSSL_NO_OBJECT
+#cmakedefine OPENSSL_NO_OBJECTS
+#cmakedefine OPENSSL_NO_OCSP
+#cmakedefine OPENSSL_NO_PEM
+#cmakedefine OPENSSL_NO_PKCS7
+#cmakedefine OPENSSL_NO_PKCS12
+#cmakedefine OPENSSL_NO_POSIX_IO
+#cmakedefine OPENSSL_NO_PQUEUE
+#cmakedefine OPENSSL_NO_PSK
+#cmakedefine OPENSSL_NO_RAND
+#cmakedefine OPENSSL_NO_RC2
+#cmakedefine OPENSSL_NO_RC4
+#cmakedefine OPENSSL_NO_RC5
+#cmakedefine OPENSSL_NO_RDRAND
+#cmakedefine OPENSSL_NO_RFC3779
+#cmakedefine OPENSSL_NO_RIPEMD
+#cmakedefine OPENSSL_NO_RIPEMD160
+#cmakedefine OPENSSL_NO_RMD160
+#cmakedefine OPENSSL_NO_SCTP
+#cmakedefine OPENSSL_NO_SEED
+#cmakedefine OPENSSL_NO_SETVBUF_IONBF
+#cmakedefine OPENSSL_NO_SHA0
+#cmakedefine OPENSSL_NO_SHA1
+#cmakedefine OPENSSL_NO_SHA256
+#cmakedefine OPENSSL_NO_SHA512
+#cmakedefine OPENSSL_NO_SOCK
+#cmakedefine OPENSSL_NO_SPEED
+#cmakedefine OPENSSL_NO_SRP
+#cmakedefine OPENSSL_NO_SRTP
+#cmakedefine OPENSSL_NO_SSL_INTERN
+#cmakedefine OPENSSL_NO_SSL_TRACE
+#cmakedefine OPENSSL_NO_SSL2
+#cmakedefine OPENSSL_NO_SSL2_METHOD
+#cmakedefine OPENSSL_NO_SSL3
+#cmakedefine OPENSSL_NO_STACK
+#cmakedefine OPENSSL_NO_STDIO
+#ifndef OPENSSL_NO_STORE
+#cmakedefine OPENSSL_NO_STORE
+#endif
+#cmakedefine OPENSSL_NO_TLS1
+#cmakedefine OPENSSL_NO_TS
+#cmakedefine OPENSSL_NO_TXT_DB
+#cmakedefine OPENSSL_NO_UI
+#cmakedefine OPENSSL_NO_UNIT_TEST
+#cmakedefine OPENSSL_NO_WEAK_SSL_CIPHERS
+#cmakedefine OPENSSL_NO_WHIRLPOOL
+#cmakedefine OPENSSL_NO_X509
+#cmakedefine OPENSSL_NO_X509_VERIFY
+#cmakedefine OPENSSL_NO_X509V3
+
+#endif
+
+#cmakedefine OPENSSL_NO_HW
+#cmakedefine OPENSSL_NO_HW_4758_CCA
+#cmakedefine OPENSSL_NO_HW_AEP
+#cmakedefine OPENSSL_NO_HW_ATALLA
+#cmakedefine OPENSSL_NO_HW_CHIL
+#cmakedefine OPENSSL_NO_HW_CSWIFT
+#cmakedefine OPENSSL_NO_HW_IBMCA
+#cmakedefine OPENSSL_NO_HW_NCIPHER
+#cmakedefine OPENSSL_NO_HW_NURON
+#cmakedefine OPENSSL_NO_HW_PADLOCK
+#cmakedefine OPENSSL_NO_HW_SUREWARE
+#cmakedefine OPENSSL_NO_HW_UBSEC
+#cmakedefine OPENSSL_NO_HW_ZENCOD
+#cmakedefine OPENSSL_NO_ERR
+#cmakedefine OPENSSL_NO_ASM
+#cmakedefine OPENSSL_NO_STATIC_ENGINE
+#cmakedefine OPENSSL_NO_DYNAMIC_ENGINE
+
+/* The OPENSSL_NO_* macros are also defined as NO_* if the application
+   asks for it.  This is a transient feature that is provided for those
+   who haven't had the time to do the appropriate changes in their
+   applications.  */
+
+#ifdef OPENSSL_ALGORITHM_DEFINES
+#ifdef OPENSSL_NO_KRB5
+#define NO_KRB5
+#endif
+#ifdef OPENSSL_NO_SSL
+#define NO_SSL
+#endif
+#ifdef OPENSSL_NO_TLS
+#define NO_TLS
+#endif
+#ifdef OPENSSL_NO_SSL3_METHOD
+#define NO_SSL3_METHOD
+#endif
+#ifdef OPENSSL_NO_DES
+#define NO_DES
+#endif
+#ifdef OPENSSL_NO_EC
+#define NO_EC
+#endif
+#ifdef OPENSSL_NO_MD5
+#define NO_MD5
+#endif
+#ifdef OPENSSL_NO_RSA
+#define NO_RSA
+#endif
+#ifdef OPENSSL_NO_SHA
+#define NO_SHA
+#endif
+#ifdef OPENSSL_NO_DSA
+#define NO_DSA
+#endif
+#ifdef OPENSSL_NO_DH
+#define NO_DH
+#endif
+#ifdef OPENSSL_NO_GOST
+#define NO_GOST
+#endif
+#ifdef OPENSSL_NO_TLSEXT
+#define NO_TLSEXT
+#endif
+#ifdef OPENSSL_NO_AES
+#define NO_AES
+#endif
+#ifdef OPENSSL_NO_ASN1
+#define NO_ASN1
+#endif
+#ifdef OPENSSL_NO_BF
+#define NO_BF
+#endif
+#ifdef OPENSSL_NO_BIO
+#define NO_BIO
+#endif
+#ifdef OPENSSL_NO_BN
+#define NO_BN
+#endif
+#ifdef OPENSSL_NO_BUF_FREELISTS
+#define NO_BUF_FREELISTS
+#endif
+#ifdef OPENSSL_NO_BUFFER
+#define NO_BUFFER
+#endif
+#ifdef OPENSSL_NO_CAMELLIA
+#define NO_CAMELLIA
+#endif
+#ifdef OPENSSL_NO_CAPIENG
+#define NO_CAPIENG
+#endif
+#ifdef OPENSSL_NO_CAST
+#define NO_CAST
+#endif
+#ifdef OPENSSL_NO_CHAIN_VERIFY
+#define NO_CHAIN_VERIFY
+#endif
+#ifdef OPENSSL_NO_CMAC
+#define NO_CMAC
+#endif
+#ifdef OPENSSL_NO_CMS
+#define NO_CMS
+#endif
+#ifdef OPENSSL_NO_COMP
+#define NO_COMP
+#endif
+#ifdef OPENSSL_NO_CONF
+#define NO_CONF
+#endif
+#ifdef OPENSSL_NO_DEPRECATED
+#define NO_DEPRECATED
+#endif
+#ifdef OPENSSL_NO_DESCBCM
+#define NO_DESCBCM
+#endif
+#ifdef OPENSSL_NO_DGRAM
+#define NO_DGRAM
+#endif
+#ifdef OPENSSL_NO_DSO
+#define NO_DSO
+#endif
+#ifdef OPENSSL_NO_DTLS
+#define NO_DTLS
+#endif
+#ifdef OPENSSL_NO_DTLS1
+#define NO_DTLS1
+#endif
+#ifdef OPENSSL_NO_EC_NISTP_64_GCC_128
+#define NO_EC_NISTP_64_GCC_128
+#endif
+#ifdef OPENSSL_NO_EC2M
+#define NO_EC2M
+#endif
+#ifdef OPENSSL_NO_ECDH
+#define NO_ECDH
+#endif
+#ifdef OPENSSL_NO_ECDSA
+#define NO_ECDSA
+#endif
+#ifdef OPENSSL_NO_ENGINE
+#define NO_ENGINE
+#endif
+#ifdef OPENSSL_NO_EVP
+#define NO_EVP
+#endif
+#ifdef OPENSSL_NO_FP_API
+#define NO_FP_API
+#endif
+#ifdef OPENSSL_NO_GMP
+#define NO_GMP
+#endif
+#ifdef OPENSSL_NO_HASH_COMP
+#define NO_HASH_COMP
+#endif
+#ifdef OPENSSL_NO_HEARTBEATS
+#define NO_HEARTBEATS
+#endif
+#ifdef OPENSSL_NO_HMAC
+#define NO_HMAC
+#endif
+#ifdef OPENSSL_NO_IDEA
+#define NO_IDEA
+#endif
+#ifdef OPENSSL_NO_JPAKE
+#define NO_JPAKE
+#endif
+#ifdef OPENSSL_NO_LHASH
+#define NO_LHASH
+#endif
+#ifdef OPENSSL_NO_LIBUNBOUND
+#define NO_LIBUNBOUND
+#endif
+#ifdef OPENSSL_NO_LOCKING
+#define NO_LOCKING
+#endif
+#ifdef OPENSSL_NO_MD2
+#define NO_MD2
+#endif
+#ifdef OPENSSL_NO_MD4
+#define NO_MD4
+#endif
+#ifdef OPENSSL_NO_MDC2
+#define NO_MDC2
+#endif
+#ifdef OPENSSL_NO_MODES
+#define NO_MODES
+#endif
+#ifdef OPENSSL_NO_MULTIBYTE
+#define NO_MULTIBYTE
+#endif
+#ifdef OPENSSL_NO_NEXTPROTONEG
+#define NO_NEXTPROTONEG
+#endif
+#ifdef OPENSSL_NO_OBJECT
+#define NO_OBJECT
+#endif
+#ifdef OPENSSL_NO_OBJECTS
+#define NO_OBJECTS
+#endif
+#ifdef OPENSSL_NO_OCSP
+#define NO_OCSP
+#endif
+#ifdef OPENSSL_NO_PEM
+#define NO_PEM
+#endif
+#ifdef OPENSSL_NO_PKCS7
+#define NO_PKCS7
+#endif
+#ifdef OPENSSL_NO_PKCS12
+#define NO_PKCS12
+#endif
+#ifdef OPENSSL_NO_POSIX_IO
+#define NO_POSIX_IO
+#endif
+#ifdef OPENSSL_NO_PQUEUE
+#define NO_PQUEUE
+#endif
+#ifdef OPENSSL_NO_PSK
+#define NO_PSK
+#endif
+#ifdef OPENSSL_NO_RAND
+#define NO_RAND
+#endif
+#ifdef OPENSSL_NO_RC2
+#define NO_RC2
+#endif
+#ifdef OPENSSL_NO_RC4
+#define NO_RC4
+#endif
+#ifdef OPENSSL_NO_RC5
+#define NO_RC5
+#endif
+#ifdef OPENSSL_NO_RDRAND
+#define NO_RDRAND
+#endif
+#ifdef OPENSSL_NO_RFC3779
+#define NO_RFC3779
+#endif
+#ifdef OPENSSL_NO_RIPEMD
+#define NO_RIPEMD
+#endif
+#ifdef OPENSSL_NO_RIPEMD160
+#define NO_RIPEMD160
+#endif
+#ifdef OPENSSL_NO_RMD160
+#define NO_RMD160
+#endif
+#ifdef OPENSSL_NO_SCTP
+#define NO_SCTP
+#endif
+#ifdef OPENSSL_NO_SEED
+#define NO_SEED
+#endif
+#ifdef OPENSSL_NO_SETVBUF_IONBF
+#define NO_SETVBUF_IONBF
+#endif
+#ifdef OPENSSL_NO_SHA0
+#define NO_SHA0
+#endif
+#ifdef OPENSSL_NO_SHA1
+#define NO_SHA1
+#endif
+#ifdef OPENSSL_NO_SHA256
+#define NO_SHA256
+#endif
+#ifdef OPENSSL_NO_SHA512
+#define NO_SHA512
+#endif
+#ifdef OPENSSL_NO_SOCK
+#define NO_SOCK
+#endif
+#ifdef OPENSSL_NO_SPEED
+#define NO_SPEED
+#endif
+#ifdef OPENSSL_NO_SRP
+#define NO_SRP
+#endif
+#ifdef OPENSSL_NO_SRTP
+#define NO_SRTP
+#endif
+#ifdef OPENSSL_NO_SSL_INTERN
+#define NO_SSL_INTERN
+#endif
+#ifdef OPENSSL_NO_SSL_TRACE
+#define NO_SSL_TRACE
+#endif
+#ifdef OPENSSL_NO_SSL2
+#define NO_SSL2
+#endif
+#ifdef OPENSSL_NO_SSL2_METHOD
+#define NO_SSL2_METHOD
+#endif
+#ifdef OPENSSL_NO_SSL3
+#define NO_SSL3
+#endif
+#ifdef OPENSSL_NO_STACK
+#define NO_STACK
+#endif
+#ifdef OPENSSL_NO_STDIO
+#define NO_STDIO
+#endif
+#ifdef OPENSSL_NO_STORE
+#define NO_STORE
+#endif
+#ifdef OPENSSL_NO_TLS1
+#define NO_TLS1
+#endif
+#ifdef OPENSSL_NO_TS
+#define NO_TS
+#endif
+#ifdef OPENSSL_NO_TXT_DB
+#define NO_TXT_DB
+#endif
+#ifdef OPENSSL_NO_UI
+#define NO_UI
+#endif
+#ifdef OPENSSL_NO_UNIT_TEST
+#define NO_UNIT_TEST
+#endif
+#ifdef OPENSSL_NO_WEAK_SSL_CIPHERS
+#define NO_WEAK_SSL_CIPHERS
+#endif
+#ifdef OPENSSL_NO_WHIRLPOOL
+#define NO_WHIRLPOOL
+#endif
+#ifdef OPENSSL_NO_X509
+#define NO_X509
+#endif
+#ifdef OPENSSL_NO_X509_VERIFY
+#define NO_X509_VERIFY
+#endif
+#ifdef OPENSSL_NO_X509V3
+#define NO_X509V3
+#endif
+#endif
+
+#ifndef OPENSSL_THREADS
+#cmakedefine OPENSSL_THREADS
+#endif
+
+#cmakedefine OPENSSL_CPUID_OBJ
+
+/* crafted from crypto/opensslconf.h.in */
+
+/* Generate 80386 code? */
+#cmakedefine I386_ONLY
+
+#if !(defined(VMS) || defined(__VMS)) /* VMS uses logical names instead */
+#if defined(HEADER_CRYPTLIB_H) && !defined(OPENSSLDIR)
+#define ENGINESDIR "@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_LIBDIR@/engines"
+#define OPENSSLDIR "@CMAKE_INSTALL_PREFIX@/@OPENSSL_OPENSSLDIR@"
+#endif
+#endif
+
+#undef OPENSSL_UNISTD
+#define OPENSSL_UNISTD <unistd.h>
+
+#cmakedefine OPENSSL_EXPORT_VAR_AS_FUNCTION
+
+#if defined(HEADER_IDEA_H) && !defined(IDEA_INT)
+#define IDEA_INT unsigned @OPENSSL_IDEA_INT@
+#endif
+
+#if defined(HEADER_MD2_H) && !defined(MD2_INT)
+#define MD2_INT unsigned @OPENSSL_MD2_INT@
+#endif
+
+#if defined(HEADER_RC2_H) && !defined(RC2_INT)
+/* I need to put in a mod for the alpha - eay */
+#define RC2_INT unsigned @OPENSSL_RC2_INT@
+#endif
+
+#if defined(HEADER_RC4_H)
+#if !defined(RC4_INT)
+/* using int types make the structure larger but make the code faster
+ * on most boxes I have tested - up to %20 faster. */
+/*
+ * I don't know what does "most" mean, but declaring "int" is a must on:
+ * - Intel P6 because partial register stalls are very expensive;
+ * - elder Alpha because it lacks byte load/store instructions;
+ */
+#define RC4_INT unsigned @OPENSSL_RC4_INT@
+#endif
+#if !defined(RC4_CHUNK)
+/*
+ * This enables code handling data aligned at natural CPU word
+ * boundary. See crypto/rc4/rc4_enc.c for further details.
+ */
+#define EXTERNALCMAKE_RC4_CHUNK_TYPE @OPENSSL_RC4_CHUNK_TYPE@
+#if RC4_CHUNK == 0
+/* #undef RC4_CHUNK */
+#elif RC4_CHUNK == 1
+#define RC4_CHUNK unsigned long
+#elif RC4_CHUNK == 2
+#define RC4_CHUNK unsigned long long
+#endif
+#undef EXTERNALCMAKE_RC4_CHUNK_TYPE
+#endif
+#endif
+
+#if (defined(HEADER_NEW_DES_H) || defined(HEADER_DES_H)) && !defined(DES_LONG)
+/* If this is set to 'unsigned int' on a DEC Alpha, this gives about a
+ * %20 speed up (longs are 8 bytes, int's are 4). */
+#ifndef DES_LONG
+#define DES_LONG unsigned @OPENSSL_DES_INT@
+#endif
+#endif
+
+#if defined(HEADER_BN_H) && !defined(CONFIG_HEADER_BN_H)
+#define CONFIG_HEADER_BN_H
+#cmakedefine BN_LLONG
+
+/* Should we define BN_DIV2W here? */
+
+/* Only one for the following should be defined */
+#cmakedefine SIXTY_FOUR_BIT_LONG
+#cmakedefine SIXTY_FOUR_BIT
+#cmakedefine THIRTY_TWO_BIT
+#endif
+
+#if defined(HEADER_RC4_LOCL_H) && !defined(CONFIG_HEADER_RC4_LOCL_H)
+#define CONFIG_HEADER_RC4_LOCL_H
+/* if this is defined data[i] is used instead of *data, this is a %20
+ * speedup on x86 */
+#cmakedefine RC4_INDEX
+#endif
+
+#if defined(HEADER_BF_LOCL_H) && !defined(CONFIG_HEADER_BF_LOCL_H)
+#define CONFIG_HEADER_BF_LOCL_H
+
+#define EXTERNALCMAKE_BF_PTR @OPENSSL_BF_PTR@
+#if EXTERNALCMAKE_BF_PTR == 0
+/* #undef BF_PTR */
+#elif EXTERNALCMAKE_BF_PTR == 1
+#define BF_PTR
+#elif EXTERNALCMAKE_BF_PTR == 2
+#define BF_PTR2
+#endif
+#undef EXTERNALCMAKE_BF_PTR
+#endif /* HEADER_BF_LOCL_H */
+
+#if defined(HEADER_DES_LOCL_H) && !defined(CONFIG_HEADER_DES_LOCL_H)
+#define CONFIG_HEADER_DES_LOCL_H
+#ifndef DES_DEFAULT_OPTIONS
+/* the following is tweaked from a config script, that is why it is a
+ * protected undef/define */
+#ifndef DES_PTR
+#cmakedefine DES_PTR
+#endif
+
+/* This helps C compiler generate the correct code for multiple functional
+ * units.  It reduces register dependancies at the expense of 2 more
+ * registers */
+#ifndef DES_RISC1
+#cmakedefine DES_RISC1
+#endif
+
+#ifndef DES_RISC2
+#cmakedefine DES_RISC2
+#endif
+
+#if defined(DES_RISC1) && defined(DES_RISC2)
+#error YOU SHOULD NOT HAVE BOTH DES_RISC1 AND DES_RISC2 DEFINED!!!!!
+#endif
+
+/* Unroll the inner loop, this sometimes helps, sometimes hinders.
+ * Very mucy CPU dependant */
+#ifndef DES_UNROLL
+#cmakedefine DES_UNROLL
+#endif
+
+/* These default values were supplied by
+ * Peter Gutman <pgut001@cs.auckland.ac.nz>
+ * They are only used if nothing else has been defined */
+#if !defined(DES_PTR) && !defined(DES_RISC1) && !defined(DES_RISC2) && !defined(DES_UNROLL)
+/* Special defines which change the way the code is built depending on the
+   CPU and OS.  For SGI machines you can use _MIPS_SZLONG (32 or 64) to find
+   even newer MIPS CPU's, but at the moment one size fits all for
+   optimization options.  Older Sparc's work better with only UNROLL, but
+   there's no way to tell at compile time what it is you're running on */
+
+#if defined( __sun ) || defined ( sun )		/* Newer Sparc's */
+#  define DES_PTR
+#  define DES_RISC1
+#  define DES_UNROLL
+#elif defined( __ultrix )	/* Older MIPS */
+#  define DES_PTR
+#  define DES_RISC2
+#  define DES_UNROLL
+#elif defined( __osf1__ )	/* Alpha */
+#  define DES_PTR
+#  define DES_RISC2
+#elif defined ( _AIX )		/* RS6000 */
+  /* Unknown */
+#elif defined( __hpux )		/* HP-PA */
+  /* Unknown */
+#elif defined( __aux )		/* 68K */
+  /* Unknown */
+#elif defined( __dgux )		/* 88K (but P6 in latest boxes) */
+#  define DES_UNROLL
+#elif defined( __sgi )		/* Newer MIPS */
+#  define DES_PTR
+#  define DES_RISC2
+#  define DES_UNROLL
+#elif defined(i386) || defined(__i386__)	/* x86 boxes, should be gcc */
+#  define DES_PTR
+#  define DES_RISC1
+#  define DES_UNROLL
+#endif /* Systems-specific speed defines */
+#endif
+
+#endif /* DES_DEFAULT_OPTIONS */
+#endif /* HEADER_DES_LOCL_H */
+
+#ifdef __cplusplus
+}
+#endif
