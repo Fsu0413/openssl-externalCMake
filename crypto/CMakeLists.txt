@@ -561,10 +561,14 @@ if (OPENSSL_ZLIB AND ( NOT OPENSSL_ZLIB_DYNAMIC ) )
     target_link_libraries(crypto PUBLIC ZLIB::ZLIB)
 endif()
 if (WIN32)
-    set_target_properties(crypto
-        PROPERTIES RUNTIME_OUTPUT_NAME libeay32
+    set_target_properties(crypto PROPERTIES
+        RUNTIME_OUTPUT_NAME libeay32
     )
 endif()
+set_target_properties(crypto PROPERTIES
+    SOVERSION 1.0.0
+    VERSION ${PROJECT_VERSION}
+)
 
 target_include_directories(crypto
     PUBLIC ${CMAKE_BINARY_DIR}/include

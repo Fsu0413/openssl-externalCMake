@@ -18,6 +18,10 @@ if (OPENSSL_HW AND BUILD_SHARED_LIBS AND OPENSSL_DYNAMIC_ENGINE)
             target_link_libraries(${_ENGINE}
                 PUBLIC crypto
             )
+            install(TARGETS ${_ENGINE}
+                RUNTIME DESTINATION ${CMAKE_INSTALL_LIBDIR}/engines
+                LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/engines
+            )
             unset(ENGINE_SOURCES)
         endif()
         unset(_OPTION_SYMBOL)

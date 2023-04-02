@@ -75,10 +75,14 @@ add_library(ssl
     ${LIBSSL_SOURCES})
 
 if (WIN32)
-    set_target_properties(ssl
-        PROPERTIES OUTPUT_NAME ssleay32
+    set_target_properties(ssl PROPERTIES
+        OUTPUT_NAME ssleay32
     )
 endif()
+set_target_properties(ssl PROPERTIES
+    SOVERSION 1.0.0
+    VERSION ${PROJECT_VERSION}
+)
 
 target_include_directories(ssl
     PUBLIC ${CMAKE_BINARY_DIR}/include

@@ -9,6 +9,7 @@ project(OpenSSL
 
 if (WIN32)
     set(CMAKE_SHARED_LIBRARY_PREFIX "")
+    set(CMAKE_SHARED_MODULE_PREFIX "")
     set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS YES)
 endif()
 
@@ -91,18 +92,6 @@ foreach (_OPTION IN ITEMS hw hw-4758-cca hw-aep hw-atalla hw-chil hw-cswift hw-i
 endforeach()
 
 if (OPENSSL_ASM)
-    if (APPLE AND NOT IOS)
-        list(LENGTH CMAKE_OSX_ARCHITECTURES OPENSSL_ASM_ARCHITECTURES_LENGTH)
-        if (OPENSSL_ASM_ARCHITECTURES_LENGTH GREATER 1)
-            message(FATAL_ERROR "OPENSSL_ASM is incompatible with more than one CMAKE_OSX_ARCHITECTURES on macOS. If a multi-architecture should be built, "
-                                "either build the all-in-one package without ASM or build them separately with ASM and combile them using lipo provided by Apple.")
-        elseif(OPENSSL_ASM_ARCHITECTURES_LENGTH EQUAL 1)
-            # todo
-        else()
-            # use CMAKE_SYSTEM_NAME directly
-        endif()
-        unset(OPENSSL_ASM_ARCHITECTURES_LENGTH)
-    endif()
     if (MSVC)
         enable_language(ASM_MASM)
         set(OPENSSL_ASM_PREPROCESSED ".asm")
@@ -243,17 +232,32 @@ endif()
 configure_file(${CMAKE_SOURCE_DIR}/openssl/e_os2.h ${CMAKE_BINARY_DIR}/include/openssl/e_os2.h COPYONLY)
 
 # undocumented!
-if (NOT OPENSSL_TARGET_ARCH)
+if ( OPENSSL_ASM AND ( NOT OPENSSL_TARGET_ARCH ) )
     set(OPENSSL_TARGET_ARCH_GET ${CMAKE_SYSTEM_PROCESSOR})
     set(OPENSSL_TARGET_ARCH)
 
     # !!! for some platform host can run multiple architecture.
-    # e.g. Windows AMD64 can run Windows x86 / Linux AMD64 can run Linux x86 / Windows ARM64 can run Windows x86....
-    # need to find all these conditions?
+    # e.g. Windows amd64 can run / build Windows x86 in NATIVE.
+    # Linux amd64 can run / build Linux x86 in NATIVE.
+    # macOS arm64 can run / build macOS x86_64 in NATIVE.
+    # need to figure out all these conditions?
 
-    # if a toolchain file is specified we consider this contains CMAKE_SYSTEM_PROCESSOR configured by user since it is forced by CMake for cross building
-    # else we set OPENSSL_TARGET_ARCH on ourselves and use it later
-    if (NOT CMAKE_TOOLCHAIN_FILE)
+    # for cross build on Apple platform
+    if (APPLE AND ( NOT IOS ) AND CMAKE_OSX_ARCHITECTURES)
+        list(LENGTH CMAKE_OSX_ARCHITECTURES OPENSSL_ASM_ARCHITECTURES_LENGTH)
+        if (OPENSSL_ASM_ARCHITECTURES_LENGTH GREATER 1)
+            message(FATAL_ERROR "OPENSSL_ASM is incompatible with more than one CMAKE_OSX_ARCHITECTURES set on macOS, due to the file used for building it is different. "
+                                "If a multi-architecture build should be done, either build the all-in-one package with OPENSSL_ASM set to OFF or build them separately "
+                                "with OPENSSL_ASM set to ON and combine them using lipo provided by Apple.")
+        elseif (OPENSSL_ASM_ARCHITECTURES_LENGTH EQUAL 1)
+            list(GET CMAKE_OSX_ARCHITECTURES 0 OPENSSL_TARGET_ARCH_GET)
+        else()
+            # use CMAKE_SYSTEM_NAME directly
+        endif()
+        unset(OPENSSL_ASM_ARCHITECTURES_LENGTH)
+    elseif (NOT CMAKE_TOOLCHAIN_FILE)
+        # if a toolchain file is specified we consider this contains CMAKE_SYSTEM_PROCESSOR configured by user since it is forced by CMake for cross building
+        # else we set OPENSSL_TARGET_ARCH on ourselves and use it later
         if (CMAKE_SIZEOF_VOID_P EQUAL 4)
             string(REGEX REPLACE "[\\-_]?64" "" OPENSSL_TARGET_ARCH_GET ${CMAKE_SYSTEM_PROCESSOR})
             string(TOUPPER ${OPENSSL_TARGET_ARCH_GET} OPENSSL_TARGET_ARCH_UPPER)

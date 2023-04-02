@@ -48,11 +48,10 @@ Just typical CMake procedure will work.
 
 Sort by priority
 
-1. Check build on macOS
-1. Check cross build for Android (arm, arm64, x86)
 1. `make install` support
-1. `make test` support
 1. `crypto.pc` and `ssl.pc` generation
+1. `make test` support
+1. Check cross build for Android (arm, arm64, x86)
 1. uplink / applink for Win32 Windows. Currently it is commented out
 1. Check build with zlib
 1. Check build with krb5
