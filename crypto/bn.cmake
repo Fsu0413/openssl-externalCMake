@@ -137,12 +137,12 @@ set(LIBCRYPTO_${LIBCRYPTO_CURRENTDIR}_ASM_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/crypto/bn/bn_asm.c
 )
 if (OPENSSL_ASM)
-    if ( ( ( CMAKE_SYSTEM_PROCESSOR MATCHES "[Xx]86[_\\-]64" ) OR ( CMAKE_SYSTEM_PROCESSOR MATCHES "[Aa][Mm][Dd]64" ) AND (
+    if ( ( OPENSSL_TARGET_ARCH STREQUAL "x64" ) AND (
                ( CMAKE_SYSTEM_NAME MATCHES "BSD" )
             OR CYGWIN
-            OR ( WIN32 AND NOT MSVC )
+            OR WIN32
             OR ( APPLE AND NOT IOS )
-    ) ) OR ( OPENSSL_PERLASM_MSVC_X86_64 ) )
+    ) )
         set(LIBCRYPTO_${LIBCRYPTO_CURRENTDIR}_ASM_SOURCES
             ${CMAKE_SOURCE_DIR}/openssl/crypto/bn/asm/x86_64-gcc.c
             x86_64-mont${OPENSSL_ASM_PREPROCESSED}
@@ -154,12 +154,12 @@ if (OPENSSL_ASM)
             rsaz-avx2${OPENSSL_ASM_PREPROCESSED}
         )
         set(LIBCRYPTO_CFLAGS ${LIBCRYPTO_CFLAGS} "-DOPENSSL_IA32_SSE2" "-DOPENSSL_BN_ASM_MONT" "-DOPENSSL_BN_ASM_MONT5" "-DOPENSSL_BN_ASM_GF2m")
-    elseif ( ( ( CMAKE_SYSTEM_PROCESSOR MATCHES "i[2-7]86" ) OR ( CMAKE_SYSTEM_PROCESSOR MATCHES "[Xx]86" ) AND (
+    elseif ( ( OPENSSL_TARGET_ARCH STREQUAL "x86" ) AND (
                ( CMAKE_SYSTEM_NAME MATCHES "BSD" )
             OR CYGWIN
-            OR ( WIN32 AND NOT MSVC )
+            OR WIN32
             OR ANDROID
-    ) ) OR ( OPENSSL_PERLASM_MSVC_I386 ) )
+    ) )
         set(LIBCRYPTO_${LIBCRYPTO_CURRENTDIR}_ASM_SOURCES
             bn-586${OPENSSL_ASM_PREPROCESSED}
             co-586${OPENSSL_ASM_PREPROCESSED}
@@ -167,7 +167,7 @@ if (OPENSSL_ASM)
             x86-gf2m${OPENSSL_ASM_PREPROCESSED}
         )
         set(LIBCRYPTO_CFLAGS ${LIBCRYPTO_CFLAGS} "-DOPENSSL_BN_ASM_PART_WORDS" "-DOPENSSL_IA32_SSE2" "-DOPENSSL_BN_ASM_MONT" "-DOPENSSL_BN_ASM_GF2m")
-    elseif (( CMAKE_SYSTEM_PROCESSOR MATCHES "armv\\d(-a)?") AND (
+    elseif ( ( OPENSSL_TARGET_ARCH STREQUAL "arm32" ) AND (
                ANDROID
             OR ( CMAKE_SYSTEM_NAME MATCHES "[Ll]inux")
     ) )
@@ -177,7 +177,7 @@ if (OPENSSL_ASM)
             armv4-gf2m.S
         )
         set(LIBCRYPTO_CFLAGS ${LIBCRYPTO_CFLAGS} "-DOPENSSL_BN_ASM_MONT" "-DOPENSSL_BN_ASM_GF2m")
-    elseif (( CMAKE_SYSTEM_PROCESSOR MATCHES "aarch64" ) AND (
+    elseif ( ( OPENSSL_TARGET_ARCH STREQUAL "arm64" ) AND (
                ANDROID
             OR ( CMAKE_SYSTEM_NAME MATCHES "[Ll]inux" )
     ) )

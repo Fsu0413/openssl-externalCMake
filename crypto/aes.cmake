@@ -94,12 +94,12 @@ set(LIBCRYPTO_${LIBCRYPTO_CURRENTDIR}_ASM_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/crypto/aes/aes_cbc.c
 )
 if (OPENSSL_ASM)
-    if ( ( ( CMAKE_SYSTEM_PROCESSOR MATCHES "[Xx]86[_\\-]64" ) OR ( CMAKE_SYSTEM_PROCESSOR MATCHES "[Aa][Mm][Dd]64" ) AND (
+    if ( ( OPENSSL_TARGET_ARCH STREQUAL "x64" ) AND (
                ( CMAKE_SYSTEM_NAME MATCHES "BSD" )
             OR CYGWIN
-            OR ( WIN32 AND NOT MSVC )
+            OR WIN32
             OR ( APPLE AND NOT IOS )
-    ) ) OR ( OPENSSL_PERLASM_MSVC_X86_64 ) )
+    ) )
         set(LIBCRYPTO_${LIBCRYPTO_CURRENTDIR}_ASM_SOURCES
             aes-x86_64${OPENSSL_ASM_PREPROCESSED}
             vpaes-x86_64${OPENSSL_ASM_PREPROCESSED}
@@ -110,12 +110,12 @@ if (OPENSSL_ASM)
             aesni-mb-x86_64${OPENSSL_ASM_PREPROCESSED}
         )
         set(LIBCRYPTO_CFLAGS ${LIBCRYPTO_CFLAGS} "-DAES_ASM" "-DVPAES_ASM" "-DBSAES_ASM")
-    elseif ( ( ( CMAKE_SYSTEM_PROCESSOR MATCHES "i[2-7]86" ) OR ( CMAKE_SYSTEM_PROCESSOR MATCHES "[Xx]86" ) AND (
+    elseif ( ( OPENSSL_TARGET_ARCH STREQUAL "x86" ) AND (
                ( CMAKE_SYSTEM_NAME MATCHES "BSD" )
             OR CYGWIN
-            OR ( WIN32 AND NOT MSVC )
+            OR WIN32
             OR ANDROID
-    ) ) OR ( OPENSSL_PERLASM_MSVC_I386 ) )
+    ) )
         set(LIBCRYPTO_${LIBCRYPTO_CURRENTDIR}_ASM_SOURCES
             aes-586${OPENSSL_ASM_PREPROCESSED}
         )
@@ -128,7 +128,7 @@ if (OPENSSL_ASM)
             )
             set(LIBCRYPTO_CFLAGS ${LIBCRYPTO_CFLAGS} "-DVPAES_ASM")
         endif()
-    elseif (( CMAKE_SYSTEM_PROCESSOR MATCHES "armv\\d(-a)?") AND (
+    elseif ( ( OPENSSL_TARGET_ARCH STREQUAL "arm32" ) AND (
                ANDROID
             OR ( CMAKE_SYSTEM_NAME MATCHES "[Ll]inux")
     ) )
@@ -139,7 +139,7 @@ if (OPENSSL_ASM)
             aesv8-armx.S
         )
         set(LIBCRYPTO_CFLAGS ${LIBCRYPTO_CFLAGS} "-DAES_ASM" "-DBSAES_ASM")
-    elseif (( CMAKE_SYSTEM_PROCESSOR MATCHES "aarch64" ) AND (
+    elseif ( ( OPENSSL_TARGET_ARCH STREQUAL "arm64" ) AND (
                ANDROID
             OR ( CMAKE_SYSTEM_NAME MATCHES "[Ll]inux" )
     ) )

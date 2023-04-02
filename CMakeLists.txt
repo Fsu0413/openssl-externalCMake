@@ -242,6 +242,40 @@ endif()
 
 configure_file(${CMAKE_SOURCE_DIR}/openssl/e_os2.h ${CMAKE_BINARY_DIR}/include/openssl/e_os2.h COPYONLY)
 
+# undocumented!
+if (NOT OPENSSL_TARGET_ARCH)
+    set(OPENSSL_TARGET_ARCH_GET ${CMAKE_SYSTEM_PROCESSOR})
+    set(OPENSSL_TARGET_ARCH)
+
+    # !!! for some platform host can run multiple architecture.
+    # e.g. Windows AMD64 can run Windows x86 / Linux AMD64 can run Linux x86 / Windows ARM64 can run Windows x86....
+    # need to find all these conditions?
+
+    # if a toolchain file is specified we consider this contains CMAKE_SYSTEM_PROCESSOR configured by user since it is forced by CMake for cross building
+    # else we set OPENSSL_TARGET_ARCH on ourselves and use it later
+    if (NOT CMAKE_TOOLCHAIN_FILE)
+        if (CMAKE_SIZEOF_VOID_P EQUAL 4)
+            string(REGEX REPLACE "[\\-_]?64" "" OPENSSL_TARGET_ARCH_GET ${CMAKE_SYSTEM_PROCESSOR})
+            string(TOUPPER ${OPENSSL_TARGET_ARCH_GET} OPENSSL_TARGET_ARCH_UPPER)
+            if (OPENSSL_TARGET_ARCH_UPPER STREQUAL "AMD")
+                set(OPENSSL_TARGET_ARCH_GET "x86")
+            endif()
+        endif()
+    endif()
+
+    if ( ( OPENSSL_TARGET_ARCH_GET MATCHES "[Aa][Mm][Dd]64" ) OR ( OPENSSL_TARGET_ARCH_GET MATCHES "[Xx]86[_\\-]64" ) )
+        set(OPENSSL_TARGET_ARCH "x64")
+    elseif ( ( OPENSSL_TARGET_ARCH_GET MATCHES "i[2-7]86" ) OR ( OPENSSL_TARGET_ARCH_GET MATCHES "[Xx]86" ) )
+        set(OPENSSL_TARGET_ARCH "x86")
+    elseif ( ( OPENSSL_TARGET_ARCH_GET MATCHES "[Aa][Rr][Mm]") OR ( OPENSSL_TARGET_ARCH_GET MATCHES "aarch" ) )
+        if (OPENSSL_TARGET_ARCH_GET MATCHES "64")
+            set(OPENSSL_TARGET_ARCH "arm64")
+        else()
+            set(OPENSSL_TARGET_ARCH "arm32")
+        endif()
+    endif()
+endif()
+
 add_subdirectory(crypto)
 add_subdirectory(ssl)
 add_subdirectory(apps)
