@@ -49,7 +49,6 @@ Just typical CMake procedure will work.
 Sort by priority
 
 1. c_rehash and other tools generation
-1. Check build on 32-bit MinGW
 1. Check build on Linux
 1. Check build on macOS
 1. Check cross build for Android (arm, arm64, x86)
