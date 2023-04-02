@@ -65,6 +65,7 @@ if (OPENSSL_ASM)
             OR CYGWIN
             OR WIN32
             OR ( APPLE AND NOT IOS )
+            OR ( CMAKE_SYSTEM_NAME MATCHES "[Ll]inux" )
     ) )
         set(LIBCRYPTO_${LIBCRYPTO_CURRENTDIR}_ASM_SOURCES
             x86_64cpuid${OPENSSL_ASM_PREPROCESSED}
@@ -74,6 +75,7 @@ if (OPENSSL_ASM)
             OR CYGWIN
             OR WIN32
             OR ANDROID
+            OR ( CMAKE_SYSTEM_NAME MATCHES "[Ll]inux" )
     ) )
         # TODO: properly set up applink and uplink
         set(LIBCRYPTO_${LIBCRYPTO_CURRENTDIR}_ASM_SOURCES

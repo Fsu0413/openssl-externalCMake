@@ -28,6 +28,7 @@ if ( OPENSSL_ASM AND NOT BUILD_SHARED_LIBS )
             OR CYGWIN
             OR WIN32
             OR ( APPLE AND NOT IOS )
+            OR ( CMAKE_SYSTEM_NAME MATCHES "[Ll]inux" )
     ) )
         # no-asm
     elseif ( ( OPENSSL_TARGET_ARCH STREQUAL "x86" ) AND (
@@ -35,6 +36,7 @@ if ( OPENSSL_ASM AND NOT BUILD_SHARED_LIBS )
             OR CYGWIN
             OR WIN32
             OR ANDROID
+            OR ( CMAKE_SYSTEM_NAME MATCHES "[Ll]inux" )
     ) )
         set(LIBCRYPTO_${LIBCRYPTO_CURRENTDIR}_ASM_SOURCES
             cast-586${OPENSSL_ASM_PREPROCESSED}

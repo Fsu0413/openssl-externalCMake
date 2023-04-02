@@ -47,6 +47,7 @@ if (OPENSSL_ASM)
             OR CYGWIN
             OR WIN32
             OR ( APPLE AND NOT IOS )
+            OR ( CMAKE_SYSTEM_NAME MATCHES "[Ll]inux" )
     ) )
         set(LIBCRYPTO_${LIBCRYPTO_CURRENTDIR}_ASM_SOURCES
             ${CMAKE_SOURCE_DIR}/openssl/crypto/ec/ecp_nistz256.c
@@ -58,6 +59,7 @@ if (OPENSSL_ASM)
             OR CYGWIN
             OR WIN32
             OR ANDROID
+            OR ( CMAKE_SYSTEM_NAME MATCHES "[Ll]inux" )
     ) )
         # no-asm
     elseif ( ( OPENSSL_TARGET_ARCH STREQUAL "arm32" ) AND (
