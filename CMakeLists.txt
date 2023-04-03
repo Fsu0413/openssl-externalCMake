@@ -45,7 +45,8 @@ set(OPENSSL_OPENSSLDIR "ssl" CACHE STRING "OpenSSL SSL install directory, relati
 option(OPENSSL_THREADS "Build with threads supported" ON)
 
 # [no-]shared
-option(BUILD_SHARED_LIBS "Build Shared Libraries" ON)
+# iOS supports only static libraries
+cmake_dependent_option(BUILD_SHARED_LIBS "Build Shared Libraries" ON "NOT IOS" OFF)
 
 # no-dso
 option(OPENSSL_DSO "use dymamic shared object loader code" ON)
@@ -83,7 +84,9 @@ foreach (_OPTION IN ITEMS hw hw-4758-cca hw-aep hw-atalla hw-chil hw-cswift hw-i
     string(CONCAT _OPTION_STR "OPENSSL_" ${_OPTION_SYMBOL})
     string(CONCAT _OPTION_HELP "enable OpenSSL option " ${_OPTION})
     if (_OPTION STREQUAL "asm")
-        cmake_dependent_option(${_OPTION_STR} ${_OPTION_HELP} ON "Perl_FOUND" OFF)
+        # building ASM needs Perl
+        # ASM is not supported on iOS
+        cmake_dependent_option(${_OPTION_STR} ${_OPTION_HELP} ON "Perl_FOUND;NOT IOS" OFF)
     else()
         option(${_OPTION_STR} ${_OPTION_HELP} ON)
     endif()
