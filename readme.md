@@ -37,7 +37,7 @@ Not using other generators is because I have never used them before.
 
 ### Dependency of Perl
 
-Perl is used in generating ASM and some other source code for OpenSSL.
+Perl is used in generating ASM / documentation and some other source code for OpenSSL.
 I personally don't mind that building software needs other tools, if using tools can make software better.
 
 ## How to use this project? Or how to use CMake to build OpenSSL?

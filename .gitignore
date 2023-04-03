@@ -1,2 +1,4 @@
 /crypto/.FsEnv.cmake
 /CMakeLists.txt.user*
+
+.DS_Store

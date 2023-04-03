@@ -1,0 +1,20 @@
+
+get_filename_component(POD_DIR "${PODFILEPATH}" DIRECTORY)
+get_filename_component(POD_FILE "${PODFILEPATH}" NAME)
+get_filename_component(OUT_DIR "${OUTPUTFILEPATH}" DIRECTORY)
+execute_process(COMMAND @CMAKE_COMMAND@ -E
+                        make_directory ${OUT_DIR}
+                )
+execute_process(COMMAND @PERL_EXECUTABLE@
+                        @CMAKE_SOURCE_DIR@/openssl/util/pod2man.pl
+                        "--section=${SECTION}"
+                        "--center=OpenSSL"
+                        "--release=1.0.2u"
+                        ${POD_FILE}
+                WORKING_DIRECTORY ${POD_DIR}
+                OUTPUT_FILE ${OUTPUTFILEPATH}
+                COMMAND_ERROR_IS_FATAL ANY
+                )
+foreach (L IN LISTS LINKS)
+    file(COPY_FILE ${PODFILEPATH} ${L})
+endforeach()

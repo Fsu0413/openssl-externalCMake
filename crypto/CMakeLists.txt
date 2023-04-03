@@ -380,9 +380,6 @@ if (OPENSSL_ASM)
         message(FATAL_ERROR "OpenSSL does not support ASM on this platform - Please set OPENSSL_ASM to OFF and reconfigure")
     endif()
 
-    include("./.FsEnv.cmake" OPTIONAL)
-    find_package(Perl)
-
     if (NOT PERL_FOUND)
         message(FATAL_ERROR "building OpenSSL with ASM needs Perl installed - Please set PERL_EXECUTABLE before running CMake or set OPENSSL_ASM to OFF and reconfigure")
     endif()
@@ -594,6 +591,6 @@ install(TARGETS crypto
     ARCHIVE
 )
 
-install(DIRECTORY ${CMAKE_BINARY_DIR}/include
+install(DIRECTORY ${CMAKE_BINARY_DIR}/include/openssl
     TYPE INCLUDE
 )

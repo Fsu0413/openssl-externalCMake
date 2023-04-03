@@ -11,6 +11,8 @@ if (WIN32)
     set(CMAKE_SHARED_LIBRARY_PREFIX "")
     set(CMAKE_SHARED_MODULE_PREFIX "")
     set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS YES)
+elseif (APPLE AND NOT IOS)
+    set(CMAKE_SHARED_MODULE_SUFFIX ".dylib")
 endif()
 
 set(CMAKE_C_STANDARD 99)
@@ -31,6 +33,9 @@ endforeach()
 
 include(GNUInstallDirs)
 include(CMakeDependentOption)
+
+include("./.FsEnv.cmake" OPTIONAL)
+find_package(Perl)
 
 # --openssldir
 # option(OPENSSL_OPENSSLDIR "OpenSSL SSL install directory, relative to CMAKE_INSTALL_PREFIX" "ssl")
@@ -70,12 +75,18 @@ cmake_dependent_option(OPENSSL_SSE2 "Enable SSE2 instructions in assembly" ON "N
 # static_engine
 cmake_dependent_option(OPENSSL_STATIC_ENGINE "generate static engine library" OFF "BUILD_SHARED_LIBS" ON)
 
+cmake_dependent_option(OPENSSL_BUILD_DOCS "Build documentation" ON "Perl_FOUND" OFF)
+
 foreach (_OPTION IN ITEMS hw hw-4758-cca hw-aep hw-atalla hw-chil hw-cswift hw-ibmca hw-ncipher hw-nuron hw-padlock hw-sureware hw-ubsec hw-zencod asm err)
     string(TOUPPER ${_OPTION} _OPTION_UPPER)
     string(REPLACE "-" "_" _OPTION_SYMBOL ${_OPTION_UPPER})
     string(CONCAT _OPTION_STR "OPENSSL_" ${_OPTION_SYMBOL})
     string(CONCAT _OPTION_HELP "enable OpenSSL option " ${_OPTION})
-    option(${_OPTION_STR} ${_OPTION_HELP} ON)
+    if (_OPTION STREQUAL "asm")
+        cmake_dependent_option(${_OPTION_STR} ${_OPTION_HELP} ON "Perl_FOUND" OFF)
+    else()
+        option(${_OPTION_STR} ${_OPTION_HELP} ON)
+    endif()
     string(CONCAT _OPTION_NO_STR "OPENSSL_NO_" ${_OPTION_SYMBOL})
     string(CONCAT _OPTION_NO_HELP "disable OpenSSL option " ${_OPTION})
     set(${_OPTION_NO_STR} ON CACHE BOOL ${_OPTION_NO_HELP})
@@ -286,3 +297,4 @@ add_subdirectory(apps)
 add_subdirectory(engines)
 add_subdirectory(tools)
 add_subdirectory(test)
+add_subdirectory(doc)
