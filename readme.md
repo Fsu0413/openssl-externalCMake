@@ -1,3 +1,5 @@
+﻿# openssl-externalCMake
+
 This is a totally external CMake project for building OpenSSL.
 
 This branch is for OpenSSL 1.0.2 series.
@@ -33,12 +35,47 @@ Not using other generators is because I have never used them before.
 
 (I hate using Gradle! But Android application development needs it)
 
-## What issue won't be resolved for building OpenSSL with CMake?
+## Why another CMake project?
+
+There are currently some CMake project for OpenSSL on GitHub.
+But I don't think either of them is a full-featured makefile generator.
+
+The woes I spotted were:
+
+- Some of them use ExternalProject for downloads on build .
+- One of them calls `git config --global` which modifies global property of git (which makes it unusable for public)
+- Some of them use original Perl-based configure script and make instructions (instead of replacing it)
+- Some of them include only a subset of files of OpenSSL.
+- Some of them only builds using a fixed set of options, not configurable.
+- One of them is made for replacing `FindOpenSSL.cmake` by building it (which is not what I thinks of a CMake project)
+- Some of them cannot build ASM. Mainly the ones which want to kill Perl dependency.
+
+## Features for my CMake
+
+What is my CMake project:
+
+- A CMake project which aims for supporting all the features provided by the original Perl-based hand-crafted build system
+- A more IDE-friendly alternative project file
+
+What is NOT my CMake project:
+
+- An alternative project which kills or tries to kill Perl dependency
+- A wrapper which calls original Perl-based configure tool
+- A CMake project which downloads stuff during build
+
+## What issue won't be resolved for building OpenSSL with my CMake project?
 
 ### Dependency of Perl
 
 Perl is used in generating ASM / documentation and some other source code for OpenSSL.
 I personally don't mind that building software needs other tools, if using tools can make software better.
+
+Perl is a language good at text manipulation thanks for its builtin regular expressions support.
+I think that's why OpenSSL team decided to use Perl for code generation.
+
+### Build errors which happens also using original Perl-based configuration tool
+
+I'm using original OpenSSL as subproject and won't fix any problem which original OpenSSL have.
 
 ## How to use this project? Or how to use CMake to build OpenSSL?
 
