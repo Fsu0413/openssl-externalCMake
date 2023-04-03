@@ -1,0 +1,9 @@
+prefix=@CMAKE_INSTALL_PREFIX@
+exec_prefix=${prefix}
+libdir=${exec_prefix}/@CMAKE_INSTALL_LIBDIR@
+includedir=${prefix}/@CMAKE_INSTALL_INCLUDEDIR@
+
+Name: OpenSSL
+Description: Secure Sockets Layer and cryptography libraries and tools
+Version: @OPENSSL_VERSION_REAL@
+Requires: libssl libcrypto

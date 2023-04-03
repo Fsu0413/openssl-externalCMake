@@ -62,9 +62,11 @@ add_executable(openssl
     ${OPENSSL_SOURCES}
 )
 
-set_target_properties(openssl PROPERTIES
-    VERSION ${OPENSSL_VERSION_REAL}
-)
+if (WIN32)
+    set_target_properties(openssl PROPERTIES
+        VERSION ${OPENSSL_VERSION_REAL}
+    )
+endif()
 
 target_compile_definitions(openssl
     PRIVATE -DMONOLITH
@@ -97,4 +99,9 @@ install(PROGRAMS ${CMAKE_SOURCE_DIR}/openssl/apps/tsget
 
 install(FILES ${CMAKE_SOURCE_DIR}/openssl/apps/openssl.cnf
     DESTINATION ${OPENSSL_OPENSSLDIR}
+)
+
+configure_file(openssl.pc.cmake.in openssl.pc @ONLY)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/openssl.pc
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig
 )
