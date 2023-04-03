@@ -81,3 +81,16 @@ target_link_libraries(openssl
 install(TARGETS openssl
     RUNTIME
 )
+
+install(PROGRAMS CA.pl
+    DESTINATION ${OPENSSL_OPENSSLDIR}/misc
+)
+
+install(PROGRAMS ${CMAKE_SOURCE_DIR}/openssl/apps/tsget
+                 ${CMAKE_SOURCE_DIR}/openssl/apps/CA.sh
+    DESTINATION ${OPENSSL_OPENSSLDIR}/misc
+)
+
+install(FILES ${CMAKE_SOURCE_DIR}/openssl/apps/openssl.cnf
+    DESTINATION ${OPENSSL_OPENSSLDIR}
+)

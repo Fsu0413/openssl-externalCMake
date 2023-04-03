@@ -48,7 +48,6 @@ Just typical CMake procedure will work.
 
 Sort by priority
 
-1. `make install` support
 1. `crypto.pc` and `ssl.pc` generation
 1. `make test` support
 1. Check cross build for Android (arm, arm64, x86)
