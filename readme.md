@@ -49,11 +49,11 @@ Just typical CMake procedure will work.
 Sort by priority
 
 1. `crypto.pc` and `ssl.pc` generation
+1. Windows resource file generation
 1. `make test` support
 1. Check cross build for Android (arm, arm64, x86)
 1. uplink / applink for Win32 Windows. Currently it is commented out
-1. Check build with zlib
-1. Check build with krb5
+1. Check build with krb5 - don't compile on 1.0.2 branch, even on original version
 1. Check build without threads
 1. `OpenSSLConfig.cmake` generation
 1. Support for BSDs

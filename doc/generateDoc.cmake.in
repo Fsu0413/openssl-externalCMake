@@ -9,7 +9,7 @@ execute_process(COMMAND @PERL_EXECUTABLE@
                         @CMAKE_SOURCE_DIR@/openssl/util/pod2man.pl
                         "--section=${SECTION}"
                         "--center=OpenSSL"
-                        "--release=1.0.2u"
+                        "--release=@OPENSSL_VERSION_REAL@"
                         ${POD_FILE}
                 WORKING_DIRECTORY ${POD_DIR}
                 OUTPUT_FILE ${OUTPUTFILEPATH}

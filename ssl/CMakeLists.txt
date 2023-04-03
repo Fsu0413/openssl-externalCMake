@@ -81,7 +81,7 @@ if (WIN32)
 endif()
 set_target_properties(ssl PROPERTIES
     SOVERSION 1.0.0
-    VERSION ${PROJECT_VERSION}
+    VERSION ${OPENSSL_VERSION_REAL}
 )
 
 target_include_directories(ssl

@@ -62,6 +62,10 @@ add_executable(openssl
     ${OPENSSL_SOURCES}
 )
 
+set_target_properties(openssl PROPERTIES
+    VERSION ${OPENSSL_VERSION_REAL}
+)
+
 target_compile_definitions(openssl
     PRIVATE -DMONOLITH
 )
