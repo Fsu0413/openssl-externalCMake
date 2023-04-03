@@ -340,6 +340,14 @@ if (OPENSSL_ASM)
     set(OPENSSL_PERLASM_SCHEME)
     if ( APPLE AND NOT IOS )
         set(OPENSSL_PERLASM_SCHEME "macosx")
+
+        if (OPENSSL_TARGET_ARCH STREQUAL "arm64")
+            message(WARNING
+                "OpenSSL doesn't yet support macOS ARM as for version 1.0.2. The ASM doesn't compile on this platform so is currently disabled. "
+                "Building with OPENSSL_ASM value ON will make build fail since the build system links to the ASM code which does not exist. "
+                "Use -DOPENSSL_ASM=NO to pass the build."
+            )
+        endif()
     elseif (IOS)
         set(OPENSSL_PERLASM_SCHEME "void")
     else()
