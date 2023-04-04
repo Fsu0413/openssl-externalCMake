@@ -1,6 +1,7 @@
 
 if (OPENSSL_BUILD_DOCS)
     set(OPENSSL_DOCS_LIST)
+    set(OPENSSL_DOCS_FULLLIST)
     macro(perldoc_add_document_man PODFILE DEFAULTPAGENUMBER)
         get_filename_component(_PODFILE_ABSOLUTE ${PODFILE} ABSOLUTE)
         get_filename_component(_MAINPAGENAME ${PODFILE} NAME_WLE)
@@ -20,7 +21,11 @@ if (OPENSSL_BUILD_DOCS)
         set(_PAGEOUTPUTLIST)
         foreach (_PAGENAME IN LISTS _PAGENAMELIST)
             if ( NOT "${_PAGENAME}" STREQUAL "${_MAINPAGENAME}" )
-                set(_PAGEOUTPUTLIST ${_PAGEOUTPUTLIST} "${CMAKE_CURRENT_BINARY_DIR}/man/man${_PAGENUMBER}/${_PAGENAME}.${_PAGENUMBER}")
+                list(FIND OPENSSL_DOCS_FULLLIST "man/man${_PAGENUMBER}/${_PAGENAME}.${_PAGENUMBER}" _FULLLISTINDEX)
+                if (NOT _FULLLISTINDEX EQUAL -1)
+                    set(_PAGEOUTPUTLIST ${_PAGEOUTPUTLIST} "man/man${_PAGENUMBER}/${_PAGENAME}.${_PAGENUMBER}")
+                endif()
+                unset(_FULLLISTINDEX)
             endif()
         endforeach()
         add_custom_command(OUTPUT "man/man${_PAGENUMBER}/${_MAINPAGENAME}.${_PAGENUMBER}"
@@ -29,7 +34,7 @@ if (OPENSSL_BUILD_DOCS)
                                    "-DSECTION=${_PAGENUMBER}"
                                    "-DPODFILEPATH=${_PODFILE_ABSOLUTE}"
                                    "-DLINKS=\"${_PAGEOUTPUTLIST}\""
-                                   "-DOUTPUTFILEPATH=${CMAKE_CURRENT_BINARY_DIR}/man/man${_PAGENUMBER}/${_MAINPAGENAME}.${_PAGENUMBER}"
+                                   "-DOUTPUTFILEPATH=man/man${_PAGENUMBER}/${_MAINPAGENAME}.${_PAGENUMBER}"
                                    "-P" generateDoc.cmake
                            MAIN_DEPENDENCY ${PODFILE}
         )
@@ -43,6 +48,7 @@ if (OPENSSL_BUILD_DOCS)
                 RENAME ${MANFILE}.${_PAGENUMBER}
             )
         endforeach()
+        set(OPENSSL_DOCS_FULLLIST ${OPENSSL_DOCS_FULLLIST} ${_PAGEOUTPUTLIST} "man/man${_PAGENUMBER}/${_MAINPAGENAME}.${_PAGENUMBER}")
         unset(_REPLACED_OUTPUTNAME)
         unset(_PAGEOUTPUTLIST)
         unset(_PAGENAMELIST)
@@ -212,7 +218,7 @@ if (OPENSSL_BUILD_DOCS)
         "${CMAKE_SOURCE_DIR}/openssl/doc/crypto/EVP_EncodeInit.pod"
         "${CMAKE_SOURCE_DIR}/openssl/doc/crypto/EVP_EncryptInit.pod"
         "${CMAKE_SOURCE_DIR}/openssl/doc/crypto/EVP_OpenInit.pod"
-        # "${CMAKE_SOURCE_DIR}/openssl/doc/crypto/EVP_PKEY_CTX_ctrl.pod" ## multiple rules generate doc/man/man3/EVP_PKEY_get_default_digest_nid.3
+        "${CMAKE_SOURCE_DIR}/openssl/doc/crypto/EVP_PKEY_CTX_ctrl.pod"
         "${CMAKE_SOURCE_DIR}/openssl/doc/crypto/EVP_PKEY_CTX_new.pod"
         "${CMAKE_SOURCE_DIR}/openssl/doc/crypto/EVP_PKEY_cmp.pod"
         "${CMAKE_SOURCE_DIR}/openssl/doc/crypto/EVP_PKEY_decrypt.pod"
@@ -270,7 +276,7 @@ if (OPENSSL_BUILD_DOCS)
         "${CMAKE_SOURCE_DIR}/openssl/doc/crypto/SMIME_read_PKCS7.pod"
         "${CMAKE_SOURCE_DIR}/openssl/doc/crypto/SMIME_write_CMS.pod"
         "${CMAKE_SOURCE_DIR}/openssl/doc/crypto/SMIME_write_PKCS7.pod"
-        # "${CMAKE_SOURCE_DIR}/openssl/doc/crypto/SSLeay_version.pod" ## multiple rules generate doc/man/man3/SSLeay_version.3
+        "${CMAKE_SOURCE_DIR}/openssl/doc/crypto/SSLeay_version.pod"
         "${CMAKE_SOURCE_DIR}/openssl/doc/crypto/X509_NAME_ENTRY_get_object.pod"
         "${CMAKE_SOURCE_DIR}/openssl/doc/crypto/X509_NAME_add_entry_by_txt.pod"
         "${CMAKE_SOURCE_DIR}/openssl/doc/crypto/X509_NAME_get_index_by_NID.pod"
@@ -439,5 +445,6 @@ if (OPENSSL_BUILD_DOCS)
         perldoc_add_document_man(${PODFILE} 3)
     endforeach()
     add_custom_target(doc ALL DEPENDS ${OPENSSL_DOCS_LIST})
+    unset(OPENSSL_DOCS_FULLLIST)
     unset(OPENSSL_DOCS_LIST)
 endif()
