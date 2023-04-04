@@ -56,6 +56,7 @@ What is my CMake project:
 
 - A CMake project which aims for supporting all the features provided by the original Perl-based hand-crafted build system
 - A more IDE-friendly alternative project file
+- A faster build method to build OpenSSL on some platforms
 
 What is NOT my CMake project:
 
