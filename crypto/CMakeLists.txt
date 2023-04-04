@@ -551,7 +551,10 @@ if (OPENSSL_HW AND ( NOT ( BUILD_SHARED_LIBS AND OPENSSL_DYNAMIC_ENGINE ) ) )
         unset(_OPTION_UPPER)
     endforeach()
 endif()
-
+if (WIN32)
+    configure_file(crypto.rc.cmake.in crypto.rc @ONLY)
+    set(LIBCRYPTO_SOURCES ${LIBCRYPTO_SOURCES} crypto.rc)
+endif()
 add_library(crypto
     ${CMAKE_BINARY_DIR}/include/openssl/opensslconf.h
     ${LIBCRYPTO_SOURCES}

@@ -70,10 +70,13 @@ set(LIBSSL_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/ssl/ssl_locl.h
     ${CMAKE_SOURCE_DIR}/openssl/ssl/kssl_lcl.h
 )
-
+if (WIN32)
+    configure_file(ssl.rc.cmake.in ssl.rc @ONLY)
+    set(LIBSSL_SOURCES ${LIBSSL_SOURCES} ssl.rc)
+endif()
 add_library(ssl
-    ${LIBSSL_SOURCES})
-
+    ${LIBSSL_SOURCES}
+)
 if (WIN32)
     set_target_properties(ssl PROPERTIES
         OUTPUT_NAME ssleay32

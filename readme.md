@@ -38,7 +38,7 @@ Not using other generators is because I have never used them before.
 ## Why another CMake project?
 
 There are currently some CMake project for OpenSSL on GitHub.
-But I don't think either of them is a full-featured makefile generator.
+But I don't think either of them is a full-featured Makefile generator.
 
 The woes I spotted were:
 
@@ -85,7 +85,6 @@ Just typical CMake procedure will work.
 
 Sort by priority
 
-1. Windows resource file generation
 1. `make test` support
 1. 1.1.1 series support
 1. 3.0 series support
