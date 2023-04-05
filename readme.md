@@ -86,7 +86,7 @@ Just typical CMake procedure will work.
 
 Sort by priority
 
-1. `make test` support
+1. `make check` support
 1. 1.1.1 series support
 1. 3.0 series support
 1. 3.1 series support
