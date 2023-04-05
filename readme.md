@@ -74,7 +74,7 @@ I personally don't mind that building software needs other tools, if using tools
 Perl is a language good at text manipulation thanks for its builtin regular expressions support.
 I think that's why OpenSSL team decided to use Perl for code generation.
 
-### Build errors which happens also using original Perl-based configuration tool
+### Build errors and test failures which happens also using original Perl-based configuration tool
 
 I'm using original OpenSSL as subproject and won't fix any problem which original OpenSSL have.
 
