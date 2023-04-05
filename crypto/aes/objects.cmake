@@ -107,7 +107,6 @@ if (OPENSSL_ASM)
             aesni-sha256-x86_64${OPENSSL_ASM_PREPROCESSED}
             aesni-mb-x86_64${OPENSSL_ASM_PREPROCESSED}
         )
-        set(LIBCRYPTO_CFLAGS ${LIBCRYPTO_CFLAGS} "-DAES_ASM" "-DVPAES_ASM" "-DBSAES_ASM")
     elseif ( ( OPENSSL_TARGET_ARCH STREQUAL "x86" ) AND (
                ( CMAKE_SYSTEM_NAME MATCHES "BSD" )
             OR CYGWIN
@@ -118,14 +117,12 @@ if (OPENSSL_ASM)
         set(LIBCRYPTO_CURRENTDIR_ASM_SOURCES
             aes-586${OPENSSL_ASM_PREPROCESSED}
         )
-        set(LIBCRYPTO_CFLAGS ${LIBCRYPTO_CFLAGS} "-DAES_ASM")
         if (OPENSSL_SSE2)
             set(LIBCRYPTO_CURRENTDIR_ASM_SOURCES
                 ${LIBCRYPTO_CURRENTDIR_ASM_SOURCES}
                 vpaes-x86${OPENSSL_ASM_PREPROCESSED}
                 aesni-x86${OPENSSL_ASM_PREPROCESSED}
             )
-            set(LIBCRYPTO_CFLAGS ${LIBCRYPTO_CFLAGS} "-DVPAES_ASM")
         endif()
     elseif ( ( OPENSSL_TARGET_ARCH STREQUAL "arm32" ) AND (
                ANDROID
@@ -137,7 +134,6 @@ if (OPENSSL_ASM)
             bsaes-armv7.S
             aesv8-armx.S
         )
-        set(LIBCRYPTO_CFLAGS ${LIBCRYPTO_CFLAGS} "-DAES_ASM" "-DBSAES_ASM")
     elseif ( ( OPENSSL_TARGET_ARCH STREQUAL "arm64" ) AND (
                ANDROID
             OR ( CMAKE_SYSTEM_NAME MATCHES "[Ll]inux" )

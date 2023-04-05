@@ -44,7 +44,6 @@ if (OPENSSL_ASM)
             rc4-x86_64${OPENSSL_ASM_PREPROCESSED}
             rc4-md5-x86_64${OPENSSL_ASM_PREPROCESSED}
         )
-        set(LIBCRYPTO_CFLAGS ${LIBCRYPTO_CFLAGS} "-DRC4_ASM")
     elseif ( ( OPENSSL_TARGET_ARCH STREQUAL "x86" ) AND (
                ( CMAKE_SYSTEM_NAME MATCHES "BSD" )
             OR CYGWIN
@@ -55,7 +54,6 @@ if (OPENSSL_ASM)
         set(LIBCRYPTO_CURRENTDIR_ASM_SOURCES
             rc4-586${OPENSSL_ASM_PREPROCESSED}
         )
-        set(LIBCRYPTO_CFLAGS ${LIBCRYPTO_CFLAGS} "-DRC4_ASM")
     elseif ( ( OPENSSL_TARGET_ARCH STREQUAL "arm32" ) AND (
                ANDROID
             OR ( CMAKE_SYSTEM_NAME MATCHES "[Ll]inux")

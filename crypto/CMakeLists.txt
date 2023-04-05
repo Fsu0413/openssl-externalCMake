@@ -6,7 +6,7 @@ if (MSVC)
     elseif (OPENSSL_TARGET_ARCH STREQUAL "x64")
         set(OPENSSL_SYS_DEFINE "OPENSSL_SYSNAME_WIN64A")
     else()
-        message(FATAL_ERROR "This version of MSVC is not supported")
+        message(FATAL_ERROR "This version of MSVC is not yet supported")
     endif()
 elseif (WIN32 AND NOT MSVC)
     if (OPENSSL_TARGET_ARCH STREQUAL "x86")
@@ -14,7 +14,7 @@ elseif (WIN32 AND NOT MSVC)
     elseif (OPENSSL_TARGET_ARCH STREQUAL "x64")
         set(OPENSSL_SYS_DEFINE "OPENSSL_SYSNAME_MINGW64")
     else()
-        message(FATAL_ERROR "This version of MinGW is not supported")
+        message(FATAL_ERROR "This version of MinGW is not yet supported")
     endif()
 elseif (CYGWIN)
     set(OPENSSL_SYS_DEFINE "OPENSSL_SYSNAME_CYGWIN")
@@ -342,10 +342,8 @@ if (OPENSSL_ASM)
         set(OPENSSL_PERLASM_SCHEME "macosx")
 
         if (OPENSSL_TARGET_ARCH STREQUAL "arm64")
-            message(WARNING
-                "OpenSSL doesn't yet support macOS ARM as for version 1.0.2. The ASM doesn't compile on this platform so is currently disabled. "
-                "Building with OPENSSL_ASM value ON will make build fail since the build system links to the ASM code which does not exist. "
-                "Use -DOPENSSL_ASM=NO to pass the build."
+            message(FATAL_ERROR
+                "OpenSSL 1.0.2 does not yet support ASM on this platform - Please set OPENSSL_ASM to OFF and reconfigure"
             )
         endif()
     elseif (IOS)
@@ -385,7 +383,7 @@ if (OPENSSL_ASM)
     endif()
 
     if (NOT OPENSSL_PERLASM_SCHEME)
-        message(FATAL_ERROR "OpenSSL does not support ASM on this platform - Please set OPENSSL_ASM to OFF and reconfigure")
+        message(FATAL_ERROR "OpenSSL does not yet support ASM on this platform - Please set OPENSSL_ASM to OFF and reconfigure")
     endif()
 
     if (NOT PERL_FOUND)
@@ -445,10 +443,11 @@ macro (perlasm_generate_src OUT_ASMFILE SRC_PERLFILE)
     unset(DEPENDENCIES)
 endmacro()
 
-# original OpenSSL building progress made static libraries, and link the static libraries to the final libraries
+# original OpenSSL building progress made archive of static libraries, and link the static libraries to the final shared / dynamic loaded libraries
 # we create a variable for recording the C / S files...
 set(LIBCRYPTO_SOURCES)
-set(LIBCRYPTO_DIRECTORIES)
+set(LIBCRYPTO_DIRECTORIES _cryptoDir)
+set(LIBCRYPTO_SOURCE_DIRECTORIES_ABSOLUTE)
 set(LIBCRYPTO_CFLAGS)
 if (WIN32)
     set(LIBCRYPTO_CFLAGS ${LIBCRYPTO_CFLAGS} "-DOPENSSL_SYSNAME_WIN32" "-DWIN32_LEAN_AND_MEAN" "-D_WINSOCK_DEPRECATED_NO_WARNINGS")
@@ -505,7 +504,6 @@ else()
     set(LIBCRYPTO_CFLAGS ${LIBCRYPTO_CFLAGS} "-DL_ENDIAN")
 endif()
 
-include(_cryptoDir.cmake)
 foreach (_DIRECTORY IN ITEMS
         aes asn1 bf bio bn buffer camellia cast cmac cms comp conf des dh dsa dso ec ecdh ecdsa engine err evp hmac idea jpake krb5 lhash md2 md4 md5 mdc2 modes objects ocsp pem
         pkcs12 pkcs7 pqueue rand rc2 rc4 rc5 ripemd rsa seed sha srp stack store ts txt_db ui whrlpool x509 x509v3
@@ -517,18 +515,83 @@ foreach (_DIRECTORY IN ITEMS
     string(TOUPPER ${_CIPHER} _CIPHER_UPPER)
     string(REPLACE "-" "_" _CIPHER_SYMBOL ${_CIPHER_UPPER})
     if (OPENSSL_${_CIPHER_SYMBOL})
-        include(${_DIRECTORY}.cmake)
-        set(LIBCRYPTO_DIRECTORIES ${LIBCRYPTO_DIRECTORIES} ${CMAKE_SOURCE_DIR}/openssl/crypto/${_DIRECTORY})
+        set(LIBCRYPTO_DIRECTORIES ${LIBCRYPTO_DIRECTORIES} ${_DIRECTORY})
+        set(LIBCRYPTO_SOURCE_DIRECTORIES_ABSOLUTE ${LIBCRYPTO_SOURCE_DIRECTORIES_ABSOLUTE} ${CMAKE_SOURCE_DIR}/openssl/crypto/${_DIRECTORY})
     endif()
     unset(_CIPHER_SYMBOL)
     unset(_CIPHER_UPPER)
     unset(_CIPHER)
 endforeach()
 
+foreach (_DIRECTORY IN LISTS LIBCRYPTO_DIRECTORIES)
+    include(${_DIRECTORY}/flags.cmake OPTIONAL)
+endforeach()
+
 foreach (_EXPERIMENTALCIPHER IN LISTS OPENSSL_EXPERIMENTAL_CIPHERS)
     if (OPENSSL_EXPERIMENTAL_${_EXPERIMENTALCIPHER})
         set(LIBCRYPTO_CFLAGS ${LIBCRYPTO_CFLAGS} "-DOPENSSL_EXPERIMENTAL_${_EXPERIMENTALCIPHER}")
     endif()
+endforeach()
+
+string(TIMESTAMP OPENSSL_BUILD_TIMESTAMP "%a %b %d %H:%M:%S %Y" UTC)
+if (NOT OPENSSL_BUILD_TIMESTAMP)
+    set(OPENSSL_BUILD_TIMESTAMP "date not available")
+endif()
+set(OPENSSL_BUILDINF_H_CMAKE_IN "buildinf.h.cmake.in")
+if ( APPLE AND ( NOT IOS ) AND CMAKE_OSX_ARCHITECTURES )
+    list(LENGTH CMAKE_OSX_ARCHITECTURES OPENSSL_OSX_ARCHITECTURES_LENGTH)
+    if (OPENSSL_OSX_ARCHITECTURES_LENGTH GREATER 1)
+        set(OPENSSL_BUILDINF_H_CMAKE_IN "buildinf.h.appleUnified.cmake.in")
+    endif()
+    unset(OPENSSL_OSX_ARCHITECTURES_LENGTH)
+endif()
+set(LIBCRYPTO_CFLAGS_SOOOOOOOOLONG)
+string(LENGTH ${CMAKE_C_COMPILER} CCOMPILER_LENGTH)
+foreach (I RANGE ${CCOMPILER_LENGTH})
+    if (I EQUAL CCOMPILER_LENGTH)
+        break()
+    endif()
+    math(EXPR IMOD35 "${I} % 35")
+    if (IMOD35 EQUAL 0)
+        if (I EQUAL 0)
+            string(APPEND LIBCRYPTO_CFLAGS_SOOOOOOOOLONG "\n    // CMAKE_C_COMPILER")
+        endif()
+        string(APPEND LIBCRYPTO_CFLAGS_SOOOOOOOOLONG "\n   ")
+    endif()
+    unset(IMOD35)
+    string(SUBSTRING ${CMAKE_C_COMPILER} ${I} 1 STRI)
+    string(APPEND LIBCRYPTO_CFLAGS_SOOOOOOOOLONG " '${STRI}',")
+    unset(STRI)
+endforeach()
+unset(CCOMPILER_LENGTH)
+string(APPEND LIBCRYPTO_CFLAGS_SOOOOOOOOLONG "\n\n    ' ',\n")
+string(REGEX REPLACE ";" " " LIBCRYPTO_CFLAGS_SPACES "${LIBCRYPTO_CFLAGS}")
+string(LENGTH ${LIBCRYPTO_CFLAGS_SPACES} CFLAGS_LENGTH)
+foreach (I RANGE ${CFLAGS_LENGTH})
+    if (I EQUAL CFLAGS_LENGTH)
+        break()
+    endif()
+    math(EXPR IMOD35 "${I} % 35")
+    if (IMOD35 EQUAL 0)
+        if (I EQUAL 0)
+            string(APPEND LIBCRYPTO_CFLAGS_SOOOOOOOOLONG "\n    // LIBCRYPTO_CFLAGS")
+        endif()
+        string(APPEND LIBCRYPTO_CFLAGS_SOOOOOOOOLONG "\n   ")
+    endif()
+    unset(IMOD35)
+    string(SUBSTRING ${LIBCRYPTO_CFLAGS_SPACES} ${I} 1 STRI)
+    string(APPEND LIBCRYPTO_CFLAGS_SOOOOOOOOLONG " '${STRI}',")
+    unset(STRI)
+endforeach()
+unset(CFLAGS_LENGTH)
+string(APPEND LIBCRYPTO_CFLAGS_SOOOOOOOOLONG "\n")
+configure_file(${OPENSSL_BUILDINF_H_CMAKE_IN} buildinf.h @ONLY)
+unset(LIBCRYPTO_CFLAGS_SOOOOOOOOLONG)
+unset(LIBCRYPTO_CFLAGS_SPACES)
+unset(OPENSSL_BUILDINF_H_CMAKE_IN)
+
+foreach (_DIRECTORY IN LISTS LIBCRYPTO_DIRECTORIES)
+    include(${_DIRECTORY}/objects.cmake)
 endforeach()
 
 if (OPENSSL_HW AND ( NOT ( BUILD_SHARED_LIBS AND OPENSSL_DYNAMIC_ENGINE ) ) )
@@ -583,7 +646,7 @@ target_include_directories(crypto
            ${CMAKE_CURRENT_BINARY_DIR}
            ${CMAKE_SOURCE_DIR}/openssl
            ${CMAKE_SOURCE_DIR}/openssl/crypto
-           ${LIBCRYPTO_DIRECTORIES}
+           ${LIBCRYPTO_SOURCE_DIRECTORIES_ABSOLUTE}
 )
 
 target_compile_definitions(crypto

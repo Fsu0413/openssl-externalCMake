@@ -68,7 +68,6 @@ if (OPENSSL_ASM)
             ghash-x86_64${OPENSSL_ASM_PREPROCESSED}
             aesni-gcm-x86_64${OPENSSL_ASM_PREPROCESSED}
         )
-        set(LIBCRYPTO_CFLAGS ${LIBCRYPTO_CFLAGS} "-DGHASH_ASM")
     elseif ( ( OPENSSL_TARGET_ARCH STREQUAL "x86" ) AND (
                ( CMAKE_SYSTEM_NAME MATCHES "BSD" )
             OR CYGWIN
@@ -79,7 +78,6 @@ if (OPENSSL_ASM)
         set(LIBCRYPTO_CURRENTDIR_ASM_SOURCES
             ghash-x86${OPENSSL_ASM_PREPROCESSED}
         )
-        set(LIBCRYPTO_CFLAGS ${LIBCRYPTO_CFLAGS} "-DGHASH_ASM")
     elseif ( ( OPENSSL_TARGET_ARCH STREQUAL "arm32" ) AND (
                ANDROID
             OR ( CMAKE_SYSTEM_NAME MATCHES "[Ll]inux")
@@ -88,7 +86,6 @@ if (OPENSSL_ASM)
             ghash-armv4.S
             ghashv8-armx.S
         )
-        set(LIBCRYPTO_CFLAGS ${LIBCRYPTO_CFLAGS} "-DGHASH_ASM")
     elseif ( ( OPENSSL_TARGET_ARCH STREQUAL "arm64" ) AND (
                ANDROID
             OR ( CMAKE_SYSTEM_NAME MATCHES "[Ll]inux" )

@@ -176,7 +176,6 @@ if (OPENSSL_ASM)
             sha256-mb-x86_64${OPENSSL_ASM_PREPROCESSED}
             sha512-x86_64${OPENSSL_ASM_PREPROCESSED}
         )
-        set(LIBCRYPTO_CFLAGS ${LIBCRYPTO_CFLAGS} "-DSHA1_ASM" "-DSHA256_ASM" "-DSHA512_ASM")
     elseif ( ( OPENSSL_TARGET_ARCH STREQUAL "x86" ) AND (
                ( CMAKE_SYSTEM_NAME MATCHES "BSD" )
             OR CYGWIN
@@ -191,7 +190,6 @@ if (OPENSSL_ASM)
                 sha256-586${OPENSSL_ASM_PREPROCESSED}
                 sha512-586${OPENSSL_ASM_PREPROCESSED}
             )
-            set(LIBCRYPTO_CFLAGS ${LIBCRYPTO_CFLAGS} "-DSHA1_ASM" "-DSHA256_ASM" "-DSHA512_ASM")
         endif()
     elseif ( ( OPENSSL_TARGET_ARCH STREQUAL "arm32" ) AND (
                ANDROID
@@ -202,7 +200,6 @@ if (OPENSSL_ASM)
             sha256-armv4.S
             sha512-armv4.S
         )
-        set(LIBCRYPTO_CFLAGS ${LIBCRYPTO_CFLAGS} "-DSHA1_ASM" "-DSHA256_ASM" "-DSHA512_ASM")
     elseif ( ( OPENSSL_TARGET_ARCH STREQUAL "arm64" ) AND (
                ANDROID
             OR ( CMAKE_SYSTEM_NAME MATCHES "[Ll]inux" )
@@ -212,7 +209,6 @@ if (OPENSSL_ASM)
             sha256-armv8.S
             sha512-armv8.S
         )
-        set(LIBCRYPTO_CFLAGS ${LIBCRYPTO_CFLAGS} "-DSHA1_ASM" "-DSHA256_ASM" "-DSHA512_ASM")
     endif()
 endif()
 

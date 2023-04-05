@@ -27,7 +27,6 @@ if (OPENSSL_ASM)
         set(LIBCRYPTO_CURRENTDIR_ASM_SOURCES
             wp-x86_64${OPENSSL_ASM_PREPROCESSED}
         )
-        set(LIBCRYPTO_CFLAGS ${LIBCRYPTO_CFLAGS} "-DWHIRLPOOL_ASM")
     elseif ( ( OPENSSL_TARGET_ARCH STREQUAL "x86" ) AND (
                ( CMAKE_SYSTEM_NAME MATCHES "BSD" )
             OR CYGWIN
@@ -39,7 +38,6 @@ if (OPENSSL_ASM)
             ${CMAKE_SOURCE_DIR}/openssl/crypto/whrlpool/wp_block.c
             wp-mmx${OPENSSL_ASM_PREPROCESSED}
         )
-        set(LIBCRYPTO_CFLAGS ${LIBCRYPTO_CFLAGS} "-DWHIRLPOOL_ASM")
     elseif ( ( OPENSSL_TARGET_ARCH STREQUAL "arm32" ) AND (
                ANDROID
             OR ( CMAKE_SYSTEM_NAME MATCHES "[Ll]inux")

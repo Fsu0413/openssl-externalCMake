@@ -50,7 +50,6 @@ if (OPENSSL_ASM)
             ${CMAKE_SOURCE_DIR}/openssl/crypto/ec/ecp_nistz256.c
             ecp_nistz256-x86_64${OPENSSL_ASM_PREPROCESSED}
         )
-        set(LIBCRYPTO_CFLAGS ${LIBCRYPTO_CFLAGS} "-DECP_NISTZ256_ASM")
     elseif ( ( OPENSSL_TARGET_ARCH STREQUAL "x86" ) AND (
                ( CMAKE_SYSTEM_NAME MATCHES "BSD" )
             OR CYGWIN

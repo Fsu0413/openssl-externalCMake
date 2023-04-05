@@ -34,7 +34,6 @@ if (OPENSSL_ASM)
         set(LIBCRYPTO_CURRENTDIR_ASM_SOURCES
             rmd-586${OPENSSL_ASM_PREPROCESSED}
         )
-        set(LIBCRYPTO_CFLAGS ${LIBCRYPTO_CFLAGS} "-DRMD160_ASM")
     elseif ( ( OPENSSL_TARGET_ARCH STREQUAL "arm32" ) AND (
                ANDROID
             OR ( CMAKE_SYSTEM_NAME MATCHES "[Ll]inux")
