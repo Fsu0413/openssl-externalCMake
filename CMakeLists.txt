@@ -7,6 +7,8 @@ project(OpenSSL
     LANGUAGES C
 )
 
+include(CTest)
+
 if (PROJECT_VERSION_MAJOR LESS 3)
     set(OPENSSL_VERSION_PRE3_SUFFICES
         ";a;b;c;d;e;f;g;h;i;j;k;l;m;n;o;p;q;r;s;t;u;v;w;x;y;za;zb;zc;zd;ze;zf;zg;zh"
@@ -394,12 +396,21 @@ elseif (CMAKE_SYSTEM_NAME MATCHES "BSD")
     endif()
 endif()
 
+if (BUILD_TESTING)
+    add_library(OpenSSLTest INTERFACE)
+    target_include_directories(OpenSSLTest INTERFACE "${CMAKE_SOURCE_DIR}/openssl/test")
+    target_sources(OpenSSLTest INTERFACE "${CMAKE_SOURCE_DIR}/openssl/test/testutil.h" "${CMAKE_SOURCE_DIR}/openssl/test/ssltestlib.h")
+    add_custom_target(check ctest)
+endif()
+
 add_subdirectory(crypto)
 add_subdirectory(ssl)
 add_subdirectory(apps)
 add_subdirectory(engines)
 add_subdirectory(tools)
-add_subdirectory(test)
+if (BUILD_TESTING)
+    add_subdirectory(test)
+endif()
 if (OPENSSL_BUILD_DOCS)
     add_subdirectory(doc)
 endif()

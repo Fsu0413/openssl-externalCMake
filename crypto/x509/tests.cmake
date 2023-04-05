@@ -1,0 +1,4 @@
+add_executable(verify_extra_test EXCLUDE_FROM_ALL ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/verify_extra_test.c)
+target_link_libraries(verify_extra_test PUBLIC OpenSSLTest crypto)
+add_dependencies(check verify_extra_test)
+add_test(NAME verify_extra_test COMMAND verify_extra_test COMMAND_EXPEND_LISTS)

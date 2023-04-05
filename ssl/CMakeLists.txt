@@ -109,3 +109,41 @@ configure_file(libssl.pc.cmake.in libssl.pc @ONLY)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libssl.pc
     DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig
 )
+
+if (BUILD_TESTING)
+    # TODO: add testing program
+    add_executable(ssltest EXCLUDE_FROM_ALL ${CMAKE_SOURCE_DIR}/openssl/ssl/ssltest.c)
+    target_link_libraries(ssltest PUBLIC OpenSSLTest crypto ssl)
+    add_dependencies(check ssltest)
+    add_test(NAME ssltest COMMAND ssltest COMMAND_EXPEND_LISTS)
+
+    add_executable(heartbeat_test EXCLUDE_FROM_ALL ${CMAKE_SOURCE_DIR}/openssl/ssl/heartbeat_test.c)
+    target_link_libraries(heartbeat_test PUBLIC OpenSSLTest crypto ssl)
+    add_dependencies(check heartbeat_test)
+    add_test(NAME heartbeat_test COMMAND heartbeat_test COMMAND_EXPEND_LISTS)
+
+    add_executable(clienthellotest EXCLUDE_FROM_ALL ${CMAKE_SOURCE_DIR}/openssl/ssl/clienthellotest.c)
+    target_link_libraries(clienthellotest PUBLIC OpenSSLTest crypto ssl)
+    add_dependencies(check clienthellotest)
+    add_test(NAME clienthellotest COMMAND clienthellotest COMMAND_EXPEND_LISTS)
+
+    add_executable(sslv2conftest EXCLUDE_FROM_ALL ${CMAKE_SOURCE_DIR}/openssl/ssl/sslv2conftest.c)
+    target_link_libraries(sslv2conftest PUBLIC OpenSSLTest crypto ssl)
+    add_dependencies(check sslv2conftest)
+    add_test(NAME sslv2conftest COMMAND sslv2conftest COMMAND_EXPEND_LISTS)
+
+    add_executable(dtlstest EXCLUDE_FROM_ALL ${CMAKE_SOURCE_DIR}/openssl/ssl/dtlstest.c ${CMAKE_SOURCE_DIR}/openssl/test/ssltestlib.c)
+    target_link_libraries(dtlstest PUBLIC OpenSSLTest crypto ssl)
+    add_dependencies(check dtlstest)
+    add_test(NAME dtlstest COMMAND dtlstest COMMAND_EXPEND_LISTS)
+
+    add_executable(bad_dtls_test EXCLUDE_FROM_ALL ${CMAKE_SOURCE_DIR}/openssl/ssl/bad_dtls_test.c)
+    target_link_libraries(bad_dtls_test PUBLIC OpenSSLTest crypto ssl)
+    add_dependencies(check bad_dtls_test)
+    add_test(NAME bad_dtls_test COMMAND bad_dtls_test COMMAND_EXPEND_LISTS)
+
+    add_executable(fatalerrtest EXCLUDE_FROM_ALL ${CMAKE_SOURCE_DIR}/openssl/ssl/fatalerrtest.c ${CMAKE_SOURCE_DIR}/openssl/test/ssltestlib.c)
+    target_link_libraries(fatalerrtest PUBLIC OpenSSLTest crypto ssl)
+    add_dependencies(check fatalerrtest)
+    add_test(NAME fatalerrtest COMMAND fatalerrtest COMMAND_EXPEND_LISTS)
+endif()
