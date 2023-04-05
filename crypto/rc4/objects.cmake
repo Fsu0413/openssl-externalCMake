@@ -38,7 +38,7 @@ if (OPENSSL_ASM)
             OR CYGWIN
             OR WIN32
             # OR ( APPLE AND NOT IOS )
-            OR ( CMAKE_SYSTEM_NAME MATCHES "[Ll]inux" )
+            # OR ( CMAKE_SYSTEM_NAME MATCHES "[Ll]inux" )
     ) )
         set(LIBCRYPTO_CURRENTDIR_ASM_SOURCES
             rc4-x86_64${OPENSSL_ASM_PREPROCESSED}

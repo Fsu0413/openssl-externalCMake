@@ -5,7 +5,7 @@ if (OPENSSL_ASM)
             OR CYGWIN
             OR WIN32
             # OR ( APPLE AND NOT IOS )
-            OR ( CMAKE_SYSTEM_NAME MATCHES "[Ll]inux" )
+            # OR ( CMAKE_SYSTEM_NAME MATCHES "[Ll]inux" )
     ) )
         set(LIBCRYPTO_CFLAGS ${LIBCRYPTO_CFLAGS} "-DRC4_ASM")
     elseif ( ( OPENSSL_TARGET_ARCH STREQUAL "x86" ) AND (
