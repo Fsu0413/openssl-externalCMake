@@ -5,9 +5,7 @@
 # Let's temporarily ignore the generation of this file and use the file bundled in the git repository
 # Note: MSVC builds always use the pre-generated one
 
-get_filename_component(LIBCRYPTO_CURRENTDIR ${CMAKE_CURRENT_LIST_FILE} NAME_WE)
-
-set(LIBCRYPTO_${LIBCRYPTO_CURRENTDIR}_SOURCES
+set(LIBCRYPTO_CURRENTDIR_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/crypto/objects/o_names.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/objects/obj_dat.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/objects/obj_lib.c
@@ -19,5 +17,6 @@ set(LIBCRYPTO_${LIBCRYPTO_CURRENTDIR}_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/crypto/objects/obj_xref.h
 )
 
-set(LIBCRYPTO_SOURCES ${LIBCRYPTO_SOURCES} ${LIBCRYPTO_${LIBCRYPTO_CURRENTDIR}_SOURCES})
-unset(LIBCRYPTO_CURRENTDIR)
+set(LIBCRYPTO_SOURCES ${LIBCRYPTO_SOURCES} ${LIBCRYPTO_CURRENTDIR_SOURCES})
+
+unset(LIBCRYPTO_CURRENTDIR_SOURCES)

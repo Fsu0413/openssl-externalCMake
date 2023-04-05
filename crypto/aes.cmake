@@ -1,5 +1,4 @@
 
-# TODO: DO NOT USE CMAKE_C_FLAGS, USE CRYPTO_C_FLAGS INSTEAD WHEN READY
 perlasm_generate_src(aes-586${OPENSSL_ASM_PREPROCESSED} ${CMAKE_SOURCE_DIR}/openssl/crypto/aes/asm/aes-586.pl
     DEPENDENCIES ${CMAKE_SOURCE_DIR}/openssl/crypto/perlasm/x86asm.pl
     FLAGS ${OPENSSL_PERLASM_SCHEME} ${LIBCRYPTO_CFLAGS} ${OPENSSL_USE_386}
@@ -75,9 +74,7 @@ perlasm_generate_src(bsaes-armv7.S ${CMAKE_SOURCE_DIR}/openssl/crypto/aes/asm/bs
     NO_STDOUT
 )
 
-get_filename_component(LIBCRYPTO_CURRENTDIR ${CMAKE_CURRENT_LIST_FILE} NAME_WE)
-
-set(LIBCRYPTO_${LIBCRYPTO_CURRENTDIR}_SOURCES
+set(LIBCRYPTO_CURRENTDIR_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/crypto/aes/aes_misc.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/aes/aes_ecb.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/aes/aes_cfb.c
@@ -89,7 +86,7 @@ set(LIBCRYPTO_${LIBCRYPTO_CURRENTDIR}_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/crypto/aes/aes_locl.h
 )
 
-set(LIBCRYPTO_${LIBCRYPTO_CURRENTDIR}_ASM_SOURCES
+set(LIBCRYPTO_CURRENTDIR_ASM_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/crypto/aes/aes_core.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/aes/aes_cbc.c
 )
@@ -101,7 +98,7 @@ if (OPENSSL_ASM)
             OR ( APPLE AND NOT IOS )
             OR ( CMAKE_SYSTEM_NAME MATCHES "[Ll]inux" )
     ) )
-        set(LIBCRYPTO_${LIBCRYPTO_CURRENTDIR}_ASM_SOURCES
+        set(LIBCRYPTO_CURRENTDIR_ASM_SOURCES
             aes-x86_64${OPENSSL_ASM_PREPROCESSED}
             vpaes-x86_64${OPENSSL_ASM_PREPROCESSED}
             bsaes-x86_64${OPENSSL_ASM_PREPROCESSED}
@@ -118,13 +115,13 @@ if (OPENSSL_ASM)
             OR ANDROID
             OR ( CMAKE_SYSTEM_NAME MATCHES "[Ll]inux" )
     ) )
-        set(LIBCRYPTO_${LIBCRYPTO_CURRENTDIR}_ASM_SOURCES
+        set(LIBCRYPTO_CURRENTDIR_ASM_SOURCES
             aes-586${OPENSSL_ASM_PREPROCESSED}
         )
         set(LIBCRYPTO_CFLAGS ${LIBCRYPTO_CFLAGS} "-DAES_ASM")
         if (OPENSSL_SSE2)
-            set(LIBCRYPTO_${LIBCRYPTO_CURRENTDIR}_ASM_SOURCES
-                ${LIBCRYPTO_${LIBCRYPTO_CURRENTDIR}_ASM_SOURCES}
+            set(LIBCRYPTO_CURRENTDIR_ASM_SOURCES
+                ${LIBCRYPTO_CURRENTDIR_ASM_SOURCES}
                 vpaes-x86${OPENSSL_ASM_PREPROCESSED}
                 aesni-x86${OPENSSL_ASM_PREPROCESSED}
             )
@@ -134,7 +131,7 @@ if (OPENSSL_ASM)
                ANDROID
             OR ( CMAKE_SYSTEM_NAME MATCHES "[Ll]inux")
     ) )
-        set(LIBCRYPTO_${LIBCRYPTO_CURRENTDIR}_ASM_SOURCES
+        set(LIBCRYPTO_CURRENTDIR_ASM_SOURCES
             ${CMAKE_SOURCE_DIR}/openssl/crypto/aes/aes_cbc.c
             aes-armv4.S
             bsaes-armv7.S
@@ -145,7 +142,7 @@ if (OPENSSL_ASM)
                ANDROID
             OR ( CMAKE_SYSTEM_NAME MATCHES "[Ll]inux" )
     ) )
-        set(LIBCRYPTO_${LIBCRYPTO_CURRENTDIR}_ASM_SOURCES
+        set(LIBCRYPTO_CURRENTDIR_ASM_SOURCES
             ${CMAKE_SOURCE_DIR}/openssl/crypto/aes/aes_core.c
             ${CMAKE_SOURCE_DIR}/openssl/crypto/aes/aes_cbc.c
             aesv8-armx.S
@@ -153,10 +150,12 @@ if (OPENSSL_ASM)
     endif()
 endif()
 
-set(LIBCRYPTO_${LIBCRYPTO_CURRENTDIR}_SOURCES
-    ${LIBCRYPTO_${LIBCRYPTO_CURRENTDIR}_SOURCES}
-    ${LIBCRYPTO_${LIBCRYPTO_CURRENTDIR}_ASM_SOURCES}
+set(LIBCRYPTO_CURRENTDIR_SOURCES
+    ${LIBCRYPTO_CURRENTDIR_SOURCES}
+    ${LIBCRYPTO_CURRENTDIR_ASM_SOURCES}
 )
 
-set(LIBCRYPTO_SOURCES ${LIBCRYPTO_SOURCES} ${LIBCRYPTO_${LIBCRYPTO_CURRENTDIR}_SOURCES})
-unset(LIBCRYPTO_CURRENTDIR)
+set(LIBCRYPTO_SOURCES ${LIBCRYPTO_SOURCES} ${LIBCRYPTO_CURRENTDIR_SOURCES})
+
+unset(LIBCRYPTO_CURRENTDIR_SOURCES)
+unset(LIBCRYPTO_CURRENTDIR_ASM_SOURCES)

@@ -23,9 +23,7 @@ perlasm_generate_src(pariscid${OPENSSL_ASM_PREPROCESSED} ${CMAKE_SOURCE_DIR}/ope
 perlasm_generate_src(alphacpuid.S ${CMAKE_SOURCE_DIR}/openssl/crypto/alphacpuid.pl
 )
 
-get_filename_component(LIBCRYPTO_CURRENTDIR ${CMAKE_CURRENT_LIST_FILE} NAME_WE)
-
-set(LIBCRYPTO_${LIBCRYPTO_CURRENTDIR}_SOURCES
+set(LIBCRYPTO_CURRENTDIR_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/crypto/cryptlib.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/mem.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/mem_dbg.c
@@ -56,7 +54,7 @@ set(LIBCRYPTO_${LIBCRYPTO_CURRENTDIR}_SOURCES
     buildinf.h
 )
 
-set(LIBCRYPTO_${LIBCRYPTO_CURRENTDIR}_ASM_SOURCES
+set(LIBCRYPTO_CURRENTDIR_ASM_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/crypto/mem_clr.c
 )
 if (OPENSSL_ASM)
@@ -67,7 +65,7 @@ if (OPENSSL_ASM)
             OR ( APPLE AND NOT IOS )
             OR ( CMAKE_SYSTEM_NAME MATCHES "[Ll]inux" )
     ) )
-        set(LIBCRYPTO_${LIBCRYPTO_CURRENTDIR}_ASM_SOURCES
+        set(LIBCRYPTO_CURRENTDIR_ASM_SOURCES
             x86_64cpuid${OPENSSL_ASM_PREPROCESSED}
         )
     elseif ( ( OPENSSL_TARGET_ARCH STREQUAL "x86" ) AND ( NOT OPENSSL_386 ) AND (
@@ -78,12 +76,12 @@ if (OPENSSL_ASM)
             OR ( CMAKE_SYSTEM_NAME MATCHES "[Ll]inux" )
     ) )
         # TODO: properly set up applink and uplink
-        set(LIBCRYPTO_${LIBCRYPTO_CURRENTDIR}_ASM_SOURCES
+        set(LIBCRYPTO_CURRENTDIR_ASM_SOURCES
             x86cpuid${OPENSSL_ASM_PREPROCESSED}
         )
         if (false)
             if ( WIN32 )
-                set(LIBCRYPTO_${LIBCRYPTO_CURRENTDIR}_ASM_SOURCES
+                set(LIBCRYPTO_CURRENTDIR_ASM_SOURCES
                     ${LIBCRYPTO_CRYPTODIR_ASM_SOURCES}
                     ${CMAKE_SOURCE_DIR}/ms/applink.c
                     ${CMAKE_SOURCE_DIR}/ms/uplink.c
@@ -95,7 +93,7 @@ if (OPENSSL_ASM)
                ANDROID
             OR ( CMAKE_SYSTEM_NAME MATCHES "[Ll]inux")
     ) )
-        set(LIBCRYPTO_${LIBCRYPTO_CURRENTDIR}_ASM_SOURCES
+        set(LIBCRYPTO_CURRENTDIR_ASM_SOURCES
             ${CMAKE_SOURCE_DIR}/openssl/crypto/armv4cpuid.S
             ${CMAKE_SOURCE_DIR}/openssl/crypto/armcap.c
         )
@@ -103,7 +101,7 @@ if (OPENSSL_ASM)
                ANDROID
             OR ( CMAKE_SYSTEM_NAME MATCHES "[Ll]inux" )
     ) )
-        set(LIBCRYPTO_${LIBCRYPTO_CURRENTDIR}_ASM_SOURCES
+        set(LIBCRYPTO_CURRENTDIR_ASM_SOURCES
             ${CMAKE_SOURCE_DIR}/openssl/crypto/arm64cpuid.S
             ${CMAKE_SOURCE_DIR}/openssl/crypto/armcap.c
             ${CMAKE_SOURCE_DIR}/openssl/crypto/mem_clr.c
@@ -111,11 +109,12 @@ if (OPENSSL_ASM)
     endif()
 endif()
 
-set(LIBCRYPTO_${LIBCRYPTO_CURRENTDIR}_SOURCES
-    ${LIBCRYPTO_${LIBCRYPTO_CURRENTDIR}_SOURCES}
-    ${LIBCRYPTO_${LIBCRYPTO_CURRENTDIR}_ASM_SOURCES}
+set(LIBCRYPTO_CURRENTDIR_SOURCES
+    ${LIBCRYPTO_CURRENTDIR_SOURCES}
+    ${LIBCRYPTO_CURRENTDIR_ASM_SOURCES}
 )
 
-set(LIBCRYPTO_SOURCES ${LIBCRYPTO_SOURCES} ${LIBCRYPTO_${LIBCRYPTO_CURRENTDIR}_SOURCES})
+set(LIBCRYPTO_SOURCES ${LIBCRYPTO_SOURCES} ${LIBCRYPTO_CURRENTDIR_SOURCES})
 
-unset(LIBCRYPTO_CURRENTDIR)
+unset(LIBCRYPTO_CURRENTDIR_SOURCES)
+unset(LIBCRYPTO_CURRENTDIR_ASM_SOURCES)
