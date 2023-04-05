@@ -105,3 +105,23 @@ configure_file(openssl.pc.cmake.in openssl.pc @ONLY)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/openssl.pc
     DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig
 )
+
+if (BUILD_TESTING)
+    if (WIN32 AND BUILD_SHARED_LIBS)
+        add_custom_command(OUTPUT "${CMAKE_BINARY_DIR}/apps/libeay32.dll"
+                           COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/crypto/libeay32.dll ${CMAKE_BINARY_DIR}/apps/libeay32.dll
+                           DEPENDS crypto
+        )
+        add_custom_target(copycrypto_apps DEPENDS "${CMAKE_BINARY_DIR}/apps/libeay32.dll")
+        add_dependencies(check copycrypto_apps)
+    endif()
+
+    if (WIN32 AND BUILD_SHARED_LIBS)
+        add_custom_command(OUTPUT "${CMAKE_BINARY_DIR}/apps/ssleay32.dll"
+                           COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/ssl/ssleay32.dll ${CMAKE_BINARY_DIR}/apps/ssleay32.dll
+                           DEPENDS ssl
+        )
+        add_custom_target(copyssl_apps DEPENDS "${CMAKE_BINARY_DIR}/apps/ssleay32.dll")
+        add_dependencies(check copyssl_apps)
+    endif()
+endif()

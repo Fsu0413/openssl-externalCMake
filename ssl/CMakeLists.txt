@@ -111,6 +111,15 @@ install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libssl.pc
 )
 
 if (BUILD_TESTING)
+    if (WIN32 AND BUILD_SHARED_LIBS)
+        add_custom_command(OUTPUT "${CMAKE_BINARY_DIR}/ssl/libeay32.dll"
+                           COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/crypto/libeay32.dll ${CMAKE_BINARY_DIR}/ssl/libeay32.dll
+                           DEPENDS crypto
+        )
+        add_custom_target(copycrypto_ssl DEPENDS "${CMAKE_BINARY_DIR}/ssl/libeay32.dll")
+        add_dependencies(check copycrypto_ssl)
+    endif()
+
     # TODO: add testing program
     add_executable(ssltest EXCLUDE_FROM_ALL ${CMAKE_SOURCE_DIR}/openssl/ssl/ssltest.c)
     target_link_libraries(ssltest PUBLIC OpenSSLTest crypto ssl)
