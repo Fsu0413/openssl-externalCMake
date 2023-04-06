@@ -107,6 +107,8 @@ install(FILES ${CMAKE_CURRENT_BINARY_DIR}/openssl.pc
 )
 
 if (BUILD_TESTING)
+    add_dependencies(check openssl)
+
     if (WIN32 AND BUILD_SHARED_LIBS)
         add_custom_command(OUTPUT "${CMAKE_BINARY_DIR}/apps/libeay32.dll"
                            COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/crypto/libeay32.dll ${CMAKE_BINARY_DIR}/apps/libeay32.dll
