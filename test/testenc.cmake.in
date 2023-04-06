@@ -1,0 +1,95 @@
+
+message(NOTICE "cat")
+execute_process(COMMAND @CMAKE_BINARY_DIR@/apps/openssl enc
+                WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
+                INPUT_FILE @CMAKE_CURRENT_BINARY_DIR@/p
+                OUTPUT_FILE p.cipher
+                COMMAND_ERROR_IS_FATAL ANY
+)
+execute_process(COMMAND @CMAKE_BINARY_DIR@/apps/openssl enc
+                WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
+                INPUT_FILE p.cipher
+                OUTPUT_FILE p.clear
+                COMMAND_ERROR_IS_FATAL ANY
+)
+execute_process(COMMAND @CMAKE_COMMAND@ -E compare_files --ignore-eol @CMAKE_CURRENT_BINARY_DIR@/p p.clear
+                WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
+                COMMAND_ERROR_IS_FATAL ANY
+)
+execute_process(COMMAND @CMAKE_COMMAND@ -E rm -f p.cipher p.clear
+                WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
+)
+
+message(NOTICE "base64")
+execute_process(COMMAND @CMAKE_BINARY_DIR@/apps/openssl enc -a -e
+                WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
+                INPUT_FILE @CMAKE_CURRENT_BINARY_DIR@/p
+                OUTPUT_FILE p.cipher
+                COMMAND_ERROR_IS_FATAL ANY
+)
+execute_process(COMMAND @CMAKE_BINARY_DIR@/apps/openssl enc -a -d
+                WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
+                INPUT_FILE p.cipher
+                OUTPUT_FILE p.clear
+                COMMAND_ERROR_IS_FATAL ANY
+)
+execute_process(COMMAND @CMAKE_COMMAND@ -E compare_files --ignore-eol @CMAKE_CURRENT_BINARY_DIR@/p p.clear
+                WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
+                COMMAND_ERROR_IS_FATAL ANY
+)
+execute_process(COMMAND @CMAKE_COMMAND@ -E rm -f p.cipher p.clear
+                WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
+)
+
+execute_process(COMMAND @CMAKE_BINARY_DIR@/apps/openssl list-cipher-commands
+                WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
+                OUTPUT_VARIABLE CIPHER_COMMANDS
+
+)
+string(REGEX REPLACE "[ \t\r\n]+" ";" CIPHER_COMMANDS_LIST ${CIPHER_COMMANDS})
+
+foreach (I IN LISTS CIPHER_COMMANDS_LIST)
+    if (${I})
+        message(NOTICE "${I}")
+        execute_process(COMMAND @CMAKE_BINARY_DIR@/apps/openssl ${I} -bufsize 113 -e -k test
+                        WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
+                        INPUT_FILE @CMAKE_CURRENT_BINARY_DIR@/p
+                        OUTPUT_FILE "p.${I}.cipher"
+                        COMMAND_ERROR_IS_FATAL ANY
+        )
+        execute_process(COMMAND @CMAKE_BINARY_DIR@/apps/openssl ${I} -bufsize 157 -d -k test
+                        WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
+                        INPUT_FILE "p.${I}.cipher"
+                        OUTPUT_FILE "p.${I}.clear"
+                        COMMAND_ERROR_IS_FATAL ANY
+        )
+        execute_process(COMMAND @CMAKE_COMMAND@ -E compare_files --ignore-eol @CMAKE_CURRENT_BINARY_DIR@/p "p.${I}.clear"
+                        WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
+                        COMMAND_ERROR_IS_FATAL ANY
+        )
+        execute_process(COMMAND @CMAKE_COMMAND@ -E rm -f "p.${I}.cipher" "p.${I}.clear"
+                        WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
+        )
+
+        message(NOTICE "${I} base64")
+        execute_process(COMMAND @CMAKE_BINARY_DIR@/apps/openssl ${I} -bufsize 113 -a -e -k test
+                        WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
+                        INPUT_FILE @CMAKE_CURRENT_BINARY_DIR@/p
+                        OUTPUT_FILE "p.${I}.cipher"
+                        COMMAND_ERROR_IS_FATAL ANY
+        )
+        execute_process(COMMAND @CMAKE_BINARY_DIR@/apps/openssl ${I} -bufsize 157 -a -d -k test
+                        WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
+                        INPUT_FILE "p.${I}.cipher"
+                        OUTPUT_FILE "p.${I}.clear"
+                        COMMAND_ERROR_IS_FATAL ANY
+        )
+        execute_process(COMMAND @CMAKE_COMMAND@ -E compare_files --ignore-eol @CMAKE_CURRENT_BINARY_DIR@/p "p.${I}.clear"
+                        WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
+                        COMMAND_ERROR_IS_FATAL ANY
+        )
+        execute_process(COMMAND @CMAKE_COMMAND@ -E rm -f "p.${I}.cipher" "p.${I}.clear"
+                        WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
+        )
+    endif()
+endforeach()
