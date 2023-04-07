@@ -94,6 +94,7 @@ Sort by priority
 1. Check cross build for Android (arm, arm64, x86)
 1. Check build with krb5 - don't compile on 1.0.2 branch on arm64 macOS. Will try Windows and Linux
 1. `OpenSSLConfig.cmake` generation
+1. 1.1.0 series support
 1. 1.0.1 series support
 1. 1.0.0 series support
 1. 0.9.8 series support
