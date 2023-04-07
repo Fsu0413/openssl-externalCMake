@@ -1,0 +1,40 @@
+
+message(NOTICE "Generate and verify a certificate request")
+
+# removal of testcert.1 testcert.2 testcert.key is of no use?
+# export path? also of no use?
+
+message(NOTICE "generating certificate request")
+
+file(WRITE ".rnd" "string to make the random number generator think it has entropy")
+
+execute_process(COMMAND @CMAKE_BINARY_DIR@/apps/openssl no-rsa
+                WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
+                RESULT_VARIABLE NO_RSA_VAR
+)
+
+if (NO_RSA_VAR EQUAL 0)
+    set(REQ_NEW "-newkey" "dsa:../apps/dsa512.pem")
+else()
+    set(REQ_NEW "-new")
+    message(NOTICE "There should be a 2 sequences of .'s and some +'s.")
+    message(NOTICE "There should not be more that at most 80 per line")
+endif()
+
+message(NOTICE "This could take some time")
+
+execute_process(COMMAND @CMAKE_BINARY_DIR@/apps/openssl req -config test.cnf ${REQ_NEW} -out testreq.pem
+                WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
+                COMMAND_ERROR_IS_FATAL ANY
+)
+
+execute_process(COMMAND @CMAKE_BINARY_DIR@/apps/openssl req -config test.cnf -verify -in testreq.pem -noout
+                WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
+                COMMAND_ERROR_IS_FATAL ANY
+)
+
+# Why this test doesn't delete output file?
+
+execute_process(COMMAND @CMAKE_COMMAND@ -E rm -f .rnd testreq.pem
+                WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
+)
