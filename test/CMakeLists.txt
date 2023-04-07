@@ -43,6 +43,10 @@ add_test(NAME tcrl COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/tcrl.
 configure_file(tsid.cmake.in tsid.cmake @ONLY)
 add_test(NAME tsid COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/tsid.cmake WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} COMMAND_EXPAND_LISTS)
 
+# !!!! treq depends on testgen
 configure_file(${CMAKE_SOURCE_DIR}/openssl/test/test.cnf test.cnf COPYONLY)
 configure_file(testgen.cmake.in testgen.cmake @ONLY)
 add_test(NAME testgen COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/testgen.cmake WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} COMMAND_EXPAND_LISTS)
+
+configure_file(treq.cmake.in treq.cmake @ONLY)
+add_test(NAME treq COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/treq.cmake WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} COMMAND_EXPAND_LISTS)

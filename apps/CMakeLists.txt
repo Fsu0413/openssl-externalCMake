@@ -128,4 +128,5 @@ if (BUILD_TESTING)
     endif()
 
     configure_file(${CMAKE_SOURCE_DIR}/openssl/apps/dsa512.pem dsa512.pem COPYONLY) # needed for testgen
+    configure_file(${CMAKE_SOURCE_DIR}/openssl/apps/openssl.cnf openssl.cnf COPYONLY) # needed for treq
 endif()

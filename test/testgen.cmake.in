@@ -35,6 +35,6 @@ execute_process(COMMAND @CMAKE_BINARY_DIR@/apps/openssl req -config test.cnf -ve
 
 # Why this test doesn't delete output file?
 
-execute_process(COMMAND @CMAKE_COMMAND@ -E rm -f .rnd testreq.pem
+execute_process(COMMAND @CMAKE_COMMAND@ -E rm -f .rnd # testreq.pem used by treq.cmake.in
                 WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
 )
