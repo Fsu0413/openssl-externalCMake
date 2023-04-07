@@ -126,7 +126,7 @@ foreach (TESTFILE IN ITEMS testx509.pem v3-cert1.pem v3-cert2.pem)
                     COMMAND_ERROR_IS_FATAL ANY
     )
 
-    # This is indeed the original logic of tx509 logic. I don't know why they don't compare x509-f.d. Maybe that's only oversight.
+    # This is indeed the original logic of tx509 logic. I don't know why they don't compare x509-f.d. Maybe that's just oversight.
 
     execute_process(COMMAND @CMAKE_COMMAND@ -E compare_files --ignore-eol x509-f.p x509-ff.p1
                     WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@

@@ -91,6 +91,8 @@ else()
 
     # rsa-f.t rsa-ff.t3
 
+    # This is indeed the original logic of trsa logic. I don't know why they don't compare x509-f.d. Maybe that's just oversight.
+
     execute_process(COMMAND @CMAKE_COMMAND@ -E compare_files --ignore-eol rsa-f.p rsa-ff.p1
                     WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
                     COMMAND_ERROR_IS_FATAL ANY
@@ -101,6 +103,20 @@ else()
     execute_process(COMMAND @CMAKE_COMMAND@ -E compare_files --ignore-eol rsa-f.p rsa-ff.p3
                     WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
                     COMMAND_ERROR_IS_FATAL ANY
+    )
+
+    # ... I think following are correct, isn't it? -- Fsu0413
+
+    execute_process(COMMAND @CMAKE_COMMAND@ -E compare_files --ignore-eol rsa-f.d rsa-ff.d1
+             WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
+             COMMAND_ERROR_IS_FATAL ANY
+    )
+
+    # rsa-f.d rsa-ff.d2
+
+    execute_process(COMMAND @CMAKE_COMMAND@ -E compare_files --ignore-eol rsa-f.d rsa-ff.d3
+             WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
+             COMMAND_ERROR_IS_FATAL ANY
     )
 
     execute_process(COMMAND @CMAKE_COMMAND@ -E rm -f rsa-fff.p rsa-f.d rsa-f.p rsa-ff.d1 rsa-ff.d3 rsa-ff.p1 rsa-ff.p3
