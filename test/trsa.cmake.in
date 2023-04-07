@@ -91,7 +91,7 @@ else()
 
     # rsa-f.t rsa-ff.t3
 
-    # This is indeed the original logic of trsa logic. I don't know why they don't compare x509-f.d. Maybe that's just oversight.
+    # This is indeed the original logic of trsa logic. I don't know why they don't compare rsa-f.d. Maybe that's just oversight.
 
     execute_process(COMMAND @CMAKE_COMMAND@ -E compare_files --ignore-eol rsa-f.p rsa-ff.p1
                     WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@

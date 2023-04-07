@@ -1,0 +1,93 @@
+
+message(NOTICE "testing pkcs7 conversions")
+execute_process(COMMAND @CMAKE_COMMAND@ -E copy @CMAKE_SOURCE_DIR@/openssl/test/testp7.pem @CMAKE_CURRENT_BINARY_DIR@/p7-fff.p
+                WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
+                COMMAND_ERROR_IS_FATAL ANY
+)
+
+# why doesn't original p7 script use loop?
+
+message(NOTICE "p -> d")
+execute_process(COMMAND @CMAKE_BINARY_DIR@/apps/openssl pkcs7 -in p7-fff.p -inform p -outform d
+                WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
+                OUTPUT_FILE p7-f.d
+                COMMAND_ERROR_IS_FATAL ANY
+)
+
+message(NOTICE "p -> p")
+execute_process(COMMAND @CMAKE_BINARY_DIR@/apps/openssl pkcs7 -in p7-fff.p -inform p -outform p
+                WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
+                OUTPUT_FILE p7-f.p
+                COMMAND_ERROR_IS_FATAL ANY
+)
+
+message(NOTICE "d -> d")
+execute_process(COMMAND @CMAKE_BINARY_DIR@/apps/openssl pkcs7 -in p7-f.d -inform d -outform d
+                WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
+                OUTPUT_FILE p7-ff.d1
+                COMMAND_ERROR_IS_FATAL ANY
+)
+
+message(NOTICE "p -> d")
+execute_process(COMMAND @CMAKE_BINARY_DIR@/apps/openssl pkcs7 -in p7-f.p -inform p -outform d
+                WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
+                OUTPUT_FILE p7-ff.d3
+                COMMAND_ERROR_IS_FATAL ANY
+)
+
+message(NOTICE "d -> p")
+execute_process(COMMAND @CMAKE_BINARY_DIR@/apps/openssl pkcs7 -in p7-f.d -inform d -outform p
+                WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
+                OUTPUT_FILE p7-ff.p1
+                COMMAND_ERROR_IS_FATAL ANY
+)
+
+message(NOTICE "p -> p")
+execute_process(COMMAND @CMAKE_BINARY_DIR@/apps/openssl pkcs7 -in p7-f.p -inform p -outform p
+                WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
+                OUTPUT_FILE p7-ff.p3
+                COMMAND_ERROR_IS_FATAL ANY
+)
+
+execute_process(COMMAND @CMAKE_COMMAND@ -E compare_files --ignore-eol p7-fff.p p7-f.p
+                WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
+                COMMAND_ERROR_IS_FATAL ANY
+)
+
+execute_process(COMMAND @CMAKE_COMMAND@ -E compare_files --ignore-eol p7-fff.p p7-ff.p1
+                WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
+                COMMAND_ERROR_IS_FATAL ANY
+)
+
+execute_process(COMMAND @CMAKE_COMMAND@ -E compare_files --ignore-eol p7-fff.p p7-ff.p3
+                WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
+                COMMAND_ERROR_IS_FATAL ANY
+)
+
+# This is indeed the original logic of tpkcs7 logic. I don't know why they don't compare p7-f.d. Maybe that's just oversight.
+
+execute_process(COMMAND @CMAKE_COMMAND@ -E compare_files --ignore-eol p7-f.p p7-ff.p1
+                WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
+                COMMAND_ERROR_IS_FATAL ANY
+)
+
+execute_process(COMMAND @CMAKE_COMMAND@ -E compare_files --ignore-eol p7-f.p p7-ff.p3
+                WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
+                COMMAND_ERROR_IS_FATAL ANY
+)
+
+# ... I think following are correct, isn't it? -- Fsu0413
+
+execute_process(COMMAND @CMAKE_COMMAND@ -E compare_files --ignore-eol p7-f.d p7-ff.d1
+         WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
+         COMMAND_ERROR_IS_FATAL ANY
+)
+
+execute_process(COMMAND @CMAKE_COMMAND@ -E compare_files --ignore-eol p7-f.d p7-ff.d3
+         WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
+         COMMAND_ERROR_IS_FATAL ANY
+)
+
+execute_process(COMMAND @CMAKE_COMMAND@ -E rm -f p7-fff.p p7-f.d p7-f.p p7-ff.d1 p7-ff.d3 p7-ff.p1 p7-ff.p3
+                WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
+)

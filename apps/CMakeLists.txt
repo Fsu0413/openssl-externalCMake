@@ -129,4 +129,9 @@ if (BUILD_TESTING)
 
     configure_file(${CMAKE_SOURCE_DIR}/openssl/apps/dsa512.pem dsa512.pem COPYONLY) # needed for testgen
     configure_file(${CMAKE_SOURCE_DIR}/openssl/apps/openssl.cnf openssl.cnf COPYONLY) # needed for treq
+
+    if (NOT WIN32)
+        # no such case in "ms/testss.bat"
+        add_test(NAME verify COMMAND openssl verify -CApath ../certs/demo ../certs/demo/*.pem WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} COMMAND_EXPAND_LISTS)
+    endif()
 endif()

@@ -401,6 +401,12 @@ if (BUILD_TESTING)
     target_include_directories(OpenSSLTest INTERFACE "${CMAKE_SOURCE_DIR}/openssl/test")
     target_sources(OpenSSLTest INTERFACE "${CMAKE_SOURCE_DIR}/openssl/test/testutil.h" "${CMAKE_SOURCE_DIR}/openssl/test/ssltestlib.h")
     add_custom_target(check ctest)
+
+    # needed by test_verify
+    configure_file("openssl/certs/demo/ca-cert.pem" "certs/demo/ca-cert.pem" COPYONLY)
+    configure_file("openssl/certs/demo/dsa-ca.pem" "certs/demo/dsa-ca.pem" COPYONLY)
+    configure_file("openssl/certs/demo/dsa-pca.pem" "certs/demo/dsa-pca.pem" COPYONLY)
+    configure_file("openssl/certs/demo/pca-cert.pem" "certs/demo/pca-cert.pem" COPYONLY)
 endif()
 
 add_subdirectory(crypto)

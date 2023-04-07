@@ -50,3 +50,14 @@ add_test(NAME testgen COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/te
 
 configure_file(treq.cmake.in treq.cmake @ONLY)
 add_test(NAME treq COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/treq.cmake WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} COMMAND_EXPAND_LISTS)
+
+configure_file(tpkcs7.cmake.in tpkcs7.cmake @ONLY)
+add_test(NAME tpkcs7 COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/tpkcs7.cmake WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} COMMAND_EXPAND_LISTS)
+
+if (NOT WIN32)
+    # fails on Windows.
+    # "ms/testpem.bat" doesn't test pkcs7-1.pem
+    # Manually add the test cases to "ms/testpem.bat" results in test error.
+    configure_file(tpkcs7d.cmake.in tpkcs7d.cmake @ONLY)
+    add_test(NAME tpkcs7d COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/tpkcs7d.cmake WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} COMMAND_EXPAND_LISTS)
+endif()
