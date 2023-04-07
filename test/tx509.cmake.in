@@ -145,20 +145,20 @@ foreach (TESTFILE IN ITEMS testx509.pem v3-cert1.pem v3-cert2.pem)
 
     # ... I think following are correct, isn't it? -- Fsu0413
 
-    # execute_process(COMMAND @CMAKE_COMMAND@ -E compare_files --ignore-eol x509-f.d x509-ff.d1
-    #                 WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
-    #                 COMMAND_ERROR_IS_FATAL ANY
-    # )
+    execute_process(COMMAND @CMAKE_COMMAND@ -E compare_files --ignore-eol x509-f.d x509-ff.d1
+                 WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
+                 COMMAND_ERROR_IS_FATAL ANY
+    )
 
-    # execute_process(COMMAND @CMAKE_COMMAND@ -E compare_files --ignore-eol x509-f.d x509-ff.d2
-    #                 WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
-    #                 COMMAND_ERROR_IS_FATAL ANY
-    # )
+    execute_process(COMMAND @CMAKE_COMMAND@ -E compare_files --ignore-eol x509-f.d x509-ff.d2
+                 WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
+                 COMMAND_ERROR_IS_FATAL ANY
+    )
 
-    # execute_process(COMMAND @CMAKE_COMMAND@ -E compare_files --ignore-eol x509-f.d x509-ff.d3
-    #                 WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
-    #                 COMMAND_ERROR_IS_FATAL ANY
-    # )
+    execute_process(COMMAND @CMAKE_COMMAND@ -E compare_files --ignore-eol x509-f.d x509-ff.d3
+                 WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
+                 COMMAND_ERROR_IS_FATAL ANY
+    )
 
     execute_process(COMMAND @CMAKE_COMMAND@ -E rm -f x509-fff.p x509-f.d x509-f.n x509-f.p x509-ff.p1 x509-ff.p2 x509-ff.p3 x509-ff.n1 x509-ff.n2 x509-ff.n3 x509-ff.d1 x509-ff.d2 x509-ff.d3
                     WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
