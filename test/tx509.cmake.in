@@ -1,0 +1,173 @@
+
+foreach (TESTFILE IN ITEMS testx509.pem v3-cert1.pem v3-cert2.pem)
+    execute_process(COMMAND @CMAKE_COMMAND@ -E copy @CMAKE_SOURCE_DIR@/openssl/test/${TESTFILE} @CMAKE_CURRENT_BINARY_DIR@/x509-fff.p
+                    WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
+                    COMMAND_ERROR_IS_FATAL ANY
+    )
+
+    # why doesn't original tx509 script use loop?
+
+    message(NOTICE "p -> d")
+    execute_process(COMMAND @CMAKE_BINARY_DIR@/apps/openssl x509 -in x509-fff.p -inform p -outform d
+                    WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
+                    OUTPUT_FILE x509-f.d
+                    COMMAND_ERROR_IS_FATAL ANY
+    )
+
+    message(NOTICE "p -> n")
+    execute_process(COMMAND @CMAKE_BINARY_DIR@/apps/openssl x509 -in x509-fff.p -inform p -outform n
+                    WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
+                    OUTPUT_FILE x509-f.n
+                    COMMAND_ERROR_IS_FATAL ANY
+    )
+
+    message(NOTICE "p -> p")
+    execute_process(COMMAND @CMAKE_BINARY_DIR@/apps/openssl x509 -in x509-fff.p -inform p -outform p
+                    WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
+                    OUTPUT_FILE x509-f.p
+                    COMMAND_ERROR_IS_FATAL ANY
+    )
+
+    message(NOTICE "d -> d")
+    execute_process(COMMAND @CMAKE_BINARY_DIR@/apps/openssl x509 -in x509-f.d -inform d -outform d
+                    WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
+                    OUTPUT_FILE x509-ff.d1
+                    COMMAND_ERROR_IS_FATAL ANY
+    )
+
+    message(NOTICE "n -> d")
+    execute_process(COMMAND @CMAKE_BINARY_DIR@/apps/openssl x509 -in x509-f.n -inform n -outform d
+                    WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
+                    OUTPUT_FILE x509-ff.d2
+                    COMMAND_ERROR_IS_FATAL ANY
+    )
+
+    message(NOTICE "p -> d")
+    execute_process(COMMAND @CMAKE_BINARY_DIR@/apps/openssl x509 -in x509-f.p -inform p -outform d
+                    WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
+                    OUTPUT_FILE x509-ff.d3
+                    COMMAND_ERROR_IS_FATAL ANY
+    )
+
+    message(NOTICE "d -> n")
+    execute_process(COMMAND @CMAKE_BINARY_DIR@/apps/openssl x509 -in x509-f.d -inform d -outform n
+                    WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
+                    OUTPUT_FILE x509-ff.n1
+                    COMMAND_ERROR_IS_FATAL ANY
+    )
+
+    message(NOTICE "n -> n")
+    execute_process(COMMAND @CMAKE_BINARY_DIR@/apps/openssl x509 -in x509-f.n -inform n -outform n
+                    WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
+                    OUTPUT_FILE x509-ff.n2
+                    COMMAND_ERROR_IS_FATAL ANY
+    )
+
+    message(NOTICE "p -> n")
+    execute_process(COMMAND @CMAKE_BINARY_DIR@/apps/openssl x509 -in x509-f.p -inform p -outform n
+                    WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
+                    OUTPUT_FILE x509-ff.n3
+                    COMMAND_ERROR_IS_FATAL ANY
+    )
+
+    message(NOTICE "d -> p")
+    execute_process(COMMAND @CMAKE_BINARY_DIR@/apps/openssl x509 -in x509-f.d -inform d -outform p
+                    WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
+                    OUTPUT_FILE x509-ff.p1
+                    COMMAND_ERROR_IS_FATAL ANY
+    )
+
+    message(NOTICE "n -> p")
+    execute_process(COMMAND @CMAKE_BINARY_DIR@/apps/openssl x509 -in x509-f.n -inform n -outform p
+                    WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
+                    OUTPUT_FILE x509-ff.p2
+                    COMMAND_ERROR_IS_FATAL ANY
+    )
+
+    message(NOTICE "p -> p")
+    execute_process(COMMAND @CMAKE_BINARY_DIR@/apps/openssl x509 -in x509-f.p -inform p -outform p
+                    WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
+                    OUTPUT_FILE x509-ff.p3
+                    COMMAND_ERROR_IS_FATAL ANY
+    )
+
+    execute_process(COMMAND @CMAKE_COMMAND@ -E compare_files --ignore-eol x509-fff.p x509-f.p
+                    WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
+                    COMMAND_ERROR_IS_FATAL ANY
+    )
+
+    execute_process(COMMAND @CMAKE_COMMAND@ -E compare_files --ignore-eol x509-fff.p x509-ff.p1
+                    WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
+                    COMMAND_ERROR_IS_FATAL ANY
+    )
+
+    execute_process(COMMAND @CMAKE_COMMAND@ -E compare_files --ignore-eol x509-fff.p x509-ff.p2
+                    WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
+                    COMMAND_ERROR_IS_FATAL ANY
+    )
+
+    execute_process(COMMAND @CMAKE_COMMAND@ -E compare_files --ignore-eol x509-fff.p x509-ff.p3
+                    WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
+                    COMMAND_ERROR_IS_FATAL ANY
+    )
+
+    execute_process(COMMAND @CMAKE_COMMAND@ -E compare_files --ignore-eol x509-f.n x509-ff.n1
+                    WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
+                    COMMAND_ERROR_IS_FATAL ANY
+    )
+
+    execute_process(COMMAND @CMAKE_COMMAND@ -E compare_files --ignore-eol x509-f.n x509-ff.n2
+                    WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
+                    COMMAND_ERROR_IS_FATAL ANY
+    )
+
+    execute_process(COMMAND @CMAKE_COMMAND@ -E compare_files --ignore-eol x509-f.n x509-ff.n3
+                    WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
+                    COMMAND_ERROR_IS_FATAL ANY
+    )
+
+    # This is indeed the original logic of tx509 logic. I don't know why they don't compare x509-f.d. Maybe that's only oversight.
+
+    execute_process(COMMAND @CMAKE_COMMAND@ -E compare_files --ignore-eol x509-f.p x509-ff.p1
+                    WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
+                    COMMAND_ERROR_IS_FATAL ANY
+    )
+
+    execute_process(COMMAND @CMAKE_COMMAND@ -E compare_files --ignore-eol x509-f.p x509-ff.p2
+                    WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
+                    COMMAND_ERROR_IS_FATAL ANY
+    )
+
+    execute_process(COMMAND @CMAKE_COMMAND@ -E compare_files --ignore-eol x509-f.p x509-ff.p3
+                    WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
+                    COMMAND_ERROR_IS_FATAL ANY
+    )
+
+    # ... I think following are correct, isn't it? -- Fsu0413
+
+    # execute_process(COMMAND @CMAKE_COMMAND@ -E compare_files --ignore-eol x509-f.d x509-ff.d1
+    #                 WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
+    #                 COMMAND_ERROR_IS_FATAL ANY
+    # )
+
+    # execute_process(COMMAND @CMAKE_COMMAND@ -E compare_files --ignore-eol x509-f.d x509-ff.d2
+    #                 WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
+    #                 COMMAND_ERROR_IS_FATAL ANY
+    # )
+
+    # execute_process(COMMAND @CMAKE_COMMAND@ -E compare_files --ignore-eol x509-f.d x509-ff.d3
+    #                 WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
+    #                 COMMAND_ERROR_IS_FATAL ANY
+    # )
+
+    execute_process(COMMAND @CMAKE_COMMAND@ -E rm -f x509-fff.p x509-f.d x509-f.n x509-f.p x509-ff.p1 x509-ff.p2 x509-ff.p3 x509-ff.n1 x509-ff.n2 x509-ff.n3 x509-ff.d1 x509-ff.d2 x509-ff.d3
+                    WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
+    )
+endforeach()
+
+message(NOTICE "Parsing test certificates")
+execute_process(COMMAND @CMAKE_BINARY_DIR@/apps/openssl x509 -in certs/pss1.pem -text -noout
+                WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
+                OUTPUT_QUIET
+                COMMAND_ERROR_IS_FATAL ANY
+)

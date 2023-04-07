@@ -12,6 +12,8 @@ else()
                     COMMAND_ERROR_IS_FATAL ANY
     )
 
+    # why doesn't original trsa script use loop?
+
     message(NOTICE "p -> d")
     execute_process(COMMAND @CMAKE_BINARY_DIR@/apps/openssl rsa -in rsa-fff.p -inform p -outform d
                     WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@

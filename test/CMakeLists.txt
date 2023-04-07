@@ -31,5 +31,8 @@ configure_file(trsa.cmake.in trsa.cmake @ONLY)
 add_test(NAME trsa COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/trsa.cmake WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} COMMAND_EXPAND_LISTS)
 
 configure_file(testenc.cmake.in testenc.cmake @ONLY)
-configure_file(${CMAKE_SOURCE_DIR}/openssl/test/testenc p COPYONLY)
 add_test(NAME testenc COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/testenc.cmake WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} COMMAND_EXPAND_LISTS)
+
+configure_file(tx509.cmake.in tx509.cmake @ONLY)
+configure_file(${CMAKE_SOURCE_DIR}/openssl/test/certs/pss1.pem certs/pss1.pem COPYONLY)
+add_test(NAME tx509 COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/tx509.cmake WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} COMMAND_EXPAND_LISTS)
