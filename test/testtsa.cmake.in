@@ -1,0 +1,246 @@
+
+
+execute_process(COMMAND @CMAKE_COMMAND@ -E copy @CMAKE_SOURCE_DIR@/openssl/test/CAtsa.cnf CAtsa.cnf
+                WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
+                COMMAND_ERROR_IS_FATAL ANY
+)
+
+execute_process(COMMAND @CMAKE_COMMAND@ -E copy @CMAKE_SOURCE_DIR@/openssl/test/testtsa testtsa
+                WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
+                COMMAND_ERROR_IS_FATAL ANY
+)
+
+set(ENV{OPENSSL_CONF} @CMAKE_CURRENT_BINARY_DIR@/CAtsa.cnf)
+set(ENV{SSLEAY_CONFIG} "-config $ENV{OPENSSL_CONF}")
+set(ENV{OPENSSL} @CMAKE_BINARY_DIR@/apps/openssl)
+
+function(clean_up_dir)
+    # cd ..
+    execute_process(COMMAND @CMAKE_COMMAND@ -E rm -rf tsa
+                    WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
+    )
+endfunction()
+
+function(setup_dir)
+    clean_up_dir()
+    execute_process(COMMAND @CMAKE_COMMAND@ -E make_directory tsa
+                    WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
+                    COMMAND_ERROR_IS_FATAL ANY
+    )
+    # cd ./tsa
+endfunction()
+
+function(create_ca)
+    message(NOTICE "Creating a new CA for the TSA tests...")
+    set(ENV{TSDNSECT} "ts_ca_dn")
+    execute_process(COMMAND @CMAKE_BINARY_DIR@/apps/openssl req -new -x509 -nodes -out tsaca.pem -keyout tsacakey.pem
+                    WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@/tsa
+                    COMMAND_ERROR_IS_FATAL ANY
+    )
+endfunction()
+
+function(create_tsa_cert)
+    set(ENV{INDEX} ${ARGV0})
+    set(EXT ${ARGV1})
+    set(ENV{TSDNSECT} "ts_cert_dn")
+    execute_process(COMMAND @CMAKE_BINARY_DIR@/apps/openssl req -new -out tsa_req$ENV{INDEX}.pem -keyout tsa_key$ENV{INDEX}.pem
+                    WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@/tsa
+                    COMMAND_ERROR_IS_FATAL ANY
+    )
+    message(NOTICE "Using extension ${EXT}")
+    execute_process(COMMAND @CMAKE_BINARY_DIR@/apps/openssl x509 -req -in tsa_req$ENV{INDEX}.pem -out tsa_cert$ENV{INDEX}.pem -CA tsaca.pem -CAkey tsacakey.pem -CAcreateserial -extfile $ENV{OPENSSL_CONF} -extensions ${EXT}
+                    WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@/tsa
+                    COMMAND_ERROR_IS_FATAL ANY
+    )
+endfunction()
+
+function(print_request)
+    execute_process(COMMAND @CMAKE_BINARY_DIR@/apps/openssl ts -query -in ${ARGV0} -text
+                    WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@/tsa
+    )
+endfunction()
+
+function(create_time_stamp_request1)
+    execute_process(COMMAND @CMAKE_BINARY_DIR@/apps/openssl ts -query -data ../testtsa -policy tsa_policy1 -cert -out req1.tsq
+                    WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@/tsa
+                    COMMAND_ERROR_IS_FATAL ANY
+    )
+endfunction()
+
+function(create_time_stamp_request2)
+    execute_process(COMMAND @CMAKE_BINARY_DIR@/apps/openssl ts -query -data ../testtsa -policy tsa_policy2 -no_nonce -out req2.tsq
+                    WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@/tsa
+                    COMMAND_ERROR_IS_FATAL ANY
+    )
+endfunction()
+
+function(create_time_stamp_request3)
+    execute_process(COMMAND @CMAKE_BINARY_DIR@/apps/openssl ts -query -data ../CAtsa.cnf -no_nonce -out req3.tsq
+                    WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@/tsa
+                    COMMAND_ERROR_IS_FATAL ANY
+    )
+endfunction()
+
+function(print_response)
+    execute_process(COMMAND @CMAKE_BINARY_DIR@/apps/openssl ts -reply -in ${ARGV0} -text
+                    WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@/tsa
+                    COMMAND_ERROR_IS_FATAL ANY
+    )
+endfunction()
+
+function(create_time_stamp_response)
+    execute_process(COMMAND @CMAKE_BINARY_DIR@/apps/openssl ts -reply -section ${ARGV2} -queryfile ${ARGV0} -out ${ARGV1}
+                    WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@/tsa
+                    COMMAND_ERROR_IS_FATAL ANY
+    )
+endfunction()
+
+function(time_stamp_response_token_test)
+    set(RESPONSE2 ${ARGV1}.copy.tsr)
+    set(TOKEN_DER ${ARGV1}.token.der)
+    execute_process(COMMAND @CMAKE_BINARY_DIR@/apps/openssl ts -reply -in ${ARGV1} -out ${TOKEN_DER} -token_out
+                    WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@/tsa
+                    COMMAND_ERROR_IS_FATAL ANY
+    )
+    execute_process(COMMAND @CMAKE_BINARY_DIR@/apps/openssl ts -reply -in ${TOKEN_DER} -token_in -out ${RESPONSE2}
+                    WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@/tsa
+                    COMMAND_ERROR_IS_FATAL ANY
+    )
+    execute_process(COMMAND @CMAKE_COMMAND@ -E compare_files --ignore-eol ${RESPONSE2} ${ARGV1}
+                    WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@/tsa
+                    COMMAND_ERROR_IS_FATAL ANY
+    )
+    execute_process(COMMAND @CMAKE_BINARY_DIR@/apps/openssl ts -reply -in ${ARGV1} -text -token_out
+                    WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@/tsa
+                    COMMAND_ERROR_IS_FATAL ANY
+    )
+    execute_process(COMMAND @CMAKE_BINARY_DIR@/apps/openssl ts -reply -in ${TOKEN_DER} -token_in -text -token_out
+                    WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@/tsa
+                    COMMAND_ERROR_IS_FATAL ANY
+    )
+    execute_process(COMMAND @CMAKE_BINARY_DIR@/apps/openssl ts -reply -queryfile ${ARGV0} -text -token_out
+                    WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@/tsa
+                    COMMAND_ERROR_IS_FATAL ANY
+    )
+endfunction()
+
+function(verify_time_stamp_response)
+    execute_process(COMMAND @CMAKE_BINARY_DIR@/apps/openssl ts -verify -queryfile ${ARGV0} -in ${ARGV1} -CAfile tsaca.pem -untrusted tsa_cert1.pem
+                    WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@/tsa
+                    COMMAND_ERROR_IS_FATAL ANY
+    )
+    execute_process(COMMAND @CMAKE_BINARY_DIR@/apps/openssl ts -verify -data ${ARGV2} -in ${ARGV1} -CAfile tsaca.pem -untrusted tsa_cert1.pem
+                    WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@/tsa
+                    COMMAND_ERROR_IS_FATAL ANY
+    )
+endfunction()
+
+function(verify_time_stamp_token)
+    execute_process(COMMAND @CMAKE_BINARY_DIR@/apps/openssl ts -reply -in ${ARGV1} -out ${ARGV1}.token -token_out
+                    WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@/tsa
+                    COMMAND_ERROR_IS_FATAL ANY
+    )
+    execute_process(COMMAND @CMAKE_BINARY_DIR@/apps/openssl ts -verify -queryfile ${ARGV0} -in ${ARGV1}.token -token_in -CAfile tsaca.pem -untrusted tsa_cert1.pem
+                    WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@/tsa
+                    COMMAND_ERROR_IS_FATAL ANY
+    )
+    execute_process(COMMAND @CMAKE_BINARY_DIR@/apps/openssl ts -verify -data ${ARGV2} -in ${ARGV1}.token -token_in -CAfile tsaca.pem -untrusted tsa_cert1.pem
+                    WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@/tsa
+                    COMMAND_ERROR_IS_FATAL ANY
+    )
+endfunction()
+
+function(verify_time_stamp_response_fail)
+    execute_process(COMMAND @CMAKE_BINARY_DIR@/apps/openssl ts -verify -queryfile ${ARGV0} -in ${ARGV1} -CAfile tsaca.pem -untrusted tsa_cert1.pem
+                    WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@/tsa
+                    RESULT_VARIABLE verify_time_stamp_response_fail_RESULT
+    )
+    if (verify_time_stamp_response_fail_RESULT EQUAL 0)
+        message(FATAL_ERROR "verify_time_stamp_response_fail")
+    endif()
+endfunction()
+
+# main functions
+
+message(NOTICE "Setting up TSA test directory...")
+setup_dir()
+
+message(NOTICE "Creating CA for TSA tests...")
+create_ca()
+
+message(NOTICE "Creating tsa_cert1.pem TSA server cert...")
+create_tsa_cert(1 tsa_cert)
+
+message(NOTICE "Creating tsa_cert2.pem non-TSA server cert...")
+create_tsa_cert(2 non_tsa_cert)
+
+message(NOTICE "Creating req1.req time stamp request for file testtsa...")
+create_time_stamp_request1()
+
+message(NOTICE "Printing req1.req...")
+print_request(req1.tsq)
+
+message(NOTICE "Generating valid response for req1.req...")
+create_time_stamp_response(req1.tsq resp1.tsr tsa_config1)
+
+message(NOTICE "Printing response...")
+print_response(resp1.tsr)
+
+message(NOTICE "Verifying valid response...")
+verify_time_stamp_response(req1.tsq resp1.tsr ../testtsa)
+
+message(NOTICE "Verifying valid token...")
+verify_time_stamp_token(req1.tsq resp1.tsr ../testtsa)
+
+# The tests below are commented out, because invalid signer certificates
+# can no longer be specified in the config file.
+
+# message(NOTICE "Generating _invalid_ response for req1.req...")
+# create_time_stamp_response(req1.tsq resp1_bad.tsr tsa_config2)
+
+# message(NOTICE "Printing response...")
+# print_response(resp1_bad.tsr)
+
+# message(NOTICE "Verifying invalid response, it should fail...")
+# verify_time_stamp_response_fail(req1.tsq resp1_bad.tsr)
+
+message(NOTICE "Creating req2.req time stamp request for file testtsa...")
+create_time_stamp_request2()
+
+message(NOTICE "Printing req2.req...")
+print_request(req2.tsq)
+
+message(NOTICE "Generating valid response for req2.req...")
+create_time_stamp_response(req2.tsq resp2.tsr tsa_config1)
+
+message(NOTICE "Checking '-token_in' and '-token_out' options with '-reply'...")
+time_stamp_response_token_test(req2.tsq resp2.tsr)
+
+message(NOTICE "Printing response...")
+print_response(resp2.tsr)
+
+message(NOTICE "Verifying valid response...")
+verify_time_stamp_response(req2.tsq resp2.tsr ../testtsa)
+
+message(NOTICE "Verifying response against wrong request, it should fail...")
+verify_time_stamp_response_fail(req1.tsq resp2.tsr)
+
+message(NOTICE "Verifying response against wrong request, it should fail...")
+verify_time_stamp_response_fail(req2.tsq resp1.tsr)
+
+message(NOTICE "Creating req3.req time stamp request for file CAtsa.cnf...")
+create_time_stamp_request3()
+
+message(NOTICE "Printing req3.req...")
+print_request(req3.tsq)
+
+message(NOTICE "Verifying response against wrong request, it should fail...")
+verify_time_stamp_response_fail(req3.tsq resp1.tsr)
+
+message(NOTICE "Cleaning up...")
+clean_up_dir()
+
+execute_process(COMMAND @CMAKE_COMMAND@ -E rm -rf CAtsa.cnf testtsa
+                WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
+                COMMAND_ERROR_IS_FATAL ANY
+)
