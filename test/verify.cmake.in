@@ -1,0 +1,24 @@
+
+execute_process(COMMAND @CMAKE_COMMAND@ -E copy_directory @CMAKE_SOURCE_DIR@/openssl/certs/demo @CMAKE_BINARY_DIR@/certs/demo
+                WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
+                COMMAND_ERROR_IS_FATAL ANY
+)
+
+set(ENV{OPENSSL} @CMAKE_BINARY_DIR@/apps/openssl@CMAKE_EXECUTABLE_SUFFIX@)
+
+execute_process(COMMAND @CMAKE_COMMAND@ -E environment
+)
+
+execute_process(COMMAND @PERL_EXECUTABLE@ @CMAKE_BINARY_DIR@/tools/c_rehash ../certs/demo
+                WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
+                COMMAND_ERROR_IS_FATAL ANY
+)
+
+execute_process(COMMAND @CMAKE_BINARY_DIR@/apps/openssl verify -CApath ../certs/demo ../certs/demo/ca-cert.pem ../certs/demo/dsa-ca.pem ../certs/demo/dsa-pca.pem ../certs/demo/pca-cert.pem
+                WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
+                COMMAND_ERROR_IS_FATAL ANY
+)
+
+execute_process(COMMAND @CMAKE_COMMAND@ -E rm -rf @CMAKE_BINARY_DIR@/certs/demo
+                WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
+)

@@ -55,5 +55,8 @@ add_test(NAME tpkcs7 COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/tpk
 configure_file(tpkcs7d.cmake.in tpkcs7d.cmake @ONLY)
 add_test(NAME tpkcs7d COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/tpkcs7d.cmake WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} COMMAND_EXPAND_LISTS)
 
+configure_file(verify.cmake.in verify.cmake @ONLY)
+add_test(NAME verify COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/verify.cmake WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} COMMAND_EXPAND_LISTS)
+
 configure_file(tocsp.cmake.in tocsp.cmake @ONLY)
 add_test(NAME tocsp COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/tocsp.cmake WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} COMMAND_EXPAND_LISTS)
