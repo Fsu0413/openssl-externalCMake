@@ -166,8 +166,15 @@ foreach (TESTFILE IN ITEMS testx509.pem v3-cert1.pem v3-cert2.pem)
 endforeach()
 
 message(NOTICE "Parsing test certificates")
+execute_process(COMMAND @CMAKE_COMMAND@ -E copy @CMAKE_SOURCE_DIR@/openssl/test/certs/pss1.pem certs/pss1.pem
+                WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
+                COMMAND_ERROR_IS_FATAL ANY
+)
 execute_process(COMMAND @CMAKE_BINARY_DIR@/apps/openssl x509 -in certs/pss1.pem -text -noout
                 WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
                 OUTPUT_QUIET
                 COMMAND_ERROR_IS_FATAL ANY
+)
+execute_process(COMMAND @CMAKE_COMMAND@ -E rm -f certs/pss1.pem
+                WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
 )
