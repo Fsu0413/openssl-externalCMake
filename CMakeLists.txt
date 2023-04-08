@@ -404,7 +404,14 @@ if (BUILD_TESTING)
     add_library(OpenSSLTest INTERFACE)
     target_include_directories(OpenSSLTest INTERFACE "${CMAKE_SOURCE_DIR}/openssl/test")
     target_sources(OpenSSLTest INTERFACE "${CMAKE_SOURCE_DIR}/openssl/test/testutil.h" "${CMAKE_SOURCE_DIR}/openssl/test/ssltestlib.h")
-    add_custom_target(check ctest)
+    add_custom_target(check ${CMAKE_CTEST_COMMAND})
+
+    # builtin "make test" is useless for us.
+    # it does not build the dependencies needed for our test.
+    # cmake_policy(PUSH)
+    # cmake_policy(SET CMP0037 OLD)
+    # add_custom_target(test DEPENDS check)
+    # cmake_policy(POP)
 endif()
 
 add_subdirectory(crypto)

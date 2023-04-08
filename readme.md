@@ -87,11 +87,12 @@ Just typical CMake procedure will work.
 Sort by priority
 
 1. `make check` support
+1. Run build and test from GitHub Actions
 1. 1.1.1 series support
 1. 3.0 series support
 1. 3.1 series support
 1. 3.2 series support
-1. Check cross build for Android (arm, arm64, x86)
+1. Check cross build for Android (arm, arm64, x86) / issue: how to test cross-build platform?
 1. Check build with krb5 - don't compile on 1.0.2 branch on arm64 macOS. Will try Windows and Linux
 1. `OpenSSLConfig.cmake` generation
 1. 1.1.0 series support
