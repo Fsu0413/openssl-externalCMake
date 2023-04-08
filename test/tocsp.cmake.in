@@ -17,7 +17,7 @@ function(test_ocsp)
                     OUTPUT_FILE test_ocsp_pipe_${ARGV0}_1
                     )
     if (TEST_OCSP_RESULT EQUAL 0)
-        execute_process(COMMAND @CMAKE_BINARY_DIR@/apps/openssl ocsp -respin - -partial_chain -attime 1355875200 -trusted_first -CAfile ocsp-tests/${ARGV1} -verify_other ocsp-tests/${ARGV1} -CApath /dev/null
+        execute_process(COMMAND @CMAKE_BINARY_DIR@/apps/openssl ocsp -respin - -partial_chain -attime 1355875200 -trusted_first -CAfile ocsp-tests/${ARGV1} -verify_other ocsp-tests/${ARGV1} -CApath ${DEVNULL}
                         WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
                         RESULT_VARIABLE TEST_OCSP_RESULT
                         INPUT_FILE test_ocsp_pipe_${ARGV0}_1
