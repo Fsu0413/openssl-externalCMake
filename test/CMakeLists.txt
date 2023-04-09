@@ -61,6 +61,12 @@ add_test(NAME verify COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/ver
 configure_file(testss.cmake.in testss.cmake @ONLY)
 add_test(NAME testss COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/testss.cmake WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} COMMAND_EXPAND_LISTS)
 
+#configure_file(testssl.cmake.in testssl.cmake @ONLY)
+#configure_file(testsslproxy.cmake.in testsslproxy.cmake @ONLY)
+# not ready
+add_test(NAME ssltests COMMAND ${CMAKE_COMMAND} -E true WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} COMMAND_EXPAND_LISTS)
+set_tests_properties(ssltests PROPERTIES DEPENDS "testss;ssltest")
+
 configure_file(cms.cmake.in cms.cmake @ONLY)
 add_test(NAME cms COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/cms.cmake WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} COMMAND_EXPAND_LISTS)
 

@@ -120,11 +120,10 @@ if (BUILD_TESTING)
         add_dependencies(check copycrypto_ssl)
     endif()
 
-    # TODO: add testing program
     add_executable(ssltest EXCLUDE_FROM_ALL ${CMAKE_SOURCE_DIR}/openssl/ssl/ssltest.c)
     target_link_libraries(ssltest PUBLIC OpenSSLTest crypto ssl)
     add_dependencies(check ssltest)
-    # add_test(NAME ssltest COMMAND ssltest WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} COMMAND_EXPAND_LISTS)
+    add_test(NAME ssltest COMMAND ssltest -test_cipherlist WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} COMMAND_EXPAND_LISTS) # rest of test_ssl checks are put into /test directory
 
     add_executable(heartbeat_test EXCLUDE_FROM_ALL ${CMAKE_SOURCE_DIR}/openssl/ssl/heartbeat_test.c)
     target_link_libraries(heartbeat_test PUBLIC OpenSSLTest crypto ssl)
