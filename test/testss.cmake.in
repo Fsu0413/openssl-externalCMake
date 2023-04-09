@@ -1,0 +1,189 @@
+
+execute_process(COMMAND @CMAKE_COMMAND@ -E copy @CMAKE_SOURCE_DIR@/openssl/test/CAss.cnf @CMAKE_SOURCE_DIR@/openssl/test/Uss.cnf @CMAKE_SOURCE_DIR@/openssl/test/P1ss.cnf @CMAKE_SOURCE_DIR@/openssl/test/P2ss.cnf @CMAKE_CURRENT_BINARY_DIR@
+                WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
+                COMMAND_ERROR_IS_FATAL ANY
+)
+
+set(digest "-sha1")
+set(reqcmd "@CMAKE_BINARY_DIR@/apps/openssl" "req")
+set(x509cmd "@CMAKE_BINARY_DIR@/apps/openssl" "x509" "${digest}")
+set(verifycmd "@CMAKE_BINARY_DIR@/apps/openssl" "verify")
+set(dummycnf "@CMAKE_SOURCE_DIR@/openssl/apps/openssl.cnf")
+
+set(CAkey "keyCA.ss")
+set(CAcert "certCA.ss")
+set(CAreq "reqCA.ss")
+set(CAconf "CAss.cnf")
+set(CAreq2 "req2CA.ss")
+
+set(Uconf "Uss.cnf")
+set(Ukey "keyU.ss")
+set(Ureq "reqU.ss")
+set(Ucert "certU.ss")
+
+set(P1conf "P1ss.cnf")
+set(P1key "keyP1.ss")
+set(P1req "reqP1.ss")
+set(P1cert "certP1.ss")
+set(P1intermediate "tmp_intP1.ss")
+
+set(P2conf "P2ss.cnf")
+set(P2key "keyP2.ss")
+set(P2req "reqP2.ss")
+set(P2cert "certP2.ss")
+set(P2intermediate "tmp_intP2.ss")
+
+message(NOTICE "make a certificate request using 'req'")
+file(WRITE ".rnd" "string to make the random number generator think it has entropy")
+
+execute_process(COMMAND @CMAKE_BINARY_DIR@/apps/openssl no-rsa
+                WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
+                RESULT_VARIABLE NO_RSA_VAR
+)
+
+if (NO_RSA_VAR EQUAL 0)
+    set(REQ_NEW "-newkey" "dsa:../apps/dsa512.pem")
+else()
+    set(REQ_NEW "-new")
+endif()
+
+execute_process(COMMAND ${reqcmd} -config ${CAconf} -out ${CAreq} -keyout ${CAkey} ${REQ_NEW}
+                WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
+                COMMAND_ERROR_IS_FATAL ANY
+)
+
+message(NOTICE "convert the certificate request into a self signed certificate using 'x509'")
+
+execute_process(COMMAND ${x509cmd} -CAcreateserial -in ${CAreq} -days 30 -req -out ${CAcert} -signkey ${CAkey} -extfile ${CAconf} -extensions v3_ca
+                WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
+                COMMAND_ERROR_IS_FATAL ANY
+)
+
+message(NOTICE "convert a certificate into a certificate request using 'x509'")
+
+execute_process(COMMAND ${x509cmd} -in ${CAcert} -x509toreq -signkey ${CAkey} -out ${CAreq2}
+                WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
+                COMMAND_ERROR_IS_FATAL ANY
+)
+
+execute_process(COMMAND ${reqcmd} -config ${dummycnf} -verify -in ${CAreq} -noout
+                WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
+                COMMAND_ERROR_IS_FATAL ANY
+)
+
+
+execute_process(COMMAND ${reqcmd} -config ${dummycnf} -verify -in ${CAreq2} -noout
+                WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
+                COMMAND_ERROR_IS_FATAL ANY
+)
+
+
+execute_process(COMMAND ${verifycmd} -CAfile ${CAcert} ${CAcert}
+                WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
+                COMMAND_ERROR_IS_FATAL ANY
+)
+
+message(NOTICE "make a user certificate request using 'req'")
+
+execute_process(COMMAND ${reqcmd} -config ${Uconf} -out ${Ureq} -keyout ${Ukey} ${REQ_NEW}
+                WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
+                COMMAND_ERROR_IS_FATAL ANY
+)
+
+message(NOTICE "sign user certificate request with the just created CA via 'x509'")
+
+execute_process(COMMAND ${x509cmd} -CAcreateserial -in ${Ureq} -days 30 -req -out ${Ucert} -CA ${CAcert} -CAkey ${CAkey} -extfile ${Uconf} -extensions v3_ee
+                WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
+                COMMAND_ERROR_IS_FATAL ANY
+)
+
+execute_process(COMMAND ${verifycmd} -CAfile ${CAcert} ${Ucert}
+                WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
+                # COMMAND_ERROR_IS_FATAL ANY
+)
+
+message(NOTICE "Certificate details")
+
+execute_process(COMMAND ${x509cmd} -subject -issuer -startdate -enddate -noout -in ${Ucert}
+                WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
+                # COMMAND_ERROR_IS_FATAL ANY
+)
+
+message(NOTICE "make a proxy certificate request using 'req'")
+
+
+execute_process(COMMAND ${reqcmd} -config ${P1conf} -out ${P1req} -keyout ${P1key} ${REQ_NEW}
+                WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
+                COMMAND_ERROR_IS_FATAL ANY
+)
+
+message(NOTICE "sign proxy certificate request with the just created user certificate via 'x509'")
+
+execute_process(COMMAND ${x509cmd} -CAcreateserial -in ${P1req} -days 30 -req -out ${P1cert} -CA ${Ucert} -CAkey ${Ukey} -extfile ${P1conf} -extensions v3_proxy
+                WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
+                COMMAND_ERROR_IS_FATAL ANY
+)
+
+execute_process(COMMAND @CMAKE_COMMAND@ -E copy ${Ucert} ${P1intermediate}
+                WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
+                # COMMAND_ERROR_IS_FATAL ANY
+)
+
+execute_process(COMMAND ${verifycmd} -CAfile ${CAcert} -untrusted ${P1intermediate} ${P1cert}
+                WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
+                # COMMAND_ERROR_IS_FATAL ANY
+)
+
+message(NOTICE "Certificate details")
+
+execute_process(COMMAND ${x509cmd} -subject -issuer -startdate -enddate -noout -in ${P1cert}
+                WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
+                # COMMAND_ERROR_IS_FATAL ANY
+)
+
+message(NOTICE "make another proxy certificate request using 'req'")
+
+execute_process(COMMAND ${reqcmd} -config ${P2conf} -out ${P2req} -keyout ${P2key} ${REQ_NEW}
+                WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
+                COMMAND_ERROR_IS_FATAL ANY
+)
+
+message(NOTICE "sign second proxy certificate request with the first proxy certificate via 'x509'")
+
+execute_process(COMMAND ${x509cmd} -CAcreateserial -in ${P2req} -days 30 -req -out ${P2cert} -CA ${P1cert} -CAkey ${P1key} -extfile ${P2conf} -extensions v3_proxy
+                WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
+                COMMAND_ERROR_IS_FATAL ANY
+)
+
+execute_process(COMMAND @CMAKE_COMMAND@ -E copy ${P1cert} ${P2intermediate}
+                WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
+                # COMMAND_ERROR_IS_FATAL ANY
+)
+
+execute_process(COMMAND ${verifycmd} -CAfile ${CAcert} -untrusted ${P2intermediate} ${P2cert}
+                WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
+                # COMMAND_ERROR_IS_FATAL ANY
+)
+
+message(NOTICE "Certificate details")
+
+execute_process(COMMAND ${x509cmd} -subject -issuer -startdate -enddate -noout -in ${P2cert}
+                WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
+                # COMMAND_ERROR_IS_FATAL ANY
+)
+
+message(NOTICE "The generated CA certificate is ${CAcert}")
+message(NOTICE "The generated CA private key is ${CAkey}")
+
+message(NOTICE "The generated user certificate is ${Ucert}")
+message(NOTICE "The generated user private key is ${Ukey}")
+
+message(NOTICE "The first generated proxy certificate is ${P1cert}")
+message(NOTICE "The first generated proxy private key is ${P1key}")
+
+message(NOTICE "The second generated proxy certificate is ${P2cert}")
+message(NOTICE "The second generated proxy private key is ${P2key}")
+
+execute_process(COMMAND @CMAKE_COMMAND@ -E rm -f CAss.cnf Uss.cnf P1ss.cnf P2ss.cnf .rnd
+                WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
+)
