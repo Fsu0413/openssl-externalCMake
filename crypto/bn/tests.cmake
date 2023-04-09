@@ -16,18 +16,18 @@ function(bc_validator)
                     OUTPUT_VARIABLE SUNOS_BCBUG_CHECKER
                     INPUT_FILE ${CMAKE_SOURCE_DIR}/crypto/bn/sunos-bcbug.bc
                     OUTPUT_STRIP_TRAILING_WHITESPACE
-                    COMMAND_ERROR_IS_FATAL ANY
+                    RESULT_VARIABLE BCBUG_CHECKER_RESULT
     )
-    if (NOT SUNOS_BCBUG_CHECKER EQUAL 0)
+    if ( ( NOT BCBUG_CHECKER_RESULT EQUAL 0 ) OR ( NOT SUNOS_BCBUG_CHECKER STREQUAL "0" ) )
         return()
     endif()
     execute_process(COMMAND ${ARGV1}
                     OUTPUT_VARIABLE SCO_BCBUG_CHECKER
                     INPUT_FILE ${CMAKE_SOURCE_DIR}/crypto/bn/sco-bcbug.bc
                     OUTPUT_STRIP_TRAILING_WHITESPACE
-                    COMMAND_ERROR_IS_FATAL ANY
+                    RESULT_VARIABLE BCBUG_CHECKER_RESULT
     )
-    if (NOT SCO_BCBUG_CHECKER EQUAL "0\n0")
+    if ( ( NOT BCBUG_CHECKER_RESULT EQUAL 0 ) OR ( NOT SCO_BCBUG_CHECKER STREQUAL "0\n0" ) )
         return()
     endif()
     set(${ARGV0} true PARENT_SCOPE)
