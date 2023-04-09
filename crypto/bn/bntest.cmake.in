@@ -1,0 +1,52 @@
+
+message(NOTICE "starting big number library test, could take a while...")
+
+execute_process(COMMAND @CMAKE_BINARY_DIR@/crypto/bntest
+                OUTPUT_VARIABLE BNTEST_OUT
+                WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
+                COMMAND_ERROR_IS_FATAL ANY
+)
+
+string(APPEND BNTEST_OUT "\nquit\n")
+
+if (@BC_NEED_PRINT_WRAPPER@)
+    string(REGEX REPLACE "print[^\n]\n" "\n" BNTEST_REPLACED ${BNTEST_OUT})
+    file(WRITE tmp.bntest ${BNTEST_REPLACED})
+else()
+    file(WRITE tmp.bntest ${BNTEST_OUT})
+endif()
+
+message(NOTICE "running bc")
+
+# The original Perl-based implementation does not work.
+# Check passed only due to the bntest executable produced wrong output. This output is illegal in bc so bc produced empty output.
+# This makes the following Perl instruction passes.
+
+# ~/openssl/openssl/test macOS_13.3.1 ((OpenSSL_1_0_2u))
+# $ ./bntest
+# No BN support
+
+# Test code can't be run if BN support is not built in, since it is guarded by OPENSSL_NO_BN CMake configuration
+
+# We'd implement it ourselves.
+
+execute_process(COMMAND @BC@
+                # COMMAND @PERL_EXECUTABLE@ -e [[$$i=0; while (<STDIN>) {if (/^test (.*)/) {print STDERR "\nverify $$1";} elsif (!/^0\r?$$/) {die "\nFailed! bc: $$_";} else {print STDERR "."; $$i++;}} print STDERR "\n$$i tests passed\n"]]
+                INPUT_FILE tmp.bntest
+                OUTPUT_STRIP_TRAILING_WHITESPACE
+                OUTPUT_VARIABLE BCTEST_OUT
+                WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
+                COMMAND_ERROR_IS_FATAL ANY
+)
+
+string(REGEX REPLACE "\r?\n" ";" BCTEST_OUT_LIST ${BCTEST_OUT})
+
+foreach(BC_TEST_OUT_LINE IN LISTS BCTEST_OUT_LIST)
+    if (BC_TEST_OUT_LINE MATCHES "^test (.*)$")
+        message(NOTICE "verify ${CMAKE_MATCH_1}")
+    elseif (BC_TEST_OUT_LINE STREQUAL "0")
+        # pass
+    else()
+        message(FATAL_ERROR "BC test failed: \"${BC_TEST_OUT_LINE}\"")
+    endif()
+endforeach()
