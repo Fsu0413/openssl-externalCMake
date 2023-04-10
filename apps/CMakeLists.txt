@@ -106,6 +106,10 @@ install(FILES ${CMAKE_CURRENT_BINARY_DIR}/openssl.pc
     DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig
 )
 
+if (NOT WIN32)
+    configure_file(${CMAKE_SOURCE_DIR}/openssl/apps/CA.sh CA.sh COPYONLY)
+endif()
+
 if (BUILD_TESTING)
     add_dependencies(check openssl)
 
@@ -126,6 +130,11 @@ if (BUILD_TESTING)
         add_custom_target(copyssl_apps DEPENDS "${CMAKE_BINARY_DIR}/apps/ssleay32.dll")
         add_dependencies(check copyssl_apps)
     endif()
+
+    if (NOT WIN32 AND NOT OPENSSL_NO_RSA)
+        add_test(NAME testca COMMAND sh ${CMAKE_SOURCE_DIR}/openssl/test/testca WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/test COMMAND_EXPAND_LISTS)
+    endif()
+
     configure_file(${CMAKE_SOURCE_DIR}/openssl/apps/dsa512.pem dsa512.pem COPYONLY) # needed for testgen / testss
     configure_file(${CMAKE_SOURCE_DIR}/openssl/apps/openssl.cnf openssl.cnf COPYONLY) # needed for treq
     configure_file(${CMAKE_SOURCE_DIR}/openssl/apps/server.pem server.pem COPYONLY) # needed for ssltest

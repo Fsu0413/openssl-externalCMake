@@ -187,3 +187,15 @@ message(NOTICE "The second generated proxy private key is ${P2key}")
 execute_process(COMMAND @CMAKE_COMMAND@ -E rm -f CAss.cnf Uss.cnf P1ss.cnf P2ss.cnf .rnd
                 WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
 )
+
+execute_process(COMMAND @CMAKE_COMMAND@ -E cat certCA.ss certU.ss
+                WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
+                OUTPUT_FILE intP1.ss
+                COMMAND_ERROR_IS_FATAL ANY
+)
+
+execute_process(COMMAND @CMAKE_COMMAND@ -E cat certCA.ss certU.ss certP1.ss
+                WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
+                OUTPUT_FILE intP2.ss
+                COMMAND_ERROR_IS_FATAL ANY
+)
