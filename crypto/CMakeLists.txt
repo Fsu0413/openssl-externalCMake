@@ -659,6 +659,12 @@ if (WIN32)
     )
 endif()
 
+if (OPENSSL_DSO)
+    target_link_libraries(crypto
+        PUBLIC ${CMAKE_DL_LIBS}
+    )
+endif()
+
 install(TARGETS crypto
     RUNTIME
     LIBRARY
