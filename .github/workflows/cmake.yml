@@ -1,0 +1,172 @@
+name: CMake
+
+on: [push]
+
+jobs:
+  build-ubuntu:
+    strategy:
+      fail-fast: false
+      matrix:
+        runner:
+          - ver: "18.04"
+            codename: "bionic"
+          - ver: "20.04"
+            codename: "focal"
+          - ver: "22.04"
+            codename: "jammy"
+        asm: [ "YES", "NO" ]
+        zlib: [ "YES", "NO" ]
+    continue-on-error: true
+    runs-on: ubuntu-${{ matrix.runner.ver }}
+    name: build-ubuntu-${{ matrix.runner.ver }} (ASM: ${{ matrix.asm }}, Zlib: ${{ matrix.zlib }})
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: true
+          path: openssl-externalCMake
+      - name: add CMake repository and needed softwares
+        run: |
+          wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null | gpg --dearmor - | sudo tee /usr/share/keyrings/kitware-archive-keyring.gpg >/dev/null
+          echo 'deb [signed-by=/usr/share/keyrings/kitware-archive-keyring.gpg] https://apt.kitware.com/ubuntu/ ${{ matrix.runner.codename }} main' | sudo tee /etc/apt/sources.list.d/kitware.list >/dev/null
+          sudo apt-get update
+          sudo apt-get install cmake ninja-build perl build-essential zlib1g-dev
+      - name: run CMake + Ninja
+        run: |
+          mkdir -p "build"
+          cd "build"
+          cmake -GNinja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}/install" -DOPENSSL_ASM=${{ matrix.asm }} -DOPENSSL_ZLIB=${{ matrix.zlib }} "${{ github.workspace }}/openssl-externalCMake"
+          ninja
+          cmake --install . --strip
+      - name: run test
+        run: |
+          cd "build"
+          ninja check
+
+  build-macOS:
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [ "11", "12", "10.15" ]
+        asm: [ "YES", "NO" ]
+        zlib: [ "YES", "NO" ]
+    continue-on-error: true
+    runs-on: macos-${{ matrix.runner }}
+    name: build-macOS${{ matrix.runner }} (ASM: ${{ matrix.asm }}, Zlib: ${{ matrix.zlib }})
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: true
+          path: openssl-externalCMake
+      - name: install cmake and ninja
+        run: |
+          brew update
+          brew install cmake ninja
+      - name: run CMake + Ninja
+        run: |
+          mkdir -p "build"
+          cd "build"
+          cmake -GNinja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}/install" -DOPENSSL_ASM=${{ matrix.asm }} -DOPENSSL_ZLIB=${{ matrix.zlib }} "${{ github.workspace }}/openssl-externalCMake"
+          ninja
+          cmake --install . --strip
+      - name: run test
+        run: |
+          cd "build"
+          ninja check
+
+  build-MinGW:
+    strategy:
+      fail-fast: false
+      matrix:
+        toolchain:
+          - version: "8.1.0"
+            bit: "32"
+            url: "https://sourceforge.net/projects/mingw-w64/files/Toolchains%20targetting%20Win32/Personal%20Builds/mingw-builds/8.1.0/threads-posix/dwarf/i686-8.1.0-release-posix-dwarf-rt_v6-rev0.7z"
+          - version: "8.1.0"
+            bit: "64"
+            url: "https://sourceforge.net/projects/mingw-w64/files/Toolchains%20targetting%20Win64/Personal%20Builds/mingw-builds/8.1.0/threads-posix/seh/x86_64-8.1.0-release-posix-seh-rt_v6-rev0.7z"
+          - version: "11.2.0"
+            bit: "32"
+            url: "https://github.com/cristianadam/mingw-builds/releases/download/v11.2.0-rev4/i686-11.2.0-release-posix-dwarf-rt_v9-rev4.7z"
+          - version: "12.1.0"
+            bit: "64"
+            url: "https://github.com/cristianadam/mingw-builds/releases/download/v12.1.0-rev0/x86_64-12.1.0-release-posix-seh-rt_v10-rev0.7z"
+        asm: [ "YES", "NO" ]
+    continue-on-error: true
+    runs-on: windows-latest
+    name: build-MinGW-GCC${{ matrix.toolchain.version }}-${{ matrix.toolchain.bit }}bit (ASM: ${{ matrix.asm }})
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: true
+          path: openssl-externalCMake
+      - name: add CMake repository and needed softwares
+        run: |
+          choco install cmake
+          choco install ninja
+      - name: install MinGW toolchain
+        run: |
+          New-Item -Path "." -Name "mingw" -ItemType "directory";
+          (New-Object System.Net.WebClient).DownloadFile("${{ matrix.toolchain.url }}","mingw/mingw.7z");
+          cmd /c cd mingw "&&" 7z x mingw.7z
+      - name: run CMake + Ninja
+        shell: cmd
+        run: |
+          del /s /q C:\Strawberry\perl\bin\pkg-config.bat
+          set path=${{ github.workspace }}\mingw\mingw${{ matrix.toolchain.bit }}\\bin;%path%
+          mkdir -p "build"
+          cd "build"
+          cmake -GNinja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}/install" -DOPENSSL_ASM=${{ matrix.asm }} "${{ github.workspace }}/openssl-externalCMake"
+          ninja
+          cmake --install . --strip
+      - name: run test
+        shell: cmd
+        run: |
+          cd "build"
+          ninja check
+
+  build-msvc:
+    strategy:
+      fail-fast: false
+      matrix:
+        toolchain:
+          - version: 2022
+            runson: 2022
+            call: "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
+            bit: "64"
+          - version: 2019
+            runson: 2019
+            call: "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
+            bit: "64"
+          - version: 2019
+            runson: 2019
+            call: "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvarsamd64_x86.bat"
+            bit: "32"
+        asm: [ "YES", "NO" ]
+    continue-on-error: true
+    runs-on: windows-${{ matrix.toolchain.runson }}
+    name: build-MSVC${{ matrix.toolchain.version }}-${{ matrix.toolchain.bit }}bit (ASM: ${{ matrix.asm }})
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: true
+          path: openssl-externalCMake
+      - name: add CMake repository and needed softwares
+        run: |
+          choco install cmake
+          choco install ninja
+      - name: run CMake + Ninja
+        shell: cmd
+        run: |
+          del /s /q C:\Strawberry\perl\bin\pkg-config.bat
+          call "${{ matrix.toolchain.call }}"
+          mkdir -p "build"
+          cd "build"
+          cmake -GNinja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}/install" -DOPENSSL_ASM=${{ matrix.asm }} "${{ github.workspace }}/openssl-externalCMake"
+          ninja
+          cmake --install . --strip
+      - name: run test
+        shell: cmd
+        run: |
+          cd "build"
+          ninja check
+
