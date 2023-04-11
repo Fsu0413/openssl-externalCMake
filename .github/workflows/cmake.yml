@@ -129,17 +129,17 @@ jobs:
       fail-fast: false
       matrix:
         toolchain:
-          - version: 2022
-            runson: 2022
-            call: "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
+          - version: "2022"
+            runson: "2022"
+            call: C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat
             bit: "64"
-          - version: 2019
-            runson: 2019
-            call: "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
+          - version: "2019"
+            runson: "2019"
+            call: C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat
             bit: "64"
-          - version: 2019
-            runson: 2019
-            call: "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvarsamd64_x86.bat"
+          - version: "2019"
+            runson: "2019"
+            call: C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvarsamd64_x86.bat
             bit: "32"
         asm: [ "YES", "NO" ]
     continue-on-error: true
