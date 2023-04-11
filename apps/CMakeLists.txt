@@ -132,7 +132,7 @@ if (BUILD_TESTING)
     endif()
 
     if (NOT WIN32 AND NOT OPENSSL_NO_RSA)
-        configure_file(testca.cmake.in testca)
+        configure_file(testca.cmake.in testca @ONLY)
         add_test(NAME testca COMMAND sh ${CMAKE_BINARY_DIR}/apps/testca WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/test COMMAND_EXPAND_LISTS)
     endif()
 
