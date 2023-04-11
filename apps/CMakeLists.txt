@@ -132,7 +132,8 @@ if (BUILD_TESTING)
     endif()
 
     if (NOT WIN32 AND NOT OPENSSL_NO_RSA)
-        add_test(NAME testca COMMAND sh ${CMAKE_SOURCE_DIR}/openssl/test/testca WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/test COMMAND_EXPAND_LISTS)
+        configure_file(testca.cmake.in testca)
+        add_test(NAME testca COMMAND sh ${CMAKE_BINARY_DIR}/apps/testca WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/test COMMAND_EXPAND_LISTS)
     endif()
 
     configure_file(${CMAKE_SOURCE_DIR}/openssl/apps/dsa512.pem dsa512.pem COPYONLY) # needed for testgen / testss
