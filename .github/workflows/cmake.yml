@@ -121,6 +121,7 @@ jobs:
       - name: run test
         shell: cmd
         run: |
+          set path=${{ github.workspace }}\mingw\mingw${{ matrix.toolchain.bit }}\\bin;%path%
           cd "build"
           ninja check
 
@@ -167,5 +168,6 @@ jobs:
       - name: run test
         shell: cmd
         run: |
+          call "${{ matrix.toolchain.call }}"
           cd "build"
           ninja check
