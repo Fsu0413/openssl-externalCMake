@@ -97,7 +97,7 @@ cmake_dependent_option(OPENSSL_STATIC_ENGINE "generate static engine library" OF
 
 cmake_dependent_option(OPENSSL_BUILD_DOCS "Build documentation" ON "Perl_FOUND" OFF)
 
-foreach (_OPTION IN ITEMS hw hw-4758-cca hw-aep hw-atalla hw-chil hw-cswift hw-ibmca hw-ncipher hw-nuron hw-padlock hw-sureware hw-ubsec hw-zencod asm err)
+foreach (_OPTION IN ITEMS hw hw-4758-cca hw-aep hw-atalla hw-chil hw-cswift hw-ibmca hw-ncipher hw-nuron hw-padlock hw-sureware hw-ubsec hw-zencod asm err nasm)
     string(TOUPPER ${_OPTION} _OPTION_UPPER)
     string(REPLACE "-" "_" _OPTION_SYMBOL ${_OPTION_UPPER})
     string(CONCAT _OPTION_STR "OPENSSL_" ${_OPTION_SYMBOL})
@@ -106,6 +106,8 @@ foreach (_OPTION IN ITEMS hw hw-4758-cca hw-aep hw-atalla hw-chil hw-cswift hw-i
         # building ASM needs Perl
         # ASM is not supported on iOS
         cmake_dependent_option(${_OPTION_STR} ${_OPTION_HELP} ON "Perl_FOUND;NOT IOS" OFF)
+    elseif (_OPTION STREQUAL "nasm")
+        cmake_dependent_option(${_OPTION_STR} ${_OPTION_HELP} OFF "OPENSSL_ASM;MSVC" OFF)
     else()
         option(${_OPTION_STR} ${_OPTION_HELP} ON)
     endif()
@@ -124,7 +126,10 @@ foreach (_OPTION IN ITEMS hw hw-4758-cca hw-aep hw-atalla hw-chil hw-cswift hw-i
 endforeach()
 
 if (OPENSSL_ASM)
-    if (MSVC)
+    if (OPENSSL_NASM)
+        enable_language(ASM_NASM)
+        set(OPENSSL_ASM_PREPROCESSED ".nasm")
+    elseif (MSVC)
         enable_language(ASM_MASM)
         set(OPENSSL_ASM_PREPROCESSED ".asm")
     else()

@@ -137,10 +137,16 @@ jobs:
             runson: "2019"
             call: C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvarsamd64_x86.bat
             bit: "32"
-        asm: [ "YES", "NO" ]
+        asm:
+          - value: "NO"
+            nasm: "NO"
+          - value: "YES"
+            nasm: "NO"
+          - value: "YES"
+            nasm: "YES"
     continue-on-error: true
     runs-on: windows-${{ matrix.toolchain.runson }}
-    name: "build-MSVC${{ matrix.toolchain.version }}-${{ matrix.toolchain.bit }}bit (ASM: ${{ matrix.asm }})"
+    name: "build-MSVC${{ matrix.toolchain.version }}-${{ matrix.toolchain.bit }}bit (ASM: ${{ matrix.asm.value }}, NASM: ${{ matrix.asm.nasm }})"
     steps:
       - uses: actions/checkout@v3
         with:
@@ -150,6 +156,7 @@ jobs:
         run: |
           choco install cmake
           choco install ninja
+          choco install nasm
       - name: run CMake + Ninja
         shell: cmd
         run: |
@@ -157,7 +164,7 @@ jobs:
           call "${{ matrix.toolchain.call }}"
           mkdir -p "build"
           cd "build"
-          cmake -GNinja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}/install" -DOPENSSL_ASM=${{ matrix.asm }} "${{ github.workspace }}/openssl-externalCMake"
+          cmake -GNinja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}/install" -DOPENSSL_ASM=${{ matrix.asm.value }} -DOPENSSL_NASM=${{ matrix.asm.nasm }} "${{ github.workspace }}/openssl-externalCMake"
           ninja
           cmake --install . --strip
       - name: run test
