@@ -643,6 +643,11 @@ if (WIN32)
     set_target_properties(crypto PROPERTIES
         RUNTIME_OUTPUT_NAME libeay32
     )
+    if (MSVC)
+        set_target_properties(crypto PROPERTIES
+            ARCHIVE_OUTPUT_NAME libeay32
+        )
+    endif()
 endif()
 set_target_properties(crypto PROPERTIES
     SOVERSION 1.0.0

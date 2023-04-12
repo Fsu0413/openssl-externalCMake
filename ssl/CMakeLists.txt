@@ -79,8 +79,13 @@ add_library(ssl
 )
 if (WIN32)
     set_target_properties(ssl PROPERTIES
-        OUTPUT_NAME ssleay32
+        RUNTIME_OUTPUT_NAME ssleay32
     )
+    if (MSVC)
+        set_target_properties(ssl PROPERTIES
+            ARCHIVE_OUTPUT_NAME ssleay32
+        )
+    endif()
 endif()
 set_target_properties(ssl PROPERTIES
     SOVERSION 1.0.0

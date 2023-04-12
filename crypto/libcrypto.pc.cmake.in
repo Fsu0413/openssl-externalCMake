@@ -1,8 +1,8 @@
 prefix=@CMAKE_INSTALL_PREFIX@
 exec_prefix=${prefix}
 libdir=${exec_prefix}/@CMAKE_INSTALL_LIBDIR@
-includedir=$${prefix}/@CMAKE_INSTALL_INCLUDEDIR@
-enginesdir=$${libdir}/engines
+includedir=${prefix}/@CMAKE_INSTALL_INCLUDEDIR@
+enginesdir=${libdir}/engines
 
 Name: OpenSSL-libcrypto
 Description: OpenSSL cryptography library
