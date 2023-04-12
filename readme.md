@@ -86,7 +86,6 @@ Just typical CMake procedure will work.
 
 Sort by priority
 
-1. Win32 MSVC nasm support
 1. 1.1.1 series support
 1. 3.0 series support
 1. 3.1 series support
