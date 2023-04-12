@@ -21,7 +21,7 @@ jobs:
     runs-on: ubuntu-${{ matrix.runner.ver }}
     name: "build-ubuntu-${{ matrix.runner.ver }} (ASM: ${{ matrix.asm }}, Zlib: ${{ matrix.zlib }})"
     env:
-      FS_OPENSSL_PACKAGE_STR: openssl${{ env.FS_OPENSSL_VERSION_STR }}-Ubuntu${{ matrix.runner.ver }}-x86_64-ASM${{ matrix.asm }}-Zlib${{ matrix.zlib }}
+      FS_OPENSSL_PACKAGE_STR: Ubuntu${{ matrix.runner.ver }}-x86_64-ASM${{ matrix.asm }}-Zlib${{ matrix.zlib }}
     steps:
       - uses: actions/checkout@v3
         with:
@@ -37,7 +37,7 @@ jobs:
         run: |
           mkdir -p "build"
           cd "build"
-          cmake -GNinja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}/${{ env.FS_OPENSSL_PACKAGE_STR }}" -DOPENSSL_ASM=${{ matrix.asm }} -DOPENSSL_ZLIB=${{ matrix.zlib }} "${{ github.workspace }}/openssl-externalCMake"
+          cmake -GNinja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}/openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}" -DOPENSSL_ASM=${{ matrix.asm }} -DOPENSSL_ZLIB=${{ matrix.zlib }} "${{ github.workspace }}/openssl-externalCMake"
           ninja
           cmake --install . --strip
       - name: run test
@@ -46,11 +46,11 @@ jobs:
           ninja check
       - name: package
         run: |
-          tar -cJf "${{ env.FS_OPENSSL_PACKAGE_STR }}.tar.xz" "${{ env.FS_OPENSSL_PACKAGE_STR }}"
+          tar -cJf "openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}.tar.xz" "openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}"
       - uses: actions/upload-artifact@v3.1.2
         with:
-          name: ${{ env.FS_OPENSSL_PACKAGE_STR }}
-          path: ${{ env.FS_OPENSSL_PACKAGE_STR }}.tar.xz
+          name: openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}
+          path: openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}.tar.xz
 
   build-macOS:
     strategy:
@@ -63,7 +63,7 @@ jobs:
     runs-on: macos-${{ matrix.runner }}
     name: "build-macOS${{ matrix.runner }} (ASM: ${{ matrix.asm }}, Zlib: ${{ matrix.zlib }})"
     env:
-      FS_OPENSSL_PACKAGE_STR: openssl${{ env.FS_OPENSSL_VERSION_STR }}-macOS${{ matrix.runner.ver }}-x86_64-ASM${{ matrix.asm }}-Zlib${{ matrix.zlib }}
+      FS_OPENSSL_PACKAGE_STR: macOS${{ matrix.runner.ver }}-x86_64-ASM${{ matrix.asm }}-Zlib${{ matrix.zlib }}
     steps:
       - uses: actions/checkout@v3
         with:
@@ -77,7 +77,7 @@ jobs:
         run: |
           mkdir -p "build"
           cd "build"
-          cmake -GNinja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}/${{ env.FS_OPENSSL_PACKAGE_STR }}" -DOPENSSL_ASM=${{ matrix.asm }} -DOPENSSL_ZLIB=${{ matrix.zlib }} "${{ github.workspace }}/openssl-externalCMake"
+          cmake -GNinja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}/openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}" -DOPENSSL_ASM=${{ matrix.asm }} -DOPENSSL_ZLIB=${{ matrix.zlib }} "${{ github.workspace }}/openssl-externalCMake"
           ninja
           cmake --install . --strip
       - name: run test
@@ -86,11 +86,11 @@ jobs:
           ninja check
       - name: package
         run: |
-          tar -cJf "${{ env.FS_OPENSSL_PACKAGE_STR }}.tar.xz" "${{ env.FS_OPENSSL_PACKAGE_STR }}"
+          tar -cJf "openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}.tar.xz" "openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}"
       - uses: actions/upload-artifact@v3.1.2
         with:
-          name: ${{ env.FS_OPENSSL_PACKAGE_STR }}
-          path: ${{ env.FS_OPENSSL_PACKAGE_STR }}.tar.xz
+          name: openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}
+          path: openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}.tar.xz
 
   build-MinGW:
     strategy:
@@ -114,7 +114,7 @@ jobs:
     runs-on: windows-latest
     name: "build-MinGW-GCC${{ matrix.toolchain.version }}-${{ matrix.toolchain.bit }}bit (ASM: ${{ matrix.asm }})"
     env:
-      FS_OPENSSL_PACKAGE_STR: openssl${{ env.FS_OPENSSL_VERSION_STR }}-MinGWGCC${{ matrix.toolchain.version }}-${{ matrix.toolchain.arch }}-ASM${{ matrix.asm }}
+      FS_OPENSSL_PACKAGE_STR: MinGWGCC${{ matrix.toolchain.version }}-${{ matrix.toolchain.arch }}-ASM${{ matrix.asm }}
     steps:
       - uses: actions/checkout@v3
         with:
@@ -136,7 +136,7 @@ jobs:
           set path=${{ github.workspace }}\mingw\mingw${{ matrix.toolchain.bit }}\\bin;%path%
           mkdir -p "build"
           cd "build"
-          cmake -GNinja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}/${{ env.FS_OPENSSL_PACKAGE_STR }}" -DOPENSSL_ASM=${{ matrix.asm }} "${{ github.workspace }}/openssl-externalCMake"
+          cmake -GNinja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}/openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}" -DOPENSSL_ASM=${{ matrix.asm }} "${{ github.workspace }}/openssl-externalCMake"
           ninja
           cmake --install . --strip
       - name: run test
@@ -147,11 +147,11 @@ jobs:
           ninja check
       - name: package
         run: |
-          7z a "${{ env.FS_OPENSSL_PACKAGE_STR }}.7z" "${{ env.FS_OPENSSL_PACKAGE_STR }}"
+          7z a "openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}.7z" "openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}"
       - uses: actions/upload-artifact@v3.1.2
         with:
-          name: ${{ env.FS_OPENSSL_PACKAGE_STR }}
-          path: ${{ env.FS_OPENSSL_PACKAGE_STR }}.7z
+          name: openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}
+          path: openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}.7z
 
   build-msvc:
     strategy:
@@ -184,7 +184,7 @@ jobs:
     runs-on: windows-${{ matrix.toolchain.runson }}
     name: "build-MSVC${{ matrix.toolchain.version }}-${{ matrix.toolchain.bit }}bit (ASM: ${{ matrix.asm.value }}, NASM: ${{ matrix.asm.nasm }})"
     env:
-      FS_OPENSSL_PACKAGE_STR: openssl${{ env.FS_OPENSSL_VERSION_STR }}-MSVC${{ matrix.toolchain.version }}-${{ matrix.toolchain.arch }}-ASM${{ matrix.asm.value }}-NASM${{ matrix.asm.nasm }}
+      FS_OPENSSL_PACKAGE_STR: MSVC${{ matrix.toolchain.version }}-${{ matrix.toolchain.arch }}-ASM${{ matrix.asm.value }}-NASM${{ matrix.asm.nasm }}
     steps:
       - uses: actions/checkout@v3
         with:
@@ -202,7 +202,7 @@ jobs:
           call "${{ matrix.toolchain.call }}"
           mkdir -p "build"
           cd "build"
-          cmake -GNinja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}/${{ env.FS_OPENSSL_PACKAGE_STR }}" -DOPENSSL_ASM=${{ matrix.asm.value }} -DOPENSSL_NASM=${{ matrix.asm.nasm }} "${{ github.workspace }}/openssl-externalCMake"
+          cmake -GNinja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}/openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}" -DOPENSSL_ASM=${{ matrix.asm.value }} -DOPENSSL_NASM=${{ matrix.asm.nasm }} "${{ github.workspace }}/openssl-externalCMake"
           ninja
           cmake --install . --strip
       - name: run test
@@ -213,8 +213,8 @@ jobs:
           ninja check
       - name: package
         run: |
-          7z a "${{ env.FS_OPENSSL_PACKAGE_STR }}.7z" "${{ env.FS_OPENSSL_PACKAGE_STR }}"
+          7z a "openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}.7z" "openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}"
       - uses: actions/upload-artifact@v3.1.2
         with:
-          name: ${{ env.FS_OPENSSL_PACKAGE_STR }}
-          path: ${{ env.FS_OPENSSL_PACKAGE_STR }}.7z
+          name: openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}
+          path: openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}.7z
