@@ -532,11 +532,11 @@ extern "C" {
  * boundary. See crypto/rc4/rc4_enc.c for further details.
  */
 #define EXTERNALCMAKE_RC4_CHUNK_TYPE @OPENSSL_RC4_CHUNK_TYPE@
-#if RC4_CHUNK == 0
+#if EXTERNALCMAKE_RC4_CHUNK_TYPE == 0
 /* #undef RC4_CHUNK */
-#elif RC4_CHUNK == 1
+#elif EXTERNALCMAKE_RC4_CHUNK_TYPE == 1
 #define RC4_CHUNK unsigned long
-#elif RC4_CHUNK == 2
+#elif EXTERNALCMAKE_RC4_CHUNK_TYPE == 2
 #define RC4_CHUNK unsigned long long
 #endif
 #undef EXTERNALCMAKE_RC4_CHUNK_TYPE
