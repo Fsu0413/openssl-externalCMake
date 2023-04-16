@@ -1,7 +1,6 @@
 
 set(LIBCRYPTO_CURRENTDIR_SOURCES
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/krb5/krb5_asn.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/krb5/krb5_asn.h
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/sm4/sm4.c
 )
 
 set(LIBCRYPTO_SOURCES ${LIBCRYPTO_SOURCES} ${LIBCRYPTO_CURRENTDIR_SOURCES})

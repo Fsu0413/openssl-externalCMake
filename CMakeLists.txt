@@ -1,10 +1,10 @@
 cmake_minimum_required(VERSION 3.22)
 
 project(OpenSSL
-    VERSION 1.0.2.21
+    VERSION 1.1.1.20
     DESCRIPTION "TLS/SSL and crypto library"
     HOMEPAGE_URL "https://www.openssl.org/"
-    LANGUAGES C
+    LANGUAGES C CXX
 )
 
 if (PROJECT_VERSION_MAJOR LESS 3)
@@ -28,20 +28,7 @@ elseif (APPLE AND NOT IOS)
 endif()
 
 set(CMAKE_C_STANDARD 99)
-
-# check if some file exists
-# our CMake won't work if the file exists, need to remove some of the generated file from packaged source (tarball)
-foreach (_UNNEEDED_GENERATED_FILE IN ITEMS
-    ${CMAKE_CURRENT_LIST_DIR}/openssl/Makefile
-    ${CMAKE_CURRENT_LIST_DIR}/openssl/apps/CA.pl
-    ${CMAKE_CURRENT_LIST_DIR}/openssl/crypto/opensslconf.h
-    ${CMAKE_CURRENT_LIST_DIR}/openssl/test/evptests.txt
-    ${CMAKE_CURRENT_LIST_DIR}/openssl/tools/c_rehash
-)
-    if (EXISTS ${_UNNEEDED_GENERATED_FILE})
-        message(FATAL_ERROR ${_UNNEEDED_GENERATED_FILE} " exists and we don't expect this file exist during our build. Please remove them before proceeding.")
-    endif()
-endforeach()
+set(CMAKE_CXX_STANDARD 11)
 
 include(GNUInstallDirs)
 include(CMakeDependentOption)
@@ -68,9 +55,9 @@ option(OPENSSL_THREADS "Build with threads supported" ON)
 cmake_dependent_option(BUILD_SHARED_LIBS "Build Shared Libraries" ON "NOT IOS" OFF)
 
 # no-dso
-option(OPENSSL_DSO "use dymamic shared object loader code" ON)
+cmake_dependent_option(OPENSSL_DSO "use dymamic shared object loader code" ON "BUILD_SHARED_LIBS" OFF)
 
-# fips (OpenSSL 1.0.2 series doesn't bundle the FIPS module)
+# fips (OpenSSL 1.1.1 series doesn't bundle the FIPS module)
 # option(OPENSSL_FIPS "use FIPS" OFF)
 set(OPENSSL_FIPS OFF CACHE BOOL "use FIPS")
 
@@ -79,9 +66,6 @@ option(OPENSSL_ZLIB "build with ZLIB" OFF)
 
 # zlib-dynamic
 cmake_dependent_option(OPENSSL_ZLIB_DYNAMIC "build ZLIB as dynamic loaded object" OFF "OPENSSL_ZLIB" OFF)
-
-# --with-krb5-*
-OPTION(OPENSSL_KRB5 "build OpenSSL with Kerberos 5" OFF)
 
 # 386
 option(OPENSSL_386 "generate 80386 code in assembly modules" OFF)
@@ -97,7 +81,7 @@ cmake_dependent_option(OPENSSL_STATIC_ENGINE "generate static engine library" OF
 
 cmake_dependent_option(OPENSSL_BUILD_DOCS "Build documentation" ON "Perl_FOUND" OFF)
 
-foreach (_OPTION IN ITEMS hw hw-4758-cca hw-aep hw-atalla hw-chil hw-cswift hw-ibmca hw-ncipher hw-nuron hw-padlock hw-sureware hw-ubsec hw-zencod asm err nasm)
+foreach (_OPTION IN ITEMS hw hw-padlock asm err nasm)
     string(TOUPPER ${_OPTION} _OPTION_UPPER)
     string(REPLACE "-" "_" _OPTION_SYMBOL ${_OPTION_UPPER})
     string(CONCAT _OPTION_STR "OPENSSL_" ${_OPTION_SYMBOL})
@@ -130,6 +114,7 @@ if (OPENSSL_ASM)
         enable_language(ASM_NASM)
         set(OPENSSL_ASM_PREPROCESSED ".nasm")
     elseif (MSVC)
+        message(AUTHOR_WARNING "OpenSSL doesn't support MASM officially. See Comments in Configurations/50-masm.conf.")
         enable_language(ASM_MASM)
         set(OPENSSL_ASM_PREPROCESSED ".asm")
     else()
@@ -138,17 +123,44 @@ if (OPENSSL_ASM)
     endif()
 endif()
 
+# --with-rand-seed
+# TODO: multiple random seed support
+set(OPENSSL_RAND_SEED "os" CACHE STRING "OpenSSL Random seed")
+set(OPENSSL_KNOWN_RAND_SEED FALSE)
+foreach (_SEED IN ITEMS getrandom devrandom os egd none rdcpu librandom)
+    string(TOUPPER ${_SEED} _SEED_UPPER)
+    if (OPENSSL_RAND_SEED STREQUAL _SEED)
+        set(OPENSSL_KNOWN_RAND_SEED TRUE)
+        set(OPENSSL_RAND_SEED_${_SEED_UPPER} ON CACHE BOOL "enable OpenSSL Random Generator ${_SEED} (automatically set, use OPENSSL_RAND_SEED if this is to be modified)")
+        if (_SEED STREQUAL none)
+            message(AUTHOR_WARNING "You have selected the -DOPENSSL_RAND_SEED=none option, which effectively disables automatic reseeding of the OpenSSL random generator. "
+                                   "All operations depending on the random generator such as creating keys will not work unless the random generator is seeded manually by the "
+                                   "application. "
+                                   "Please read the 'Note on random number generation' section in the INSTALL instructions and the RAND_DRBG(7) manual page for more details."
+            )
+        endif()
+    else()
+        set(OPENSSL_RAND_SEED_${_SEED_UPPER} OFF CACHE BOOL "enable OpenSSL Random Generator ${_SEED} (automatically set, use OPENSSL_RAND_SEED if this is to be modified)")
+    endif()
+endforeach()
+if (NOT OPENSSL_KNOWN_RAND_SEED)
+    message(FATAL_ERROR "Random Seed ${OPENSSL_RAND_SEED} is not supported by OpenSSL.")
+endif()
+unset(OPENSSL_KNOWN_RAND_SEED)
+
 # no-<cipher>
-set(OPENSSL_DEFAULT_DISABLED_CIPHERS ec-nistp-64-gcc-128 gmp md2 rc5 rfc3779 sctp ssl-trace ssl2 unit-test weak-ssl-ciphers jpake libunbound store)
-set(OPENSSL_EXPERIMENTAL_CIPHERS jpake libunbound store)
+set(OPENSSL_DEFAULT_DISABLED_CIPHERS asan crypto-mdebug crypto-mdebug-backtrace devcryptoeng ec_nistp_64_gcc_128 egd external-tests fuzz-libfuzzer fuzz-afl heartbeats md2 msan rc5
+                                     sctp ssl-trace ssl3 ssl3-method ubsan unit-test weak-ssl-ciphers)
 
 foreach (_CIPHER IN ITEMS
-        ssl tls ssl3-method # meta-cipher
-        des ec md5 rsa sha dsa dh tlsext # dependent
-        aes asn1 bf bio bn buf-freelists buffer camellia capieng cast chain-verify cmac cms comp conf deprecated descbcm dgram dso dtls dtls1 ec-nistp-64-gcc-128 ec2m ecdh ecdsa
-        engine evp fp-api gmp gost hash-comp heartbeats hmac idea jpake lhash libunbound locking md2 md4 mdc2 modes multibyte nextprotoneg object objects ocsp pem pkcs7 pkcs12
-        posix-io pqueue psk rand rc2 rc4 rc5 rdrand rfc3779 ripemd ripemd160 rmd160 sctp seed setvbuf-ionbf sha0 sha1 sha256 sha512 sock speed srp srtp ssl-intern ssl-trace ssl2
-        ssl2-method ssl3 stack stdio store tls1 ts txt-db ui unit-test weak-ssl-ciphers whirlpool x509 x509-verify x509v3
+        ripemd ui # deprecated
+        ssl des ec sock dgram dtls tls crypto-mdebug engine afalgeng stdio comp sm3 unit-test msan # dependent
+        ssl3-method tls1-method tls1_1-method tls1_2-method dtls1-method dtls1_2-method # method
+        aes asn1 bio bn buffer conf evp hmac kdf lhash md5 modes objects pem pkcs12 pkcs7 rand rsa sha stack store ts txt_db x509 x509v3 # directories
+        aria asan async autoalginit autoerrinit autoload-config bf blake2 camellia capieng cast chacha cmac cms crypto-mdebug-backtrace ct deprecated devcryptoeng dh dsa ec2m ecdh
+        ecdsa ec_nistp_64_gcc_128 egd err filenames fuzz-libfuzzer fuzz-afl gost heartbeats idea makedepend md2 md4 mdc2 multiblock nextprotoneg pinshared ocb ocsp poly1305
+        posix-io psk rc2 rc4 rc5 rdrand rfc3779 rmd160 scrypt sctp seed siphash sm2 sm4 srp srtp ssl-trace ts ubsan ui-console whirlpool weak-ssl-ciphers ssl3 tls1 tls1_1 tls1_2
+        tls1_3 dtls1 dtls1_2
 )
     list(FIND OPENSSL_DEFAULT_DISABLED_CIPHERS ${_CIPHER} _CIPHER_IS_DEFAULT_DISABLED)
     set(_CIPHER_DEFAULT ON)
@@ -159,41 +171,90 @@ foreach (_CIPHER IN ITEMS
     string(REPLACE "-" "_" _CIPHER_SYMBOL ${_CIPHER_UPPER})
     string(CONCAT _CIPHER_STR "OPENSSL_" ${_CIPHER_SYMBOL})
     string(CONCAT _CIPHER_HELP "enable OpenSSL cipher " ${_CIPHER})
-    if (_CIPHER STREQUAL "mdc2")
+
+    if (_CIPHER STREQUAL "rmd160")
+        if (CACHE{OPENSSL_RIPEMD})
+            message(AUTHOR_WARNING "OPENSSL_RIPEMD is deprecated. Use ${_CIPHER_STR} instead.")
+            if (NOT CACHE{${_CIPHER_STR}})
+                set(${_CIPHER_STR} ${OPENSSL_RIPEMD} CACHE BOOL ${_CIPHER_HELP} FORCE)
+            endif()
+            unset(${OPENSSL_RIPEMD} CACHE)
+            unset(${OPENSSL_NO_RIPEMD} CACHE)
+        else()
+            option(${_CIPHER_STR} ${_CIPHER_HELP} ${_CIPHER_DEFAULT})
+        endif()
+    elseif (_CIPHER STREQUAL "ui-console")
+        if (CACHE{OPENSSL_UI})
+            message(AUTHOR_WARNING "OPENSSL_UI is deprecated. Use ${_CIPHER_STR} instead.")
+            if (NOT CACHE{${_CIPHER_STR}})
+                set(${_CIPHER_STR} ${OPENSSL_UI} CACHE BOOL ${_CIPHER_HELP} FORCE)
+            endif()
+            unset(${OPENSSL_UI} CACHE)
+            unset(${OPENSSL_NO_UI} CACHE)
+        else()
+            option(${_CIPHER_STR} ${_CIPHER_HELP} ${_CIPHER_DEFAULT})
+        endif()
+    elseif (_CIPHER STREQUAL "afalgeng")
+        cmake_dependent_option(${_CIPHER_STR} ${_CIPHER_HELP} ${_CIPHER_DEFAULT} "CMAKE_SYSTEM_NAME MATCHES \"[Ll]inux\";OPENSSL_ENGINE" OFF)
+    elseif (_CIPHER STREQUAL "mdc2")
         cmake_dependent_option(${_CIPHER_STR} ${_CIPHER_HELP} ${_CIPHER_DEFAULT} "OPENSSL_DES" OFF)
     elseif (_CIPHER STREQUAL "ecdsa")
         cmake_dependent_option(${_CIPHER_STR} ${_CIPHER_HELP} ${_CIPHER_DEFAULT} "OPENSSL_EC" OFF)
     elseif (_CIPHER STREQUAL "ecdh")
         cmake_dependent_option(${_CIPHER_STR} ${_CIPHER_HELP} ${_CIPHER_DEFAULT} "OPENSSL_EC" OFF)
-    elseif (_CIPHER STREQUAL "ssl2")
-        cmake_dependent_option(${_CIPHER_STR} ${_CIPHER_HELP} ${_CIPHER_DEFAULT} "OPENSSL_SSL;OPENSSL_MD5;OPENSSL_RSA" OFF)
-    elseif (_CIPHER STREQUAL "rsax")
-        cmake_dependent_option(${_CIPHER_STR} ${_CIPHER_HELP} ${_CIPHER_DEFAULT} "OPENSSL_FIPS" OFF)
     elseif (_CIPHER STREQUAL "ssl3")
-        cmake_dependent_option(${_CIPHER_STR} ${_CIPHER_HELP} ${_CIPHER_DEFAULT}
-            "OPENSSL_SSL;OPENSSL_SSL3_METHOD;OPENSSL_MD5;OPENSSL_SHA;( OPENSSL_RSA OR ( OPENSSL_DSA AND OPENSSL_DH ) )" OFF)
+        cmake_dependent_option(${_CIPHER_STR} ${_CIPHER_HELP} ${_CIPHER_DEFAULT} "OPENSSL_SSL;OPENSSL_SSL3_METHOD" OFF)
+    elseif (_CIPHER STREQUAL "dtls")
+        cmake_dependent_option(${_CIPHER_STR} ${_CIPHER_HELP} ${_CIPHER_DEFAULT} "OPENSSL_DGRAM" OFF)
+    elseif (_CIPHER STREQUAL "sctp")
+        cmake_dependent_option(${_CIPHER_STR} ${_CIPHER_HELP} ${_CIPHER_DEFAULT} "OPENSSL_DGRAM" OFF)
+    elseif (_CIPHER STREQUAL "dgram")
+        cmake_dependent_option(${_CIPHER_STR} ${_CIPHER_HELP} ${_CIPHER_DEFAULT} "OPENSSL_SOCK" OFF)
+    elseif (_CIPHER STREQUAL "dtls1")
+        cmake_dependent_option(${_CIPHER_STR} ${_CIPHER_HELP} ${_CIPHER_DEFAULT} "OPENSSL_DTLS;OPENSSL_DTLS_1_METHOD" OFF)
+    elseif (_CIPHER STREQUAL "dtls1_2")
+        cmake_dependent_option(${_CIPHER_STR} ${_CIPHER_HELP} ${_CIPHER_DEFAULT} "OPENSSL_DTLS;OPENSSL_DTLS1_2_METHOD" OFF)
+    elseif (_CIPHER STREQUAL "dtls1-method")
+        cmake_dependent_option(${_CIPHER_STR} ${_CIPHER_HELP} ${_CIPHER_DEFAULT} "OPENSSL_DTLS" OFF)
+    elseif (_CIPHER STREQUAL "dtls1_2-method")
+        cmake_dependent_option(${_CIPHER_STR} ${_CIPHER_HELP} ${_CIPHER_DEFAULT} "OPENSSL_DTLS" OFF)
     elseif (_CIPHER STREQUAL "tls1")
-        cmake_dependent_option(${_CIPHER_STR} ${_CIPHER_HELP} ${_CIPHER_DEFAULT} "OPENSSL_TLS;OPENSSL_MD5;OPENSSL_SHA;( OPENSSL_RSA OR ( OPENSSL_DSA AND OPENSSL_DH ) )" OFF)
-    elseif (_CIPHER STREQUAL "gost")
-        cmake_dependent_option(${_CIPHER_STR} ${_CIPHER_HELP} ${_CIPHER_DEFAULT} "OPENSSL_EC;OPENSSL_DSA;OPENSSL_DH" OFF)
-    elseif (_CIPHER STREQUAL "srp")
-        cmake_dependent_option(${_CIPHER_STR} ${_CIPHER_HELP} ${_CIPHER_DEFAULT} "OPENSSL_TLSEXT" OFF)
+        cmake_dependent_option(${_CIPHER_STR} ${_CIPHER_HELP} ${_CIPHER_DEFAULT} "OPENSSL_TLS;OPENSSL_TLS_1_METHOD" OFF)
+    elseif (_CIPHER STREQUAL "tls1_1")
+        cmake_dependent_option(${_CIPHER_STR} ${_CIPHER_HELP} ${_CIPHER_DEFAULT} "OPENSSL_TLS;OPENSSL_TLS_1_1_METHOD" OFF)
+    elseif (_CIPHER STREQUAL "tls1_2")
+        cmake_dependent_option(${_CIPHER_STR} ${_CIPHER_HELP} ${_CIPHER_DEFAULT} "OPENSSL_TLS;OPENSSL_TLS_1_2_METHOD" OFF)
+    elseif (_CIPHER STREQUAL "tls1_3")
+        cmake_dependent_option(${_CIPHER_STR} ${_CIPHER_HELP} ${_CIPHER_DEFAULT} "OPENSSL_TLS;OPENSSL_EC" OFF)
+    elseif (_CIPHER STREQUAL "tls1-method")
+        cmake_dependent_option(${_CIPHER_STR} ${_CIPHER_HELP} ${_CIPHER_DEFAULT} "OPENSSL_TLS" OFF)
+    elseif (_CIPHER STREQUAL "tls1_1-method")
+        cmake_dependent_option(${_CIPHER_STR} ${_CIPHER_HELP} ${_CIPHER_DEFAULT} "OPENSSL_TLS" OFF)
+    elseif (_CIPHER STREQUAL "tls1_2-method")
+        cmake_dependent_option(${_CIPHER_STR} ${_CIPHER_HELP} ${_CIPHER_DEFAULT} "OPENSSL_TLS" OFF)
+    elseif (_CIPHER STREQUAL "crypto-mdebug-backtrace")
+        cmake_dependent_option(${_CIPHER_STR} ${_CIPHER_HELP} ${_CIPHER_DEFAULT} "OPENSSL_CRYPTO_MDEBUG" OFF)
+    elseif (_CIPHER STREQUAL "devcryptoeng")
+        cmake_dependent_option(${_CIPHER_STR} ${_CIPHER_HELP} ${_CIPHER_DEFAULT} "OPENSSL_ENGINE" OFF)
+    elseif (_CIPHER STREQUAL "autoalginit")
+        cmake_dependent_option(${_CIPHER_STR} ${_CIPHER_HELP} ${_CIPHER_DEFAULT} "BUILD_SHARED_LIBS" OFF)
+    elseif (_CIPHER STREQUAL "capieng")
+        cmake_dependent_option(${_CIPHER_STR} ${_CIPHER_HELP} ${_CIPHER_DEFAULT} "OPENSSL_STDIO" OFF)
+    elseif (_CIPHER STREQUAL "egd")
+        # TODO: HOW TO DEAL WITH THIS??
+        cmake_dependent_option(${_CIPHER_STR} ${_CIPHER_HELP} ${_CIPHER_DEFAULT} "OPENSSL_STDIO" OFF)
+        # cmake_dependent_option(${_CIPHER_STR} ${_CIPHER_HELP} ${_CIPHER_DEFAULT} "NOT OPENSSL_RAND_SEED_EGD" ON) # original Configure deleted $disabled{'egd'}
+    elseif (_CIPHER STREQUAL "comp")
+        cmake_dependent_option(${_CIPHER_STR} ${_CIPHER_HELP} ${_CIPHER_DEFAULT} "OPENSSL_ZLIB" OFF)
+    elseif (_CIPHER STREQUAL "sm2")
+        cmake_dependent_option(${_CIPHER_STR} ${_CIPHER_HELP} ${_CIPHER_DEFAULT} "OPENSSL_SM3;OPENSSL_EC" OFF)
     elseif (_CIPHER STREQUAL "heartbeats")
-        cmake_dependent_option(${_CIPHER_STR} ${_CIPHER_HELP} ${_CIPHER_DEFAULT} "OPENSSL_TLSEXT" OFF)
+        cmake_dependent_option(${_CIPHER_STR} ${_CIPHER_HELP} ${_CIPHER_DEFAULT} "OPENSSL_NO_UNITTEST" OFF)
     else()
         option(${_CIPHER_STR} ${_CIPHER_HELP} ${_CIPHER_DEFAULT})
     endif()
     string(CONCAT _CIPHER_NO_STR "OPENSSL_NO_" ${_CIPHER_SYMBOL})
     string(CONCAT _CIPHER_NO_HELP "disable OpenSSL cipher " ${_CIPHER} " (automatically set, use ${_CIPHER_STR} if this is to be modified)")
-    list(FIND OPENSSL_EXPERIMENTAL_CIPHERS ${_CIPHER} _CIPHER_IS_EXPERIMENTAL)
-    if (${_CIPHER_STR} AND NOT _CIPHER_IS_EXPERIMENTAL EQUAL -1)
-        string(CONCAT _CIPHER_FORCE_STR "OPENSSL_EXPERIMENTAL_" ${_CIPHER_SYMBOL})
-        string(CONCAT _CIPHER_FORCE_HELP "force enable experimental OpenSSL cipher " ${_CIPHER})
-        cmake_dependent_option(${_CIPHER_FORCE_STR} ${_CIPHER_FORCE_HELP} OFF ${_CIPHER_STR} OFF)
-        if (NOT ${_CIPHER_FORCE_STR})
-            message(FATAL_ERROR "You are enabling experimental cipher " ${_CIPHER} ". Please use -D" ${_CIPHER_FORCE_STR} "=1 to proceed with experimental setting.")
-        endif()
-    endif()
     set(${_CIPHER_NO_STR} ON CACHE BOOL ${_CIPHER_NO_HELP})
     if (${_CIPHER_STR})
         set(${_CIPHER_NO_STR} OFF CACHE BOOL ${_CIPHER_NO_HELP} FORCE)
@@ -212,26 +273,53 @@ endforeach()
 # HACK
 set (OPENSSL_HW_CAPI ${OPENSSL_CAPIENG} CACHE BOOL "(automatically set, use OPENSSL_CAPIENG if this is to be modified)" FORCE)
 set (OPENSSL_NO_HW_CAPI ${OPENSSL_NO_CAPIENG} CACHE BOOL "(automatically set, use OPENSSL_CAPIENG if this is to be modified)" FORCE)
-set (OPENSSL_HW_CCGOST ${OPENSSL_GOST} CACHE BOOL "(automatically set, use OPENSSL_GOST if this is to be modified)" FORCE)
-set (OPENSSL_NO_HW_CCGOST ${OPENSSL_NO_GOST} CACHE BOOL "(automatically set, use OPENSSL_GOST if this is to be modified)" FORCE)
-set (OPENSSL_HW_GMP ${OPENSSL_GMP} CACHE BOOL "(automatically set, use OPENSSL_GMP if this is to be modified)" FORCE)
-set (OPENSSL_NO_HW_GMP ${OPENSSL_NO_GMP} CACHE BOOL "(automatically set, use OPENSSL_GMP if this is to be modified)" FORCE)
+set (OPENSSL_HW_AFALG ${OPENSSL_AFALGENG} CACHE BOOL "(automatically set, use OPENSSL_AFALGENG if this is to be modified)" FORCE)
+set (OPENSSL_NO_HW_AFALG ${OPENSSL_NO_AFALGENG} CACHE BOOL "(automatically set, use OPENSSL_AFALGENG if this is to be modified)" FORCE)
 
-if (OPENSSL_KRB5)
-    # let's just find MIT krb5 temporarily
-    # ... then using PkgConfig::MIT_KRB5 for further linking is fine, it is an imported target
-    # TODO: cflags = -DKRB5_MIT_OLD11 (if krb5 version is older than 1.1)
-    find_package(PkgConfig REQUIRED)
-    pkg_search_module(MIT_KRB5 REQUIRED IMPORTED_TARGET GLOBAL mit-krb5 krb5)
-    set(OPENSSL_NO_KRB5 OFF CACHE BOOL "build OpenSSL without Kerberos 5 (automatically set, use OPENSSL_KRB5 if this is to be modified)" FORCE)
+if (OPENSSL_NO_DEPRECATED)
+    set(OPENSSL_MIN_API_LEVEL "1.1.0" CACHE STRING "OpenSSL SSL minimum API LEVEL" FORCE)
 else()
-    set(OPENSSL_NO_KRB5 ON CACHE BOOL "build OpenSSL without Kerberos 5 (automatically set, use OPENSSL_KRB5 if this is to be modified)" FORCE)
+    # --api
+    # option(OPENSSL_MIN_API_LEVEL "OpenSSL SSL minimum API LEVEL" "1.1.0")
+    # set(OPENSSL_MIN_API_LEVEL "0" CACHE STRING "OpenSSL SSL minimum API LEVEL")
 endif()
 
-if (NOT OPENSSL_COMP AND OPENSSL_ZLIB)
-    message(AUTHOR_WARNING "comp cipher is not included and zlib is meaningless. Original OpenSSL desided to directly disable zlib build. "
-                           "Let's just copy their behavior.")
-    set(OPENSSL_ZLIB OFF CACHE BOOL "build with ZLIB" FORCE)
+# currently only "1.1.0" / "1.0.0" / "0.9.8" are supported
+if (CACHE{OPENSSL_MIN_API_LEVEL})
+    if (OPENSSL_MIN_API_LEVEL STREQUAL "1.1.0")
+        set(OPENSSL_MIN_API "0x10100000L" CACHE STRING "" FORCE)
+    elseif (OPENSSL_MIN_API_LEVEL STREQUAL "1.0.0")
+        set(OPENSSL_MIN_API "0x10000000L" CACHE STRING "" FORCE)
+    elseif (OPENSSL_MIN_API_LEVEL STREQUAL "0.9.8")
+        set(OPENSSL_MIN_API "0x00908000L" CACHE STRING "" FORCE)
+    else()
+        message(FATAL_ERROR "minimal api level ${OPENSSL_MIN_API_LEVEL} is not supported by OpenSSL.")
+    endif()
+endif()
+
+# some TWEAKS
+if (OPENSSL_NO_SSL3 AND OPENSSL_NO_SSL3_METHOD)
+    unset(OPENSSL_SSL)
+    unset(OPENSSL_NO_SSL)
+    set(OPENSSL_SSL OFF CACHE BOOL "enable OpenSSL cipher ssl (automatically set, use OPENSSL_SSL3 if this is to be modified)" FORCE)
+    set(OPENSSL_NO_SSL ON CACHE BOOL "disable OpenSSL cipher ssl (automatically set, use OPENSSL_SSL3 if this is to be modified)" FORCE)
+endif()
+if (OPENSSL_NO_TLS1 AND OPENSSL_NO_TLS1_1 AND OPENSSL_NO_TLS1_2 AND OPENSSL_NO_TLS1_3 AND OPENSSL_NO_TLS1_METHOD AND OPENSSL_NO_TLS1_1_METHOD AND OPENSSL_NO_TLS1_2_METHOD)
+    unset(OPENSSL_TLS)
+    unset(OPENSSL_NO_TLS)
+    set(OPENSSL_TLS OFF CACHE BOOL "enable OpenSSL cipher tls (automatically set, use one of OPENSSL_TLS* if this is to be modified)" FORCE)
+    set(OPENSSL_NO_TLS ON CACHE BOOL "disable OpenSSL cipher tls (automatically set, use one of OPENSSL_TLS* if this is to be modified)" FORCE)
+endif()
+if (OPENSSL_NO_DTLS1 AND OPENSSL_NO_DTLS1_2 AND OPENSSL_NO_DTLS1_METHOD AND OPENSSL_NO_DTLS1_2_METHOD)
+    unset(OPENSSL_DTLS)
+    unset(OPENSSL_NO_DTLS)
+    set(OPENSSL_DTLS OFF CACHE BOOL "enable OpenSSL cipher dtls (automatically set, use one of OPENSSL_DTLS* if this is to be modified)" FORCE)
+    set(OPENSSL_NO_DTLS ON CACHE BOOL "disable OpenSSL cipher dtls (automatically set, use one of OPENSSL_DTLS* if this is to be modified)" FORCE)
+endif()
+
+# NOT SUPPORTING SANTIZERS?
+if (OPENSSL_ASAN OR OPENSSL_UBSAN OR OPENSSL_MSAN)
+    message(FATAL_ERROR "santizers are not supported for now.")
 endif()
 
 if (OPENSSL_ZLIB)
@@ -260,11 +348,15 @@ if (OPENSSL_THREADS)
     find_package(Threads REQUIRED)
 endif()
 
+if (OPENSSL_DSO)
+    set(OPENSSL_NO_DSO OFF CACHE BOOL "build without DSO (automatically set, use OPENSSL_DSO if this is to be modified)" FORCE)
+else()
+    set(OPENSSL_NO_DSO ON CACHE BOOL "build without DSO (automatically set, use OPENSSL_DSO if this is to be modified)" FORCE)
+endif()
+
 # TODO: uplink platforms (if not 386)
 # cflags = -DOPENSSL_USE_APPLINK
 # cpuid_obj += uplink.o uplink-x86.o
-
-configure_file(${CMAKE_SOURCE_DIR}/openssl/e_os2.h ${CMAKE_BINARY_DIR}/include/openssl/e_os2.h COPYONLY)
 
 # undocumented!
 if ( NOT OPENSSL_TARGET_ARCH )
@@ -336,7 +428,11 @@ endif()
 if (WIN32)
     if (MSVC)
         if (OPENSSL_TARGET_ARCH STREQUAL "x64")
-            set(OPENSSL_BUILD_PLATFORM "VC-WIN64A")
+            if ( ( NOT OPENSSL_ASM ) OR OPENSSL_NASM )
+                set(OPENSSL_BUILD_PLATFORM "VC-WIN64A")
+            else()
+                set(OPENSSL_BUILD_PLATFORM "VC-WIN64A-masm")
+            endif()
         elseif (OPENSSL_TARGET_ARCH STREQUAL "x86")
             set(OPENSSL_BUILD_PLATFORM "VC-WIN32")
         endif()
@@ -351,7 +447,7 @@ elseif (CYGWIN)
     if (OPENSSL_TARGET_ARCH STREQUAL "x64")
         set(OPENSSL_BUILD_PLATFORM "Cygwin-x86_64")
     elseif (OPENSSL_TARGET_ARCH STREQUAL "x86")
-        set(OPENSSL_BUILD_PLATFORM "Cygwin")
+        set(OPENSSL_BUILD_PLATFORM "Cygwin-x86")
     endif()
 elseif (APPLE AND NOT IOS)
     if (OPENSSL_OSX_ARCHITECTURES_LENGTH GREATER 1)
@@ -364,14 +460,24 @@ elseif (APPLE AND NOT IOS)
         endif()
     endif()
 elseif (IOS)
-    set(OPENSSL_BUILD_PLATFORM "iphoneos-cross")
+    if (OPENSSL_TARGET_ARCH STREQUAL "x64")
+        set(OPENSSL_BUILD_PLATFORM "iossimulator-xcrun")
+    elseif (OPENSSL_TARGET_ARCH STREQUAL "arm32")
+        set(OPENSSL_BUILD_PLATFORM "ios-xcrun")
+    elseif (OPENSSL_TARGET_ARCH STREQUAL "arm64")
+        set(OPENSSL_BUILD_PLATFORM "ios64-xcrun")
+    else()
+        set(OPENSSL_BUILD_PLATFORM "iphoneos-cross")
+    endif()
 elseif (ANDROID)
-    if (OPENSSL_TARGET_ARCH STREQUAL "arm32")
-        set(OPENSSL_BUILD_PLATFORM "android-armv7")
+    if (OPENSSL_TARGET_ARCH STREQUAL "x64")
+        set(OPENSSL_BUILD_PLATFORM "android-x86_64")
+    elseif (OPENSSL_TARGET_ARCH STREQUAL "arm32")
+        set(OPENSSL_BUILD_PLATFORM "android-arm")
     elseif (OPENSSL_TARGET_ARCH STREQUAL "x86")
         set(OPENSSL_BUILD_PLATFORM "android-x86")
     elseif (OPENSSL_TARGET_ARCH STREQUAL "arm64")
-        set(OPENSSL_BUILD_PLATFORM "android64-aarch64")
+        set(OPENSSL_BUILD_PLATFORM "android-arm64")
     else()
         set(OPENSSL_BUILD_PLATFORM "android")
     endif()
@@ -422,11 +528,11 @@ endif()
 add_subdirectory(crypto)
 add_subdirectory(ssl)
 add_subdirectory(apps)
-add_subdirectory(engines)
-add_subdirectory(tools)
-if (BUILD_TESTING)
-    add_subdirectory(test)
-endif()
-if (OPENSSL_BUILD_DOCS)
-    add_subdirectory(doc)
-endif()
+#add_subdirectory(engines)
+#add_subdirectory(tools)
+#if (BUILD_TESTING)
+#    add_subdirectory(test)
+#endif()
+#if (OPENSSL_BUILD_DOCS)
+#    add_subdirectory(doc)
+#endif()

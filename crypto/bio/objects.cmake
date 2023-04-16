@@ -13,14 +13,17 @@ set(LIBCRYPTO_CURRENTDIR_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/crypto/bio/bf_buff.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/bio/b_print.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/bio/b_dump.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/bio/b_addr.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/bio/b_sock.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/bio/b_sock2.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/bio/bss_acpt.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/bio/bf_nbio.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/bio/bss_log.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/bio/bss_bio.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/bio/bss_dgram.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/bio/bio.h
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/bio/bio_lcl.h
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/bio/bio_meth.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/bio/bf_lbuf.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/bio/bio_local.h
 )
 
 set(LIBCRYPTO_SOURCES ${LIBCRYPTO_SOURCES} ${LIBCRYPTO_CURRENTDIR_SOURCES})

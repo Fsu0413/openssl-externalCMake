@@ -12,7 +12,9 @@ set(LIBCRYPTO_CURRENTDIR_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/crypto/dh/dh_prn.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/dh/dh_rfc5114.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/dh/dh_kdf.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/dh/dh.h
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/dh/dh_meth.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/dh/dh_rfc7919.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/dh/dh_local.h
 )
 
 set(LIBCRYPTO_SOURCES ${LIBCRYPTO_SOURCES} ${LIBCRYPTO_CURRENTDIR_SOURCES})

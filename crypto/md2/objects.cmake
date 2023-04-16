@@ -2,7 +2,6 @@
 set(LIBCRYPTO_CURRENTDIR_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/crypto/md2/md2_dgst.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/md2/md2_one.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/md2/md2.h
 )
 
 set(LIBCRYPTO_SOURCES ${LIBCRYPTO_SOURCES} ${LIBCRYPTO_CURRENTDIR_SOURCES})

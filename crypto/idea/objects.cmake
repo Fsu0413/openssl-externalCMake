@@ -5,8 +5,7 @@ set(LIBCRYPTO_CURRENTDIR_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/crypto/idea/i_ofb64.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/idea/i_ecb.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/idea/i_skey.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/idea/idea.h
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/idea/idea_lcl.h
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/idea/idea_local.h
 )
 
 set(LIBCRYPTO_SOURCES ${LIBCRYPTO_SOURCES} ${LIBCRYPTO_CURRENTDIR_SOURCES})

@@ -8,7 +8,6 @@ set(LIBCRYPTO_CURRENTDIR_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/crypto/pkcs7/pk7_attr.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/pkcs7/pk7_mime.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/pkcs7/bio_pk7.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/pkcs7/pkcs7.h
 )
 
 set(LIBCRYPTO_SOURCES ${LIBCRYPTO_SOURCES} ${LIBCRYPTO_CURRENTDIR_SOURCES})

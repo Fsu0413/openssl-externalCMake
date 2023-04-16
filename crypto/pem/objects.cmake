@@ -1,7 +1,6 @@
 
 set(LIBCRYPTO_CURRENTDIR_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/crypto/pem/pem_sign.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/pem/pem_seal.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/pem/pem_info.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/pem/pem_lib.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/pem/pem_all.c
@@ -12,8 +11,6 @@ set(LIBCRYPTO_CURRENTDIR_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/crypto/pem/pem_pk8.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/pem/pem_pkey.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/pem/pvkfmt.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/pem/pem.h
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/pem/pem2.h
 )
 
 set(LIBCRYPTO_SOURCES ${LIBCRYPTO_SOURCES} ${LIBCRYPTO_CURRENTDIR_SOURCES})

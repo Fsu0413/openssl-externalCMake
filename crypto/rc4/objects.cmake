@@ -9,60 +9,39 @@ perlasm_generate_src(rc4-x86_64${OPENSSL_ASM_PREPROCESSED} ${CMAKE_SOURCE_DIR}/o
 perlasm_generate_src(rc4-md5-x86_64${OPENSSL_ASM_PREPROCESSED} ${CMAKE_SOURCE_DIR}/openssl/crypto/rc4/asm/rc4-md5-x86_64.pl
     FLAGS ${OPENSSL_PERLASM_SCHEME}
 )
-# TODO: special case for rc4-ia64.S, need another cflags. Maybe source file properties?
-perlasm_generate_src(rc4-ia64.S ${CMAKE_SOURCE_DIR}/openssl/crypto/rc4/asm/rc4-ia64.pl
-    FLAGS ${LIBCRYPTO_CFLAGS}
-)
 perlasm_generate_src(rc4-parisc${OPENSSL_ASM_PREPROCESSED} ${CMAKE_SOURCE_DIR}/openssl/crypto/rc4/asm/rc4-parisc.pl
     FLAGS ${OPENSSL_PERLASM_SCHEME}
-    NO_STDOUT
 )
-perlasm_generate_src(rc4-s390x.S ${CMAKE_SOURCE_DIR}/openssl/crypto/rc4/asm/rc4-s390x.pl
+perlasm_generate_src(rc4-s390x${OPENSSL_ASM_PREPROCESSED} ${CMAKE_SOURCE_DIR}/openssl/crypto/rc4/asm/rc4-s390x.pl
     FLAGS ${OPENSSL_PERLASM_SCHEME}
-    NO_STDOUT
+)
+# catch-all can't be used in CMake
+perlasm_generate_src(rc4-c64xplus.S ${CMAKE_SOURCE_DIR}/openssl/crypto/rc4/asm/rc4-c64xplus.pl
+    FLAGS ${OPENSSL_PERLASM_SCHEME}
 )
 
 set(LIBCRYPTO_CURRENTDIR_SOURCES
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/rc4/rc4_utl.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/rc4/rc4.h
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/rc4/rc4_locl.h
+    # pure-asm?
 )
 
 set(LIBCRYPTO_CURRENTDIR_ASM_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/crypto/rc4/rc4_skey.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/rc4/rc4_enc.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/rc4/rc4_local.h
 )
 if (OPENSSL_ASM)
-    if ( ( OPENSSL_TARGET_ARCH STREQUAL "x64" ) AND (
-               ( CMAKE_SYSTEM_NAME MATCHES "BSD" )
-            OR CYGWIN
-            OR WIN32
-            # OR ( APPLE AND NOT IOS )
-            # OR ( CMAKE_SYSTEM_NAME MATCHES "[Ll]inux" )
-    ) )
+    if ( OPENSSL_TARGET_ARCH STREQUAL "x64" )
         set(LIBCRYPTO_CURRENTDIR_ASM_SOURCES
             rc4-x86_64${OPENSSL_ASM_PREPROCESSED}
             rc4-md5-x86_64${OPENSSL_ASM_PREPROCESSED}
         )
-    elseif ( ( OPENSSL_TARGET_ARCH STREQUAL "x86" ) AND (
-               ( CMAKE_SYSTEM_NAME MATCHES "BSD" )
-            OR CYGWIN
-            OR WIN32
-            OR ANDROID
-            OR ( CMAKE_SYSTEM_NAME MATCHES "[Ll]inux" )
-    ) )
+    elseif ( OPENSSL_TARGET_ARCH STREQUAL "x86" )
         set(LIBCRYPTO_CURRENTDIR_ASM_SOURCES
             rc4-586${OPENSSL_ASM_PREPROCESSED}
         )
-    elseif ( ( OPENSSL_TARGET_ARCH STREQUAL "arm32" ) AND (
-               ANDROID
-            OR ( CMAKE_SYSTEM_NAME MATCHES "[Ll]inux")
-    ) )
+    elseif ( OPENSSL_TARGET_ARCH STREQUAL "arm32" )
         # no-asm
-    elseif ( ( OPENSSL_TARGET_ARCH STREQUAL "arm64" ) AND (
-               ANDROID
-            OR ( CMAKE_SYSTEM_NAME MATCHES "[Ll]inux" )
-    ) )
+    elseif ( OPENSSL_TARGET_ARCH STREQUAL "arm64" )
         # no-asm
     endif()
 endif()

@@ -10,7 +10,7 @@ add_custom_command(
 )
 
 perlasm_generate_src(dest4-sparcv9${OPENSSL_ASM_PREPROCESSED} ${CMAKE_SOURCE_DIR}/openssl/crypto/des/asm/dest4-sparcv9.pl
-    FLAGS ${LIBCRYPTO_CFLAGS}
+    FLAGS ${OPENSSL_PERLASM_SCHEME}
 )
 perlasm_generate_src(des-586${OPENSSL_ASM_PREPROCESSED} ${CMAKE_SOURCE_DIR}/openssl/crypto/des/asm/des-586.pl
     DEPENDENCIES ${CMAKE_SOURCE_DIR}/openssl/crypto/perlasm/x86asm.pl
@@ -32,8 +32,6 @@ set(LIBCRYPTO_CURRENTDIR_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/crypto/des/cfb64ede.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/des/cfb_enc.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/des/ofb64ede.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/des/enc_read.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/des/enc_writ.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/des/ofb64enc.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/des/ofb_enc.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/des/str2key.c
@@ -42,18 +40,9 @@ set(LIBCRYPTO_CURRENTDIR_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/crypto/des/rand_key.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/des/fcrypt.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/des/xcbc_enc.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/des/rpc_enc.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/des/cbc_cksm.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/des/ede_cbcm_enc.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/des/des_old.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/des/des_old2.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/des/read2pwd.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/des/des.h
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/des/des_old.h
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/des/des_locl.h
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/des/rpc_des.h
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/des/des_local.h
     ${CMAKE_SOURCE_DIR}/openssl/crypto/des/spr.h
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/des/des_ver.h
 )
 
 set(LIBCRYPTO_CURRENTDIR_ASM_SOURCES
@@ -61,34 +50,16 @@ set(LIBCRYPTO_CURRENTDIR_ASM_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/crypto/des/fcrypt_b.c
 )
 if (OPENSSL_ASM)
-    if ( ( OPENSSL_TARGET_ARCH STREQUAL "x64" ) AND (
-               ( CMAKE_SYSTEM_NAME MATCHES "BSD" )
-            OR CYGWIN
-            OR WIN32
-            OR ( APPLE AND NOT IOS )
-            OR ( CMAKE_SYSTEM_NAME MATCHES "[Ll]inux" )
-    ) )
+    if ( OPENSSL_TARGET_ARCH STREQUAL "x64" )
         # no-asm
-    elseif ( ( OPENSSL_TARGET_ARCH STREQUAL "x86" ) AND (
-               ( CMAKE_SYSTEM_NAME MATCHES "BSD" )
-            OR CYGWIN
-            OR WIN32
-            OR ANDROID
-            OR ( CMAKE_SYSTEM_NAME MATCHES "[Ll]inux" )
-    ) )
+    elseif ( OPENSSL_TARGET_ARCH STREQUAL "x86" )
         set(LIBCRYPTO_CURRENTDIR_ASM_SOURCES
             des-586${OPENSSL_ASM_PREPROCESSED}
             crypt586${OPENSSL_ASM_PREPROCESSED}
         )
-    elseif ( ( OPENSSL_TARGET_ARCH STREQUAL "arm32" ) AND (
-               ANDROID
-            OR ( CMAKE_SYSTEM_NAME MATCHES "[Ll]inux")
-    ) )
+    elseif ( OPENSSL_TARGET_ARCH STREQUAL "arm32" )
         # no-asm
-    elseif ( ( OPENSSL_TARGET_ARCH STREQUAL "arm64" ) AND (
-               ANDROID
-            OR ( CMAKE_SYSTEM_NAME MATCHES "[Ll]inux" )
-    ) )
+    elseif ( OPENSSL_TARGET_ARCH STREQUAL "arm64" )
         # no-asm
     endif()
 endif()

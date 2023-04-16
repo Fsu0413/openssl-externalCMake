@@ -9,11 +9,9 @@ set(LIBCRYPTO_CURRENTDIR_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/crypto/asn1/a_octet.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/asn1/a_print.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/asn1/a_type.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/asn1/a_set.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/asn1/a_dup.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/asn1/a_d2i_fp.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/asn1/a_i2d_fp.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/asn1/a_enum.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/asn1/a_utf8.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/asn1/a_sign.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/asn1/a_digest.c
@@ -22,28 +20,17 @@ set(LIBCRYPTO_CURRENTDIR_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/crypto/asn1/a_strex.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/asn1/x_algor.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/asn1/x_val.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/asn1/x_pubkey.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/asn1/x_sig.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/asn1/x_req.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/asn1/x_attrib.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/asn1/x_bignum.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/asn1/x_long.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/asn1/x_name.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/asn1/x_x509.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/asn1/x_x509a.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/asn1/x_crl.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/asn1/x_int64.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/asn1/x_info.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/asn1/x_spki.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/asn1/nsseq.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/asn1/x_nx509.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/asn1/d2i_pu.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/asn1/d2i_pr.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/asn1/i2d_pu.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/asn1/i2d_pr.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/asn1/t_req.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/asn1/t_x509.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/asn1/t_x509a.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/asn1/t_crl.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/asn1/t_pkey.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/asn1/t_spki.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/asn1/t_bitst.c
@@ -54,14 +41,12 @@ set(LIBCRYPTO_CURRENTDIR_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/crypto/asn1/tasn_utl.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/asn1/tasn_typ.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/asn1/tasn_prn.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/asn1/tasn_scn.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/asn1/ameth_lib.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/asn1/f_int.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/asn1/f_string.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/asn1/n_pkey.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/asn1/f_enum.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/asn1/x_pkey.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/asn1/a_bool.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/asn1/x_exten.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/asn1/bio_asn1.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/asn1/bio_ndef.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/asn1/asn_mime.c
@@ -69,18 +54,21 @@ set(LIBCRYPTO_CURRENTDIR_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/crypto/asn1/asn1_par.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/asn1/asn1_lib.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/asn1/asn1_err.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/asn1/a_bytes.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/asn1/a_strnid.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/asn1/evp_asn1.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/asn1/asn_pack.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/asn1/p5_pbe.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/asn1/p5_pbev2.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/asn1/p5_scrypt.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/asn1/p8_pkey.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/asn1/asn_moid.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/asn1/asn1.h
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/asn1/asn1_mac.h
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/asn1/asn1t.h
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/asn1/asn1_locl.h
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/asn1/asn_mstbl.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/asn1/asn1_item_list.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/asn1/asn1_item_list.h
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/asn1/asn1_local.h
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/asn1/charmap.h
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/asn1/standard_methods.h
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/asn1/tbl_standard.h
 )
 
 set(LIBCRYPTO_SOURCES ${LIBCRYPTO_SOURCES} ${LIBCRYPTO_CURRENTDIR_SOURCES})

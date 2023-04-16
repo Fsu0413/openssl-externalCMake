@@ -17,17 +17,17 @@ LANGUAGE 0x09,0x01
 BEGIN
     BLOCK "StringFileInfo"
     BEGIN
-	BLOCK "040904b0"
-	BEGIN
-	    VALUE "CompanyName", "The OpenSSL Project, http://www.openssl.org/\0"
-	    VALUE "FileDescription", "OpenSSL Shared Library\0"
-	    VALUE "FileVersion", "@OPENSSL_VERSION_REAL@\0"
-	    VALUE "InternalName", "libeay32\0"
-	    VALUE "OriginalFilename", "libeay32.dll\0"
-	    VALUE "ProductName", "The OpenSSL Toolkit\0"
-	    VALUE "ProductVersion", "@OPENSSL_VERSION_REAL@\0"
-	    VALUE "LegalCopyright", "Copyright  ?1998-2005 The OpenSSL Project. Copyright ?1995-1998 Eric A. Young, Tim J. Hudson. All rights reserved.\0"
-	END
+    BLOCK "040904b0"
+    BEGIN
+        VALUE "CompanyName", "The OpenSSL Project, http://www.openssl.org/\0"
+        VALUE "FileDescription", "OpenSSL library\0"
+        VALUE "FileVersion", "@OPENSSL_VERSION_REAL@\0"
+        VALUE "InternalName", "libcrypto\0"
+        VALUE "OriginalFilename", "libcrypto\0"
+        VALUE "ProductName", "The OpenSSL Toolkit\0"
+        VALUE "ProductVersion", "@OPENSSL_VERSION_REAL@\0"
+        VALUE "LegalCopyright", "Copyright 1998-2023 The OpenSSL Authors. All rights reserved.\0"
+    END
     END
     BLOCK "VarFileInfo"
     BEGIN

@@ -21,7 +21,6 @@ set(LIBCRYPTO_CURRENTDIR_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/crypto/x509v3/v3_crld.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/x509v3/v3_purp.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/x509v3/v3_info.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/x509v3/v3_ocsp.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/x509v3/v3_akeya.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/x509v3/v3_pmaps.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/x509v3/v3_pcons.c
@@ -36,9 +35,12 @@ set(LIBCRYPTO_CURRENTDIR_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/crypto/x509v3/pcy_lib.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/x509v3/v3_asid.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/x509v3/v3_addr.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/x509v3/v3_scts.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/x509v3/x509v3.h
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/x509v3/pcy_int.h
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/x509v3/v3_tlsf.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/x509v3/v3_admis.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/x509v3/ext_dat.h
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/x509v3/pcy_local.h
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/x509v3/standard_exts.h
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/x509v3/v3_admis.h
 )
 
 set(LIBCRYPTO_SOURCES ${LIBCRYPTO_SOURCES} ${LIBCRYPTO_CURRENTDIR_SOURCES})
