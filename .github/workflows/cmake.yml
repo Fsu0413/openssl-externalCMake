@@ -17,11 +17,12 @@ jobs:
             codename: "jammy"
         asm: [ "YES", "NO" ]
         zlib: [ "YES", "NO" ]
+        threads: [ "YES", "NO" ]
     continue-on-error: true
     runs-on: ubuntu-${{ matrix.runner.ver }}
-    name: "build-ubuntu-${{ matrix.runner.ver }} (ASM: ${{ matrix.asm }}, Zlib: ${{ matrix.zlib }})"
+    name: "build-ubuntu-${{ matrix.runner.ver }} (ASM: ${{ matrix.asm }}, Zlib: ${{ matrix.zlib }}), Threads: ${{ matrix.threads }}"
     env:
-      FS_OPENSSL_PACKAGE_STR: Ubuntu${{ matrix.runner.ver }}-x86_64-ASM${{ matrix.asm }}-Zlib${{ matrix.zlib }}
+      FS_OPENSSL_PACKAGE_STR: Ubuntu${{ matrix.runner.ver }}-x86_64-ASM${{ matrix.asm }}-Zlib${{ matrix.zlib }}-Threads${{ matrix.threads }}
     steps:
       - uses: actions/checkout@v3
         with:
@@ -37,7 +38,7 @@ jobs:
         run: |
           mkdir -p "build"
           cd "build"
-          cmake -GNinja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}/openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}" -DOPENSSL_ASM=${{ matrix.asm }} -DOPENSSL_ZLIB=${{ matrix.zlib }} "${{ github.workspace }}/openssl-externalCMake"
+          cmake -GNinja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}/openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}" -DOPENSSL_ASM=${{ matrix.asm }} -DOPENSSL_ZLIB=${{ matrix.zlib }} -DOPENSSL_THREADS=${{ matrix.threads }} "${{ github.workspace }}/openssl-externalCMake"
           ninja
           cmake --install . --strip
       - name: run test
@@ -59,11 +60,12 @@ jobs:
         runner: [ "11", "12" ]
         asm: [ "YES", "NO" ]
         zlib: [ "YES", "NO" ]
+        threads: [ "YES", "NO" ]
     continue-on-error: true
     runs-on: macos-${{ matrix.runner }}
-    name: "build-macOS${{ matrix.runner }} (ASM: ${{ matrix.asm }}, Zlib: ${{ matrix.zlib }})"
+    name: "build-macOS${{ matrix.runner }} (ASM: ${{ matrix.asm }}, Zlib: ${{ matrix.zlib }}, Threads: ${{ matrix.threads }}"
     env:
-      FS_OPENSSL_PACKAGE_STR: macOS${{ matrix.runner.ver }}-x86_64-ASM${{ matrix.asm }}-Zlib${{ matrix.zlib }}
+      FS_OPENSSL_PACKAGE_STR: macOS${{ matrix.runner.ver }}-x86_64-ASM${{ matrix.asm }}-Zlib${{ matrix.zlib }}-Threads${{ matrix.threads }}
     steps:
       - uses: actions/checkout@v3
         with:
@@ -77,7 +79,7 @@ jobs:
         run: |
           mkdir -p "build"
           cd "build"
-          cmake -GNinja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}/openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}" -DOPENSSL_ASM=${{ matrix.asm }} -DOPENSSL_ZLIB=${{ matrix.zlib }} "${{ github.workspace }}/openssl-externalCMake"
+          cmake -GNinja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}/openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}" -DOPENSSL_ASM=${{ matrix.asm }} -DOPENSSL_ZLIB=${{ matrix.zlib }} -DOPENSSL_THREADS=${{ matrix.threads }} "${{ github.workspace }}/openssl-externalCMake"
           ninja
           cmake --install . --strip
       - name: run test
@@ -110,11 +112,12 @@ jobs:
             arch: "x86_64"
             url: "https://github.com/cristianadam/mingw-builds/releases/download/v12.1.0-rev0/x86_64-12.1.0-release-posix-seh-rt_v10-rev0.7z"
         asm: [ "YES", "NO" ]
+        threads: [ "YES", "NO" ]
     continue-on-error: true
     runs-on: windows-latest
-    name: "build-MinGW-GCC${{ matrix.toolchain.version }}-${{ matrix.toolchain.bit }}bit (ASM: ${{ matrix.asm }})"
+    name: "build-MinGW-GCC${{ matrix.toolchain.version }}-${{ matrix.toolchain.bit }}bit (ASM: ${{ matrix.asm }}, Threads: ${{ matrix.threads }}"
     env:
-      FS_OPENSSL_PACKAGE_STR: MinGWGCC${{ matrix.toolchain.version }}-${{ matrix.toolchain.arch }}-ASM${{ matrix.asm }}
+      FS_OPENSSL_PACKAGE_STR: MinGWGCC${{ matrix.toolchain.version }}-${{ matrix.toolchain.arch }}-ASM${{ matrix.asm }}-Threads${{ matrix.threads }}
     steps:
       - uses: actions/checkout@v3
         with:
@@ -136,7 +139,7 @@ jobs:
           set path=${{ github.workspace }}\mingw\mingw${{ matrix.toolchain.bit }}\\bin;%path%
           mkdir -p "build"
           cd "build"
-          cmake -GNinja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}/openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}" -DOPENSSL_ASM=${{ matrix.asm }} "${{ github.workspace }}/openssl-externalCMake"
+          cmake -GNinja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}/openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}" -DOPENSSL_ASM=${{ matrix.asm }} -DOPENSSL_THREADS=${{ matrix.threads }} "${{ github.workspace }}/openssl-externalCMake"
           ninja
           cmake --install . --strip
       - name: run test
@@ -180,6 +183,7 @@ jobs:
             nasm: "NO"
           - value: "YES"
             nasm: "YES"
+        # msvc builds doesn't support no-thread
     continue-on-error: true
     runs-on: windows-${{ matrix.toolchain.runson }}
     name: "build-MSVC${{ matrix.toolchain.version }}-${{ matrix.toolchain.bit }}bit (ASM: ${{ matrix.asm.value }}, NASM: ${{ matrix.asm.nasm }})"
