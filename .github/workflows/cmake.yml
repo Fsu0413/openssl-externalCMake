@@ -63,7 +63,7 @@ jobs:
         threads: [ "YES", "NO" ]
     continue-on-error: true
     runs-on: macos-${{ matrix.runner }}
-    name: "build-macOS${{ matrix.runner }} (ASM: ${{ matrix.asm }}, Zlib: ${{ matrix.zlib }}, Threads: ${{ matrix.threads }}"
+    name: "build-macOS${{ matrix.runner }}-x86_64 (ASM: ${{ matrix.asm }}, Zlib: ${{ matrix.zlib }}, Threads: ${{ matrix.threads }}"
     env:
       FS_OPENSSL_PACKAGE_STR: macOS${{ matrix.runner.ver }}-x86_64-ASM${{ matrix.asm }}-Zlib${{ matrix.zlib }}-Threads${{ matrix.threads }}
     steps:
@@ -79,13 +79,89 @@ jobs:
         run: |
           mkdir -p "build"
           cd "build"
-          cmake -GNinja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}/openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}" -DOPENSSL_ASM=${{ matrix.asm }} -DOPENSSL_ZLIB=${{ matrix.zlib }} -DOPENSSL_THREADS=${{ matrix.threads }} "${{ github.workspace }}/openssl-externalCMake"
+          cmake -GNinja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}/openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}" -DCMAKE_OSX_ARCHITECTURES="x86_64" -DOPENSSL_ASM=${{ matrix.asm }} -DOPENSSL_ZLIB=${{ matrix.zlib }} -DOPENSSL_THREADS=${{ matrix.threads }} "${{ github.workspace }}/openssl-externalCMake"
           ninja
 #          cmake --install . --strip
 #      - name: run test
 #        run: |
 #          cd "build"
 #          ninja check
+#      - name: package
+#        run: |
+#          tar -cJf "openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}.tar.xz" "openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}"
+#      - uses: actions/upload-artifact@v3
+#        with:
+#          name: openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}
+#          path: openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}.tar.xz
+
+  build-macOS-aarch64:
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [ "11", "12" ]
+        asm: [ "YES", "NO" ]
+        zlib: [ "YES", "NO" ]
+        threads: [ "YES", "NO" ]
+    continue-on-error: true
+    runs-on: macos-${{ matrix.runner }}
+    name: "build-macOS${{ matrix.runner }}-aarch64 (ASM: ${{ matrix.asm }}, Zlib: ${{ matrix.zlib }}, Threads: ${{ matrix.threads }}"
+    env:
+      FS_OPENSSL_PACKAGE_STR: macOS${{ matrix.runner.ver }}-aarch64-ASM${{ matrix.asm }}-Zlib${{ matrix.zlib }}-Threads${{ matrix.threads }}
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: true
+          path: openssl-externalCMake
+      - name: install cmake and ninja
+        run: |
+          brew update
+          brew install cmake ninja
+      - name: run CMake + Ninja
+        run: |
+          mkdir -p "build"
+          cd "build"
+          cmake -GNinja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}/openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}" -DCMAKE_OSX_ARCHITECTURES="arm64" -DOPENSSL_ASM=${{ matrix.asm }} -DOPENSSL_ZLIB=${{ matrix.zlib }} -DOPENSSL_THREADS=${{ matrix.threads }} "${{ github.workspace }}/openssl-externalCMake"
+          ninja
+#          cmake --install . --strip
+#      # Tests can not run. GitHub actions runs on x86_64 and there is no Rosetta2 available. Also test fails on macOS on ARM and won't be fixed since it is not supported anymore even using original perl-based Configure.
+#      - name: package
+#        run: |
+#          tar -cJf "openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}.tar.xz" "openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}"
+#      - uses: actions/upload-artifact@v3
+#        with:
+#          name: openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}
+#          path: openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}.tar.xz
+          
+  build-macOS-unified:
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [ "11", "12" ]
+        # can't build ASM on unified. Also macOS on ARM is not officially supported as of 1.0.2
+        zlib: [ "YES", "NO" ]
+        threads: [ "YES", "NO" ]
+    continue-on-error: true
+    runs-on: macos-${{ matrix.runner }}
+    name: "build-macOS${{ matrix.runner }}-unified (Zlib: ${{ matrix.zlib }}, Threads: ${{ matrix.threads }}"
+    env:
+      FS_OPENSSL_PACKAGE_STR: macOS${{ matrix.runner.ver }}-unified-Zlib${{ matrix.zlib }}-Threads${{ matrix.threads }}
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: true
+          path: openssl-externalCMake
+      - name: install cmake and ninja
+        run: |
+          brew update
+          brew install cmake ninja
+      - name: run CMake + Ninja
+        run: |
+          mkdir -p "build"
+          cd "build"
+          cmake -GNinja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}/openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}" -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64" -DOPENSSL_ASM=NO -DOPENSSL_ZLIB=${{ matrix.zlib }} -DOPENSSL_THREADS=${{ matrix.threads }} "${{ github.workspace }}/openssl-externalCMake"
+          ninja
+#          cmake --install . --strip
+#      # Tests need not run. Same as no-asm x86_64 since GitHub actions runs on x86_64 and there is no Rosetta2 available
 #      - name: package
 #        run: |
 #          tar -cJf "openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}.tar.xz" "openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}"
