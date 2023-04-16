@@ -1,7 +1,8 @@
 
 set(OPENSSL_DOCS_LIST)
 set(OPENSSL_DOCS_FULLLIST)
-macro(perldoc_add_document_man PODFILE DEFAULTPAGENUMBER)
+set(OPENSSL_VERSION_NUMBER_PAGENAMELIST)
+function(perldoc_add_document_man PODFILE DEFAULTPAGENUMBER)
     get_filename_component(_PODFILE_ABSOLUTE ${PODFILE} ABSOLUTE)
     get_filename_component(_MAINPAGENAME ${PODFILE} NAME_WLE)
     execute_process(COMMAND ${PERL_EXECUTABLE} "${CMAKE_SOURCE_DIR}/openssl/util/extract-section.pl" ${DEFAULTPAGENUMBER}
@@ -10,13 +11,27 @@ macro(perldoc_add_document_man PODFILE DEFAULTPAGENUMBER)
         COMMAND_ERROR_IS_FATAL ANY
     )
     string(STRIP ${_PAGENUMBER_OUTPUT} _PAGENUMBER)
-    execute_process(COMMAND ${PERL_EXECUTABLE} ${CMAKE_SOURCE_DIR}/openssl/util/extract-names.pl
-        INPUT_FILE ${_PODFILE_ABSOLUTE}
-        OUTPUT_VARIABLE _PAGENAME_OUTPUT
-        COMMAND_ERROR_IS_FATAL ANY
-    )
-    string(STRIP ${_PAGENAME_OUTPUT} _PAGENAMES)
-    string(REGEX REPLACE "[ \t\r\n]+" ";" _PAGENAMELIST ${_PAGENAMES})
+
+    set(_PAGENAMELIST)
+    if (_MAINPAGENAME STREQUAL "SSLeay_version")
+        set(_PAGENAMELIST ${OPENSSL_VERSION_NUMBER_PAGENAMELIST})
+    else()
+        execute_process(COMMAND ${PERL_EXECUTABLE} ${CMAKE_SOURCE_DIR}/openssl/util/extract-names.pl
+            INPUT_FILE ${_PODFILE_ABSOLUTE}
+            OUTPUT_VARIABLE _PAGENAME_OUTPUT
+            COMMAND_ERROR_IS_FATAL ANY
+        )
+        string(STRIP ${_PAGENAME_OUTPUT} _PAGENAMES)
+        string(REGEX REPLACE "[ \t\r\n]+" ";" _PAGENAMELIST ${_PAGENAMES})
+        if (_MAINPAGENAME STREQUAL "OPENSSL_VERSION_NUMBER")
+            set(OPENSSL_VERSION_NUMBER_PAGENAMELIST "${_PAGENAMELIST}" PARENT_SCOPE)
+            return()
+        endif()
+    endif()
+    # kill duplicates which leads to wrong result
+    if (_MAINPAGENAME STREQUAL "EVP_PKEY_CTX_ctrl")
+        list(REMOVE_ITEM _PAGENAMELIST "EVP_PKEY_get_default_digest_nid")
+    endif()
     set(_PAGEOUTPUTLIST)
     foreach (_PAGENAME IN LISTS _PAGENAMELIST)
         if ( NOT "${_PAGENAME}" STREQUAL "${_MAINPAGENAME}" )
@@ -37,7 +52,7 @@ macro(perldoc_add_document_man PODFILE DEFAULTPAGENUMBER)
                                "-P" generateDoc.cmake
                        MAIN_DEPENDENCY ${PODFILE}
     )
-    set(OPENSSL_DOCS_LIST ${OPENSSL_DOCS_LIST} "man/man${_PAGENUMBER}/${_MAINPAGENAME}.${_PAGENUMBER}")
+    set(OPENSSL_DOCS_LIST ${OPENSSL_DOCS_LIST} "man/man${_PAGENUMBER}/${_MAINPAGENAME}.${_PAGENUMBER}" PARENT_SCOPE)
     install(FILES ${CMAKE_CURRENT_BINARY_DIR}/man/man${_PAGENUMBER}/${_MAINPAGENAME}.${_PAGENUMBER}
         DESTINATION ${CMAKE_INSTALL_MANDIR}/man${_PAGENUMBER}
     )
@@ -47,17 +62,8 @@ macro(perldoc_add_document_man PODFILE DEFAULTPAGENUMBER)
             RENAME ${MANFILE}.${_PAGENUMBER}
         )
     endforeach()
-    set(OPENSSL_DOCS_FULLLIST ${OPENSSL_DOCS_FULLLIST} ${_PAGEOUTPUTLIST} "man/man${_PAGENUMBER}/${_MAINPAGENAME}.${_PAGENUMBER}")
-    unset(_REPLACED_OUTPUTNAME)
-    unset(_PAGEOUTPUTLIST)
-    unset(_PAGENAMELIST)
-    unset(_PAGENAMES)
-    unset(_PAGENAME_OUTPUT)
-    unset(_PAGENUMBER)
-    unset(_PAGENUMBER_OUTPUT)
-    unset(_MAINPAGENAME)
-    unset(_PODFILE_ABSOLUTE)
-endmacro()
+    set(OPENSSL_DOCS_FULLLIST ${OPENSSL_DOCS_FULLLIST} ${_PAGEOUTPUTLIST} "man/man${_PAGENUMBER}/${_MAINPAGENAME}.${_PAGENUMBER}" PARENT_SCOPE)
+endfunction()
 
 configure_file(generateDoc.cmake.in generateDoc.cmake @ONLY)
 
@@ -237,7 +243,7 @@ foreach (PODFILE IN ITEMS
     "${CMAKE_SOURCE_DIR}/openssl/doc/crypto/EVP_VerifyInit.pod"
     "${CMAKE_SOURCE_DIR}/openssl/doc/crypto/OBJ_nid2obj.pod"
     "${CMAKE_SOURCE_DIR}/openssl/doc/crypto/OPENSSL_Applink.pod"
-    "${CMAKE_SOURCE_DIR}/openssl/doc/crypto/OPENSSL_VERSION_NUMBER.pod"
+    "${CMAKE_SOURCE_DIR}/openssl/doc/crypto/OPENSSL_VERSION_NUMBER.pod" # need to come before "SSLeay_version.pod"
     "${CMAKE_SOURCE_DIR}/openssl/doc/crypto/OPENSSL_config.pod"
     "${CMAKE_SOURCE_DIR}/openssl/doc/crypto/OPENSSL_ia32cap.pod"
     "${CMAKE_SOURCE_DIR}/openssl/doc/crypto/OPENSSL_instrument_bus.pod"
