@@ -2,7 +2,7 @@
 
 This is a totally external CMake project for building OpenSSL.
 
-This branch is for OpenSSL 1.0.2 series.
+This branch is for OpenSSL 1.1.1 series.
 
 ## Why another makefile generator?
 
@@ -15,8 +15,6 @@ But things do not as that simple as they thought. There are some points people n
 1. Multi-process build progress on some platform is not ever considered. E.g., only Nmake is supported on MSVC which always runs commands one by one.
 1. Command line instruction is confusing. No warning or error are populated to user even if wrong argument is provided. But instead it passes the unrecognized arguments directly to compiler or linker.
 1. No IDE support for this hand-craft Makefile generator
-1. (1.0.2 and before) Out-of-tree build (shadow build) is not supported.
-1. (1.0.2 and before) Windows build have different instruction. It is not that straightforward for typical Configure-make-install instruction.
 
 There have been since a lot of people requesting OpenSSL team switch to a common and widely used Makefile generator they still won't.
 The reason is that any widely used one they have been told don't support all platforms OpenSSL is developing against.
@@ -29,8 +27,9 @@ In order not to touch OpenSSL source tree we'd build it externally.
 
 1. CMake is widely used in open source projects. It supports a majority of common platforms and is easy for users to using it.
 1. I'm slightly more familiar with CMake than other Makefile generators.
+1. CMake itself is also a full-featured script interpretor with a lot of common file operations built-in (cmake -P / -E). With CMake one can create a simple runnable script on its own and does not depends on any other script interpretor.
 
-Not using autotools is because it has poor support on Windows.
+Not using autotools is because it has poor support on Windows. It depends on full unix instructions even if the target platform is Microsoft Visual Studio.
 Not using other generators is because I have never used them before.
 
 (I hate using Gradle! But Android application development needs it)
