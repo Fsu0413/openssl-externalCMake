@@ -582,6 +582,7 @@ target_include_directories(crypto
            ${CMAKE_CURRENT_BINARY_DIR}
            ${CMAKE_SOURCE_DIR}/openssl
            ${CMAKE_SOURCE_DIR}/openssl/include
+           ${CMAKE_SOURCE_DIR}/openssl/crypto
            ${LIBCRYPTO_SOURCE_DIRECTORIES_INCLUDES}
 )
 

@@ -81,13 +81,13 @@ if (OPENSSL_ASM)
         endif()
     elseif ( OPENSSL_TARGET_ARCH STREQUAL "arm32" )
         set(LIBCRYPTO_CURRENTDIR_ASM_SOURCES
-            ${CMAKE_SOURCE_DIR}/openssl/crypto/armv4cpuid.S
+            armv4cpuid.S
             ${CMAKE_SOURCE_DIR}/openssl/crypto/armcap.c
             ${CMAKE_SOURCE_DIR}/openssl/crypto/arm_arch.h
         )
     elseif ( OPENSSL_TARGET_ARCH STREQUAL "arm64" )
         set(LIBCRYPTO_CURRENTDIR_ASM_SOURCES
-            ${CMAKE_SOURCE_DIR}/openssl/crypto/arm64cpuid.S
+            arm64cpuid.S
             ${CMAKE_SOURCE_DIR}/openssl/crypto/armcap.c
             ${CMAKE_SOURCE_DIR}/openssl/crypto/arm_arch.h
         )
