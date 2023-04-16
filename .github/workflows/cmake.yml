@@ -47,7 +47,7 @@ jobs:
       - name: package
         run: |
           tar -cJf "openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}.tar.xz" "openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}"
-      - uses: actions/upload-artifact@v3.1.2
+      - uses: actions/upload-artifact@v3
         with:
           name: openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}
           path: openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}.tar.xz
@@ -87,7 +87,7 @@ jobs:
       - name: package
         run: |
           tar -cJf "openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}.tar.xz" "openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}"
-      - uses: actions/upload-artifact@v3.1.2
+      - uses: actions/upload-artifact@v3
         with:
           name: openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}
           path: openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}.tar.xz
@@ -148,7 +148,7 @@ jobs:
       - name: package
         run: |
           7z a "openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}.7z" "openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}"
-      - uses: actions/upload-artifact@v3.1.2
+      - uses: actions/upload-artifact@v3
         with:
           name: openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}
           path: openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}.7z
@@ -214,7 +214,7 @@ jobs:
       - name: package
         run: |
           7z a "openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}.7z" "openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}"
-      - uses: actions/upload-artifact@v3.1.2
+      - uses: actions/upload-artifact@v3
         with:
           name: openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}
           path: openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}.7z
