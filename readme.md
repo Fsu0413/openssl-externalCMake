@@ -86,7 +86,18 @@ Just typical CMake procedure will work.
 
 Sort by priority
 
-1. 1.1.1 series support
+### On 1.1.1 branch:
+
+1. c_rehash and other tools generation
+1. `make install` support
+1. `crypto.pc` and `ssl.pc` generation
+1. Check build with zlib
+1. Check build without threads
+1. Check build with krb5
+1. `make check` support
+
+### All branches:
+
 1. 3.0 series support
 1. 3.1 series support
 1. 3.2 series support
