@@ -87,7 +87,7 @@ Sort by priority
 
 ### On 1.1.1 branch:
 
-1. c_rehash and other tools generation
+1. engines build
 1. `make install` support
 1. `crypto.pc` and `ssl.pc` generation
 1. `make check` support

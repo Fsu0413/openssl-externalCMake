@@ -183,8 +183,8 @@ install(PROGRAMS CA.pl
     DESTINATION ${OPENSSL_OPENSSLDIR}/misc
 )
 
-install(PROGRAMS ${CMAKE_SOURCE_DIR}/openssl/apps/tsget
-                 ${CMAKE_SOURCE_DIR}/openssl/apps/CA.sh
+configure_file(tsget.cmake.in tsget @ONLY)
+install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/tsget
     DESTINATION ${OPENSSL_OPENSSLDIR}/misc
 )
 
@@ -192,7 +192,7 @@ install(FILES ${CMAKE_SOURCE_DIR}/openssl/apps/openssl.cnf
     DESTINATION ${OPENSSL_OPENSSLDIR}
 )
 
-#configure_file(openssl.pc.cmake.in openssl.pc @ONLY)
+configure_file(openssl.pc.cmake.in openssl.pc @ONLY)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/openssl.pc
     DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig
 )

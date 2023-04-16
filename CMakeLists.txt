@@ -375,7 +375,9 @@ if ( NOT OPENSSL_TARGET_ARCH )
         if (OPENSSL_OSX_ARCHITECTURES_LENGTH GREATER 1)
             if (OPENSSL_ASM)
                 # TODO: complete this when CMake supports building different sets of file for different architectures
-                message(FATAL_ERROR "OPENSSL_ASM is incompatible with more than one CMAKE_OSX_ARCHITECTURES set on macOS, due to the file used for building it is different. "
+                # Currently only method for implementing it is to generate 2 set of libraries and use 'lipo' to combine them, since the compile flags are totally different.
+                message(FATAL_ERROR "OPENSSL_ASM is incompatible with more than one CMAKE_OSX_ARCHITECTURES set on macOS, due to the file and compiler flags used for building it "
+                                    "are totally different. "
                                     "If a multi-architecture build should be done, either build the all-in-one package with OPENSSL_ASM set to OFF or build them separately "
                                     "with OPENSSL_ASM set to ON and combine them using lipo provided by Apple.")
             endif()
@@ -529,7 +531,7 @@ add_subdirectory(crypto)
 add_subdirectory(ssl)
 add_subdirectory(apps)
 #add_subdirectory(engines)
-#add_subdirectory(tools)
+add_subdirectory(tools)
 #if (BUILD_TESTING)
 #    add_subdirectory(test)
 #endif()

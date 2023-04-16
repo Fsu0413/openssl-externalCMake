@@ -2,12 +2,11 @@ prefix=@CMAKE_INSTALL_PREFIX@
 exec_prefix=${prefix}
 libdir=${exec_prefix}/@CMAKE_INSTALL_LIBDIR@
 includedir=${prefix}/@CMAKE_INSTALL_INCLUDEDIR@
-enginesdir=${libdir}/engines
+enginesdir=${libdir}/engines-1.1
 
 Name: OpenSSL-libcrypto
 Description: OpenSSL cryptography library
 Version: @OPENSSL_VERSION_REAL@
-Requires: @MIT_KRB5_MODULE_NAME@
 Libs: -L${libdir} -lcrypto
 Libs.private:
 Cflags: -I${includedir}

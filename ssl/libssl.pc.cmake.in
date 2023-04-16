@@ -6,7 +6,6 @@ includedir=${prefix}/@CMAKE_INSTALL_INCLUDEDIR@
 Name: OpenSSL-libssl
 Description: Secure Sockets Layer and cryptography libraries
 Version: @OPENSSL_VERSION_REAL@
-Requires: @MIT_KRB5_MODULE_NAME@
 Requires.private: libcrypto
 Libs: -L${libdir} -lssl
 Libs.private:
