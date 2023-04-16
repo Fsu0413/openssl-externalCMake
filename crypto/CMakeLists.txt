@@ -34,7 +34,7 @@ else()
 endif()
 
 set(EXTERNALCMAKE_MIN_API_LEVEL NO)
-if (CACHE{OPENSSL_MIN_API_LEVEL})
+if (DEFINED CACHE{OPENSSL_MIN_API_LEVEL})
     set(EXTERNALCMAKE_MIN_API_LEVEL YES)
 endif()
 
@@ -614,6 +614,12 @@ install(TARGETS crypto
 
 install(DIRECTORY ${CMAKE_BINARY_DIR}/include/openssl
     TYPE INCLUDE
+)
+
+install(DIRECTORY ${CMAKE_SOURCE_DIR}/openssl/include/openssl
+    TYPE INCLUDE
+    REGEX "^.+\\.in$" EXCLUDE
+    REGEX "^(.*[/\\])?__DECC_INCLUDE.+$" EXCLUDE
 )
 
 # issue: can't specify zlib path, especially for the condition that zlib is found by CMake but can't be found by pkgconfig
