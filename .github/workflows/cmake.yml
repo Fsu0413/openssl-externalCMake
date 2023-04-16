@@ -65,7 +65,7 @@ jobs:
     runs-on: macos-${{ matrix.runner }}
     name: "build-macOS${{ matrix.runner }}-x86_64 (ASM: ${{ matrix.asm }}, Zlib: ${{ matrix.zlib }}, Threads: ${{ matrix.threads }}"
     env:
-      FS_OPENSSL_PACKAGE_STR: macOS${{ matrix.runner.ver }}-x86_64-ASM${{ matrix.asm }}-Zlib${{ matrix.zlib }}-Threads${{ matrix.threads }}
+      FS_OPENSSL_PACKAGE_STR: macOS${{ matrix.runner }}-x86_64-ASM${{ matrix.asm }}-Zlib${{ matrix.zlib }}-Threads${{ matrix.threads }}
     steps:
       - uses: actions/checkout@v3
         with:
@@ -106,7 +106,7 @@ jobs:
     runs-on: macos-${{ matrix.runner }}
     name: "build-macOS${{ matrix.runner }}-aarch64 (ASM: ${{ matrix.asm }}, Zlib: ${{ matrix.zlib }}, Threads: ${{ matrix.threads }}"
     env:
-      FS_OPENSSL_PACKAGE_STR: macOS${{ matrix.runner.ver }}-aarch64-ASM${{ matrix.asm }}-Zlib${{ matrix.zlib }}-Threads${{ matrix.threads }}
+      FS_OPENSSL_PACKAGE_STR: macOS${{ matrix.runner }}-aarch64-ASM${{ matrix.asm }}-Zlib${{ matrix.zlib }}-Threads${{ matrix.threads }}
     steps:
       - uses: actions/checkout@v3
         with:
@@ -144,7 +144,7 @@ jobs:
     runs-on: macos-${{ matrix.runner }}
     name: "build-macOS${{ matrix.runner }}-unified (Zlib: ${{ matrix.zlib }}, Threads: ${{ matrix.threads }}"
     env:
-      FS_OPENSSL_PACKAGE_STR: macOS${{ matrix.runner.ver }}-unified-Zlib${{ matrix.zlib }}-Threads${{ matrix.threads }}
+      FS_OPENSSL_PACKAGE_STR: macOS${{ matrix.runner }}-unified-Zlib${{ matrix.zlib }}-Threads${{ matrix.threads }}
     steps:
       - uses: actions/checkout@v3
         with:
