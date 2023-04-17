@@ -23,7 +23,7 @@ perlasm_generate_src(ghash-parisc${OPENSSL_ASM_PREPROCESSED} ${CMAKE_SOURCE_DIR}
 perlasm_generate_src(ghashp8-ppc${OPENSSL_ASM_PREPROCESSED} ${CMAKE_SOURCE_DIR}/openssl/crypto/modes/asm/ghashp8-ppc.pl
     FLAGS ${OPENSSL_PERLASM_SCHEME}
 )
-perlasm_generate_src(ghash-armv4.S {CMAKE_SOURCE_DIR}/openssl/crypto/modes/asm/ghash-armv4.pl
+perlasm_generate_src(ghash-armv4.S ${CMAKE_SOURCE_DIR}/openssl/crypto/modes/asm/ghash-armv4.pl
     FLAGS ${OPENSSL_PERLASM_SCHEME}
 )
 perlasm_generate_src(ghashv8-armx.S ${CMAKE_SOURCE_DIR}/openssl/crypto/modes/asm/ghashv8-armx.pl
