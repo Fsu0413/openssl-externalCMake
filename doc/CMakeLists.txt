@@ -1,9 +1,5 @@
 
-find_program(POD2MAN "pod2man")
-
-if (NOT POD2MAN)
-    set(POD2MAN "${PERL_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/pod2man.pl" CACHE STRING "" FORCE)
-endif()
+find_program(POD2MAN "pod2man" REQUIRED)
 
 set(OPENSSL_DOCS_LIST)
 set(OPENSSL_DOCS_FULLLIST)
