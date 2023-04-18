@@ -1,4 +1,10 @@
 
+find_program(POD2MAN "pod2man")
+
+if (NOT POD2MAN)
+    set(POD2MAN "${PERL_EXECUTABLE} ${CMAKE_SOURCE_DIR}/openssl/util/pod2man.pl" CACHE STRING "" FORCE)
+endif()
+
 set(OPENSSL_DOCS_LIST)
 set(OPENSSL_DOCS_FULLLIST)
 set(OPENSSL_VERSION_NUMBER_PAGENAMELIST)

@@ -6,8 +6,7 @@ get_filename_component(OUT_DIR "${OUTFILEPATH_ABSOLUTE}" DIRECTORY)
 execute_process(COMMAND @CMAKE_COMMAND@ -E
                         make_directory ${OUT_DIR}
                 )
-execute_process(COMMAND @PERL_EXECUTABLE@
-                        @CMAKE_SOURCE_DIR@/openssl/util/pod2man.pl
+execute_process(COMMAND @POD2MAN@
                         "--section=${SECTION}"
                         "--center=OpenSSL"
                         "--release=@OPENSSL_VERSION_REAL@"
