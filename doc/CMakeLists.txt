@@ -7,7 +7,6 @@ macro(perldoc_add_document_man PODFILE DEFAULTPAGENUMBER)
     get_filename_component(_PODFILE_ABSOLUTE ${PODFILE} ABSOLUTE)
     get_filename_component(_MAINPAGENAME ${PODFILE} NAME_WLE)
     set(_PAGENUMBER ${DEFAULTPAGENUMBER})
-    MESSAGE(NOTICE ${PODFILE})
     execute_process(COMMAND ${PERL_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/extract-names.pl
         INPUT_FILE ${_PODFILE_ABSOLUTE}
         OUTPUT_VARIABLE _PAGENAME_OUTPUT
