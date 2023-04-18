@@ -550,6 +550,6 @@ add_subdirectory(tools)
 # OpenSSL 1.1 changed the process for building documentations.
 # Current documentation build has become a pain that it processes the pod files one by one.
 # Probably we'd take previous 1.0.2 procedure back into our local repository...??
-#if (OPENSSL_BUILD_DOCS)
-#    add_subdirectory(doc)
-#endif()
+if (OPENSSL_BUILD_DOCS)
+    add_subdirectory(doc)
+endif()

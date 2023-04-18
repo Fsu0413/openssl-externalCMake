@@ -7,7 +7,7 @@ execute_process(COMMAND @CMAKE_COMMAND@ -E
                         make_directory ${OUT_DIR}
                 )
 execute_process(COMMAND @PERL_EXECUTABLE@
-                        @CMAKE_SOURCE_DIR@/openssl/util/pod2man.pl
+                        @POD2MAN@
                         "--section=${SECTION}"
                         "--center=OpenSSL"
                         "--release=@OPENSSL_VERSION_REAL@"
