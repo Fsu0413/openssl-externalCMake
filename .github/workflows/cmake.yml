@@ -215,7 +215,7 @@ jobs:
           set path=${{ github.workspace }}\mingw\mingw${{ matrix.toolchain.bit }}\\bin;%path%
           mkdir -p "build"
           cd "build"
-          cmake -GNinja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}/openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}" -DOPENSSL_ASM=${{ matrix.asm }} -DOPENSSL_THREADS=${{ matrix.threads }} "${{ github.workspace }}/openssl-externalCMake"
+          cmake -GNinja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}/openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}" -DOPENSSL_ASM=${{ matrix.asm }} -DOPENSSL_THREADS=${{ matrix.threads }} -DPOD2MAN="C:\Strawberry\perl\bin\pod2man.bat" "${{ github.workspace }}/openssl-externalCMake"
           ninja
           cmake --install . --strip
       - name: run test
@@ -282,7 +282,7 @@ jobs:
           call "${{ matrix.toolchain.call }}"
           mkdir -p "build"
           cd "build"
-          cmake -GNinja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}/openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}" -DOPENSSL_ASM=${{ matrix.asm.value }} -DOPENSSL_NASM=${{ matrix.asm.nasm }} "${{ github.workspace }}/openssl-externalCMake"
+          cmake -GNinja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}/openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}" -DOPENSSL_ASM=${{ matrix.asm.value }} -DOPENSSL_NASM=${{ matrix.asm.nasm }} -DPOD2MAN="C:\Strawberry\perl\bin\pod2man.bat" "${{ github.workspace }}/openssl-externalCMake"
           ninja
           cmake --install . --strip
       - name: run test
