@@ -196,39 +196,3 @@ configure_file(openssl.pc.cmake.in openssl.pc @ONLY)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/openssl.pc
     DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig
 )
-
-if (NOT WIN32)
-    #configure_file(${CMAKE_SOURCE_DIR}/openssl/apps/CA.sh CA.sh COPYONLY)
-endif()
-
-if (false) # (BUILD_TESTING)
-    add_dependencies(check openssl)
-
-    if (WIN32 AND BUILD_SHARED_LIBS)
-        add_custom_command(OUTPUT "${CMAKE_BINARY_DIR}/apps/libeay32.dll"
-                           COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/crypto/libeay32.dll ${CMAKE_BINARY_DIR}/apps/libeay32.dll
-                           DEPENDS crypto
-        )
-        add_custom_target(copycrypto_apps DEPENDS "${CMAKE_BINARY_DIR}/apps/libeay32.dll")
-        add_dependencies(check copycrypto_apps)
-    endif()
-
-    if (WIN32 AND BUILD_SHARED_LIBS)
-        add_custom_command(OUTPUT "${CMAKE_BINARY_DIR}/apps/ssleay32.dll"
-                           COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/ssl/ssleay32.dll ${CMAKE_BINARY_DIR}/apps/ssleay32.dll
-                           DEPENDS ssl
-        )
-        add_custom_target(copyssl_apps DEPENDS "${CMAKE_BINARY_DIR}/apps/ssleay32.dll")
-        add_dependencies(check copyssl_apps)
-    endif()
-
-    if (NOT WIN32 AND NOT OPENSSL_NO_RSA)
-        configure_file(testca.cmake.in testca @ONLY)
-        add_test(NAME testca COMMAND sh ${CMAKE_BINARY_DIR}/apps/testca WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/test COMMAND_EXPAND_LISTS)
-    endif()
-
-    configure_file(${CMAKE_SOURCE_DIR}/openssl/apps/dsa512.pem dsa512.pem COPYONLY) # needed for testgen / testss
-    configure_file(${CMAKE_SOURCE_DIR}/openssl/apps/openssl.cnf openssl.cnf COPYONLY) # needed for treq
-    configure_file(${CMAKE_SOURCE_DIR}/openssl/apps/server.pem server.pem COPYONLY) # needed for ssltest
-    configure_file(${CMAKE_SOURCE_DIR}/openssl/apps/client.pem client.pem COPYONLY) # needed for ssltest
-endif()

@@ -524,28 +524,21 @@ elseif (CMAKE_SYSTEM_NAME MATCHES "BSD")
     endif()
 endif()
 
-if (BUILD_TESTING)
-    add_library(OpenSSLTest INTERFACE)
-    target_include_directories(OpenSSLTest INTERFACE "${CMAKE_SOURCE_DIR}/openssl/test")
-    target_sources(OpenSSLTest INTERFACE "${CMAKE_SOURCE_DIR}/openssl/test/testutil.h" "${CMAKE_SOURCE_DIR}/openssl/test/ssltestlib.h")
-    add_custom_target(check ${CMAKE_CTEST_COMMAND})
-
-    # builtin "make test" is useless for us.
-    # it does not build the dependencies needed for our test.
-    # cmake_policy(PUSH)
-    # cmake_policy(SET CMP0037 OLD)
-    # add_custom_target(test DEPENDS check)
-    # cmake_policy(POP)
-endif()
-
 add_subdirectory(crypto)
 add_subdirectory(ssl)
 add_subdirectory(apps)
 add_subdirectory(engines)
 add_subdirectory(tools)
-#if (BUILD_TESTING)
-#    add_subdirectory(test)
-#endif()
+
+# OpenSSL 1.1 redesigns the whole test program.
+# It currently depends on configdata.pm (It did "eval" it instead of "use" it. See "util/perl/OpenSSL/Test/Utils.pm", line 87) which we never generate in CMake.
+# So the ctest things will be a whole rewrite of the OpenSSL test platform.
+# All the test cases should be rewritten, just as what we did in OpenSSL 1.0.2.
+# This time it comes with 157 test cases instead of 57 during 1.0.2.
+# A good thing is that all test related stuff has been moved from the indivisual directory to this "test" directory.
+if (BUILD_TESTING)
+    add_subdirectory(test)
+endif()
 
 # OpenSSL 1.1 changed the process for building documentations.
 # Current documentation build has become a pain that it processes the pod files one by one.
