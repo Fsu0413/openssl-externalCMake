@@ -524,6 +524,10 @@ elseif (CMAKE_SYSTEM_NAME MATCHES "BSD")
     endif()
 endif()
 
+if (BUILD_TESTING)
+    add_custom_target(check ${CMAKE_CTEST_COMMAND})
+endif()
+
 add_subdirectory(crypto)
 add_subdirectory(ssl)
 add_subdirectory(apps)
