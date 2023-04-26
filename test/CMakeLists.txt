@@ -675,10 +675,7 @@ endif()
 # test_verify not simple
 # test_x509 not simple
 if (OPENSSL_AFALGENG)
-    # need to set this in runner
-    # set(ENV{OPENSSL_ENGINES} ${CMAKE_BINARY_DIR}/engines)
-    # ... and then run following program
-    # add_test(NAME test_afalg COMMAND afalgtest WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} COMMAND_EXPAND_LISTS)
+    add_test(NAME test_afalg COMMAND ${CMAKE_COMMAND} -E env OPENSSL_ENGINES=${CMAKE_BINARY_DIR}/engines afalgtest WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} COMMAND_EXPAND_LISTS)
 endif()
 add_test(NAME test_engine COMMAND enginetest WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} COMMAND_EXPAND_LISTS)
 # test_evp not simple
@@ -702,7 +699,7 @@ if (OPENSSL_SSL3 OR OPENSSL_TLS1 OR OPENSSL_TLS1_1 OR OPENSSL_TLS1_2 OR OPENSSL_
 endif()
 # test_comp not simple
 # test_key_share not simple
-add_test(NAME test_packet COMMAND test_packet WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} COMMAND_EXPAND_LISTS)
+add_test(NAME test_packet COMMAND packettest WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} COMMAND_EXPAND_LISTS)
 if (OPENSSL_SSL3 OR OPENSSL_TLS1 OR OPENSSL_TLS1_1 OR OPENSSL_TLS1_2 OR OPENSSL_TLS1_3)
     add_test(NAME test_recordlen COMMAND recordlentest ${CMAKE_SOURCE_DIR}/openssl/apps/server.pem ${CMAKE_SOURCE_DIR}/openssl/apps/server.pem WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} COMMAND_EXPAND_LISTS)
 endif()
@@ -721,5 +718,82 @@ if (NOT WIN32 AND NOT BUILD_SHARED_LIBS)
     add_test(NAME test_wpacket COMMAND wpackettest WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} COMMAND_EXPAND_LISTS)
 endif()
 # test_ca not simple
-
-# add_test(NAME test_pbelu COMMAND pbelutest WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} COMMAND_EXPAND_LISTS)
+if (OPENSSL_TLS1 OR OPENSSL_TLS1_1 OR OPENSSL_TLS1_2 OR OPENSSL_TLS1_3)
+    add_test(NAME test_cipherbytes COMMAND cipherbytes_test WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} COMMAND_EXPAND_LISTS)
+    add_test(NAME test_cipherlist COMMAND cipherlist_test WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} COMMAND_EXPAND_LISTS)
+    add_test(NAME test_ciphername COMMAND ciphername_test WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} COMMAND_EXPAND_LISTS)
+endif()
+# test_cms not simple
+add_test(NAME test_cmsapi COMMAND cmsapitest ${CMAKE_SOURCE_DIR}/openssl/test/certs/servercert.pem ${CMAKE_SOURCE_DIR}/openssl/test/certs/servercert.pem WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} COMMAND_EXPAND_LISTS)
+if (OPENSSL_CT AND OPENSSL_EC)
+    add_test(NAME test_ct COMMAND ${CMAKE_COMMAND} -E env CTLOG_FILE=${CMAKE_SOURCE_DIR}/openssl/test/ct/log_list.conf CT_DIR=${CMAKE_SOURCE_DIR}/openssl/test/ct/ CERTS_DIR=${CMAKE_SOURCE_DIR}/openssl/test/certs ct_test WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} COMMAND_EXPAND_LISTS)
+endif()
+if (OPENSSL_EC)
+    add_test(NAME test_dane_1 COMMAND danetest "example.com" ${CMAKE_SOURCE_DIR}/openssl/test/danetest.pem ${CMAKE_SOURCE_DIR}/openssl/test/danetest.in WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} COMMAND_EXPAND_LISTS)
+    add_test(NAME test_dane_2 COMMAND danetest "server.example" ${CMAKE_SOURCE_DIR}/openssl/test/certs/cross-root.pem ${CMAKE_SOURCE_DIR}/openssl/test/dane-cross.in WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} COMMAND_EXPAND_LISTS)
+endif()
+if (OPENSSL_DTLS1 OR OPENSSL_DTLS1_2)
+    add_test(NAME test_dtls COMMAND dtlstest ${CMAKE_SOURCE_DIR}/openssl/apps/server.pem ${CMAKE_SOURCE_DIR}/openssl/apps/server.pem WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} COMMAND_EXPAND_LISTS)
+endif()
+if (OPENSSL_PSK AND OPENSSL_DTLS1_2)
+    add_test(NAME test_dtls_mtu COMMAND dtls_mtu_test WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} COMMAND_EXPAND_LISTS)
+endif()
+if (OPENSSL_DH)
+    add_test(NAME test_dtlsv1listen COMMAND dtlsv1listentest WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} COMMAND_EXPAND_LISTS)
+endif()
+# test_ocsp not simple
+# test_pkcs12 not simple, need utf-8 support, to be investigated
+# test_ssl_new not simple
+# test_ssl (test_ssl_old) not simple
+add_test(NAME test_ssl_test_ctx COMMAND ssl_test_ctx_test ${CMAKE_SOURCE_DIR}/openssl/test/ssl_test_ctx_test.conf WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} COMMAND_EXPAND_LISTS)
+if (OPENSSL_TLS1 OR OPENSSL_TLS1_1 OR OPENSSL_TLS1_2 OR OPENSSL_TLS1_3)
+    add_test(NAME test_sslcorrupt COMMAND sslcorrupttest ${CMAKE_SOURCE_DIR}/openssl/apps/server.pem ${CMAKE_SOURCE_DIR}/openssl/apps/server.pem WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} COMMAND_EXPAND_LISTS)
+endif()
+# test_tsa not simple
+if (OPENSSL_EC)
+    add_test(NAME test_x509aux COMMAND x509aux "example.com" ${CMAKE_SOURCE_DIR}/openssl/test/certs/roots.pem ${CMAKE_SOURCE_DIR}/openssl/test/certs/root+anyEKU.pem ${CMAKE_SOURCE_DIR}/openssl/test/certs/root-anyEKU.pem ${CMAKE_SOURCE_DIR}/openssl/test/certs/root-cert.pem ${CMAKE_SOURCE_DIR}/openssl/test/certs/invalid-cert.pem WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} COMMAND_EXPAND_LISTS)
+endif()
+add_test(NAME test_asn1_time COMMAND asn1_time_test WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} COMMAND_EXPAND_LISTS)
+if (OPENSSL_ASYNC)
+    add_test(NAME test_async COMMAND asynctest WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} COMMAND_EXPAND_LISTS)
+endif()
+if (true) # (OPENSSL_BIO_ENC)
+    add_test(NAME test_bio_enc COMMAND bio_enc_test WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} COMMAND_EXPAND_LISTS)
+endif()
+add_test(NAME test_bio_memleak COMMAND bio_memleak_test WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} COMMAND_EXPAND_LISTS)
+add_test(NAME test_constant_time COMMAND constant_time_test WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} COMMAND_EXPAND_LISTS)
+if (OPENSSL_SSL3 OR OPENSSL_TLS1 OR OPENSSL_TLS1_1 OR OPENSSL_TLS1_2 OR OPENSSL_TLS1_3)
+    add_test(NAME test_fatalerr COMMAND fatalerrtest ${CMAKE_SOURCE_DIR}/openssl/apps/server.pem ${CMAKE_SOURCE_DIR}/openssl/apps/server.pem WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} COMMAND_EXPAND_LISTS)
+endif()
+add_test(NAME test_gmdiff COMMAND gmdifftest WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} COMMAND_EXPAND_LISTS)
+# test_gost not simple
+add_test(NAME test_ige COMMAND igetest WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} COMMAND_EXPAND_LISTS)
+# test_includes not simple
+add_test(NAME test_memleak_1 COMMAND memleaktest WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} COMMAND_EXPAND_LISTS)
+add_test(NAME test_memleak_2 COMMAND memleaktest freeit WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} COMMAND_EXPAND_LISTS)
+if (NOT BUILD_SHARED_LIBS)
+    add_test(NAME test_overhead COMMAND cipher_overhead_test WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} COMMAND_EXPAND_LISTS)
+endif()
+add_test(NAME test_secmem COMMAND secmemtest WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} COMMAND_EXPAND_LISTS)
+# test_shlibload not simple
+if (OPENSSL_SRP)
+    add_test(NAME test_srp COMMAND srptest WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} COMMAND_EXPAND_LISTS)
+endif()
+# test_sslapi not simple
+if (OPENSSL_TLS1 OR OPENSSL_TLS1_1 OR OPENSSL_TLS1_2 OR OPENSSL_TLS1_3)
+    add_test(NAME test_sslbuffers COMMAND sslbuffertest ${CMAKE_SOURCE_DIR}/openssl/apps/server.pem ${CMAKE_SOURCE_DIR}/openssl/apps/server.pem WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} COMMAND_EXPAND_LISTS)
+endif()
+# test_store not simple
+# test_sysdefault not simple
+add_test(NAME test_threads COMMAND threadstest WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} COMMAND_EXPAND_LISTS)
+add_test(NAME test_time_offset COMMAND time_offset_test WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} COMMAND_EXPAND_LISTS)
+if (OPENSSL_TLS1_3)
+    add_test(NAME test_tls13ccs COMMAND tls13ccstest ${CMAKE_SOURCE_DIR}/openssl/apps/server.pem ${CMAKE_SOURCE_DIR}/openssl/apps/server.pem WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} COMMAND_EXPAND_LISTS)
+    if (NOT BUILD_SHARED_LIBS)
+        add_test(NAME tls13encryption COMMAND tls13encryptiontest  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} COMMAND_EXPAND_LISTS)
+    endif()
+endif()
+if (OPENSSL_TLS1_3 AND BUILD_SHARED_LIBS)
+    add_test(NAME tls13secrets COMMAND tls13secretstest WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} COMMAND_EXPAND_LISTS)
+endif()
+add_test(NAME test_v3name COMMAND v3nametest WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} COMMAND_EXPAND_LISTS)
