@@ -14,7 +14,7 @@ perlasm_generate_src(poly1305-ppc${OPENSSL_ASM_PREPROCESSED} ${CMAKE_SOURCE_DIR}
 perlasm_generate_src(poly1305-ppcfp${OPENSSL_ASM_PREPROCESSED} ${CMAKE_SOURCE_DIR}/openssl/crypto/poly1305/asm/poly1305-ppcfp.pl
     FLAGS ${OPENSSL_PERLASM_SCHEME}
 )
-perlasm_generate_src(poly1305-armv4.S {CMAKE_SOURCE_DIR}/openssl/crypto/poly1305/asm/poly1305-armv4.pl
+perlasm_generate_src(poly1305-armv4.S ${CMAKE_SOURCE_DIR}/openssl/crypto/poly1305/asm/poly1305-armv4.pl
     FLAGS ${OPENSSL_PERLASM_SCHEME}
 )
 perlasm_generate_src(poly1305-armv8.S ${CMAKE_SOURCE_DIR}/openssl/crypto/poly1305/asm/poly1305-armv8.pl
