@@ -429,20 +429,17 @@ endif()
 
 # 386 and SSE2
 if (OPENSSL_TARGET_ARCH STREQUAL "x64")
-    set(OPENSSL_386 ON CACHE BOOL "generate 80386 code in assembly modules" FORCE)
+    set(OPENSSL_386 OFF CACHE BOOL "generate 80386 code in assembly modules" FORCE)
+    set(OPENSSL_SSE2 ON CACHE BOOL "Enable SSE2 instructions in assembly" FORCE)
 elseif (OPENSSL_TARGET_ARCH STREQUAL "x86")
     option(OPENSSL_386 "generate 80386 code in assembly modules" OFF)
+    cmake_dependent_option(OPENSSL_SSE2 "Enable SSE2 instructions in assembly" ON "NOT OPENSSL_386" OFF)
 else()
     set(OPENSSL_386 OFF CACHE BOOL "generate 80386 code in assembly modules" FORCE)
+    set(OPENSSL_SSE2 OFF CACHE BOOL "Enable SSE2 instructions in assembly" FORCE)
 endif()
 if (OPENSSL_386)
     set(OPENSSL_USE_386 "386" CACHE STRING "" FORCE)
-endif()
-if (OPENSSL_TARGET_ARCH STREQUAL "x64" OR OPENSSL_TARGET_ARCH STREQUAL "x86")
-    # no-sse2
-    cmake_dependent_option(OPENSSL_SSE2 "Enable SSE2 instructions in assembly" ON "NOT OPENSSL_386" OFF)
-else()
-    set(OPENSSL_SSE2 OFF CACHE BOOL "Enable SSE2 instructions in assembly" FORCE)
 endif()
 
 # list the original platform descriptions - How can this be so complicated?
