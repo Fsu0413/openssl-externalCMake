@@ -25,6 +25,19 @@ perlasm_generate_src(x25519-ppc64${OPENSSL_ASM_PREPROCESSED} ${CMAKE_SOURCE_DIR}
 )
 
 set(LIBCRYPTO_CURRENTDIR_SOURCES
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/ec/curve448/arch_32/f_impl.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/ec/curve448/f_generic.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/ec/curve448/scalar.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/ec/curve448/curve448_tables.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/ec/curve448/eddsa.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/ec/curve448/curve448.c
+)
+
+set_source_files_properties(${LIBCRYPTO_CURRENTDIR_SOURCES} PROPERTIES INCLUDE_DIRECTORIES
+    "${CMAKE_SOURCE_DIR}/openssl/crypto/ec/curve448;${CMAKE_SOURCE_DIR}/openssl/crypto/ec/curve448/arch_32"
+)
+
+set(LIBCRYPTO_CURRENTDIR_SOURCES ${LIBCRYPTO_CURRENTDIR_SOURCES}
     ${CMAKE_SOURCE_DIR}/openssl/crypto/ec/ec_lib.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/ec/ecp_smpl.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/ec/ecp_mont.c
@@ -56,13 +69,9 @@ set(LIBCRYPTO_CURRENTDIR_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/crypto/ec/ecdsa_vrf.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/ec/curve25519.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/ec/ecx_meth.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/ec/curve448/arch_32/f_impl.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/ec/curve448/f_generic.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/ec/curve448/scalar.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/ec/curve448/curve448_tables.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/ec/curve448/eddsa.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/ec/curve448/curve448.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/ec/ec_local.h
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/ec/curve448/arch_32/arch_intrinsics.h
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/ec/curve448/arch_32/f_impl.h
     ${CMAKE_SOURCE_DIR}/openssl/crypto/ec/curve448/curve448_local.h
     ${CMAKE_SOURCE_DIR}/openssl/crypto/ec/curve448/ed448.h
     ${CMAKE_SOURCE_DIR}/openssl/crypto/ec/curve448/field.h

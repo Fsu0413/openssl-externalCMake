@@ -36,7 +36,7 @@ endif()
 # add_custom_target(test DEPENDS check)
 # cmake_policy(POP)
 
-if (WIN32 AND BUILD_SHARED_LIBS)
+if ( ( WIN32 OR CYGWIN ) AND BUILD_SHARED_LIBS )
     get_target_property(CRYPTO_RUNTIME_OUTPUT_NAME crypto RUNTIME_OUTPUT_NAME)
 
     add_custom_command(OUTPUT "${CMAKE_BINARY_DIR}/test/${CMAKE_SHARED_LIBRARY_PREFIX}${CRYPTO_RUNTIME_OUTPUT_NAME}${CMAKE_SHARED_LIBRARY_SUFFIX}"

@@ -1,5 +1,18 @@
 
 set(LIBCRYPTO_CURRENTDIR_SOURCES
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/e_aes.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/e_aes_cbc_hmac_sha1.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/e_aes_cbc_hmac_sha256.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/e_aria.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/e_camellia.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/e_sm4.c
+)
+
+set_source_files_properties(${LIBCRYPTO_CURRENTDIR_SOURCES} PROPERTIES INCLUDE_DIRECTORIES
+    "${CMAKE_SOURCE_DIR}/openssl/crypto/modes"
+)
+
+set(LIBCRYPTO_CURRENTDIR_SOURCES ${LIBCRYPTO_CURRENTDIR_SOURCES}
     ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/encode.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/digest.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/evp_enc.c
@@ -9,13 +22,9 @@ set(LIBCRYPTO_CURRENTDIR_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/e_bf.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/e_idea.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/e_des3.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/e_camellia.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/e_rc4.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/e_aes.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/names.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/e_seed.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/e_aria.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/e_sm4.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/e_xcbc_d.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/e_rc2.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/e_cast.c
@@ -56,8 +65,6 @@ set(LIBCRYPTO_CURRENTDIR_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/pmeth_fn.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/pmeth_gn.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/m_sigver.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/e_aes_cbc_hmac_sha1.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/e_aes_cbc_hmac_sha256.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/e_rc4_hmac_md5.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/e_chacha20_poly1305.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/cmeth_lib.c
