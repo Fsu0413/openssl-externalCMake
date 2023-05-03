@@ -292,3 +292,62 @@ jobs:
         with:
           name: openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}
           path: openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}.7z
+
+  # temporarily use latest NDK from GitHub Actions.
+  # switch to LTS of its time (maybe r26) after OpenSSL 1.1 series get EOL.
+  build-android:
+    strategy:
+      fail-fast: false
+      matrix:
+        toolchain:
+          - arch: "armeabi-v7a"
+            platform: "24"
+          - arch: "arm64-v8a"
+            platform: "24"
+          - arch: "x86"
+            platform: "24"
+          - arch: "x86_64"
+            platform: "24"
+          - arch: "armeabi-v7a"
+            platform: "27"
+          - arch: "arm64-v8a"
+            platform: "27"
+          - arch: "x86"
+            platform: "27"
+          - arch: "x86_64"
+            platform: "27"
+        asm: [ "YES", "NO" ]
+        threads: [ "YES", "NO" ]
+        zlib: [ "YES", "NO" ]
+    continue-on-error: true
+    runs-on: ubuntu-latest
+    name: "build-AndroidAPI${{ matrix.toolchain.platform }}-${{ matrix.toolchain.arch }} (ASM: ${{ matrix.asm }}, Zlib: ${{ matrix.zlib }}), Threads: ${{ matrix.threads }}"
+    env:
+      FS_OPENSSL_PACKAGE_STR: AndroidAPI${{ matrix.toolchain.platform }}-${{ matrix.toolchain.arch }}}-ASM${{ matrix.asm }}Zlib${{ matrix.zlib }}-Threads${{ matrix.threads }}
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: true
+          path: openssl-externalCMake
+      - name: add CMake repository and needed softwares
+        # TODO: replace "jammy" to something which can be get from environment
+        run: |
+          wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null | gpg --dearmor - | sudo tee /usr/share/keyrings/kitware-archive-keyring.gpg >/dev/null
+          echo 'deb [signed-by=/usr/share/keyrings/kitware-archive-keyring.gpg] https://apt.kitware.com/ubuntu/ jammy main' | sudo tee /etc/apt/sources.list.d/kitware.list >/dev/null
+          sudo apt-get update
+          sudo apt-get install cmake ninja-build perl
+      - name: run CMake + Ninja
+        run: |
+          mkdir -p "build"
+          cd "build"
+          cmake -GNinja -DCMAKE_TOOLCHAIN_FILE="${ANDROID_NDK_HOME}/build/cmake/android.toolchain.cmake" -DANDROID_ABI=${{ matrix.toolchain.arch }} -DANDROID_PLATFORM=${{ matrix.toolchain.platform }} -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}/openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}" -DOPENSSL_ASM=${{ matrix.asm }} -DOPENSSL_ZLIB=${{ matrix.zlib }} -DOPENSSL_THREADS=${{ matrix.threads }} "${{ github.workspace }}/openssl-externalCMake"
+          ninja
+          cmake --install . --strip
+      # test can't be run due to the syntax is not compatible with Android. TODO: android emulator
+      - name: package
+        run: |
+          tar -cJf "openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}.tar.xz" "openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}"
+      - uses: actions/upload-artifact@v3
+        with:
+          name: openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}
+          path: openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}.tar.xz
