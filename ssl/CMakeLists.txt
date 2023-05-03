@@ -123,6 +123,12 @@ target_link_libraries(ssl
     PUBLIC crypto
 )
 
+get_target_property(LIBCRYPTO_CFLAGS crypto COMPILE_DEFINITIONS)
+
+target_compile_definitions(ssl
+    PRIVATE ${LIBCRYPTO_CFLAGS}
+)
+
 install(TARGETS ssl
     RUNTIME
     LIBRARY
