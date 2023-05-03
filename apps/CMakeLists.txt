@@ -159,8 +159,11 @@ if (WIN32)
     )
 endif()
 
+get_target_property(LIBCRYPTO_CFLAGS crypto COMPILE_DEFINITIONS)
+
 target_compile_definitions(openssl
     PRIVATE -DMONOLITH
+            ${LIBCRYPTO_CFLAGS}
 )
 
 target_include_directories(openssl
