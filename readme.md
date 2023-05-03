@@ -77,6 +77,14 @@ I think that's why OpenSSL team decided to use Perl for code generation.
 
 I'm using original OpenSSL as subproject and won't fix any problem which original OpenSSL have.
 
+### Build and test of Krb5
+
+It does not build on macOS on 1.0.2 branch and got removed on 1.1.1.
+
+### Extra tests on submodule of OpenSSL
+
+They are not even released to users. Maybe they are some kinds of internal test run by OpenSSL developers. I don't care if and how the internal tests passes.
+
 ## How to use this project? Or how to use CMake to build OpenSSL?
 
 Just typical CMake procedure will work.
@@ -87,7 +95,6 @@ Sort by priority
 
 ### On 1.1.1 branch:
 
-1. documentation generation
 1. `make check` support
 
 ### All branches:
@@ -95,8 +102,7 @@ Sort by priority
 1. 3.0 series support
 1. 3.1 series support
 1. 3.2 series support
-1. Check cross build for Android (arm, arm64, x86) / issue: how to test cross-build platform?
-1. Check build with krb5 - don't compile on 1.0.2 branch on arm64 macOS. Will try Windows and Linux
+1. Check how to test on cross built platforms
 1. `OpenSSLConfig.cmake` generation
 1. 1.1.0 series support
 1. 1.0.1 series support
