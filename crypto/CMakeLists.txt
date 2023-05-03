@@ -165,7 +165,7 @@ if (OPENSSL_ASM)
             set(OPENSSL_PERLASM_SCHEME "mingw64")
         elseif (MSVC)
             set(OPENSSL_PERLASM_SCHEME "masm")
-        elseif ( ( CMAKE_SYSTEM_NAME MATCHES "BSD" ) OR ( CMAKE_SYSTEM_NAME MATCHES "[Ll]inux" ) )
+        elseif ( ANDROID OR ( CMAKE_SYSTEM_NAME MATCHES "BSD" ) OR ( CMAKE_SYSTEM_NAME MATCHES "[Ll]inux" ) )
             set(OPENSSL_PERLASM_SCHEME "elf")
         elseif ( APPLE AND NOT IOS )
             set(OPENSSL_PERLASM_SCHEME "macosx")
@@ -220,6 +220,11 @@ macro (perlasm_generate_src OUT_ASMFILE SRC_PERLFILE)
             set(${_CURRENTPARSING} ${${_CURRENTPARSING}} ${_ITEM})
         endif()
     endforeach()
+    if ( BUILD_SHARED_LIBS AND NOT ( WIN32 OR CYGWIN ) AND OPENSSL_TARGET_ARCH STREQUAL "x86" )
+        # PIC needs to be specified manually...???
+        # Only recoginzed when target is x86
+        set(FLAGS ${FLAGS} -fPIC)
+    endif()
     add_custom_command(
         OUTPUT ${OUT_ASMFILE}
         COMMAND ${PERL_EXECUTABLE} ${SRC_PERLFILE} ${FLAGS} ${OUT_ASMFILE}
