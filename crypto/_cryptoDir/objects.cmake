@@ -46,6 +46,13 @@ set(LIBCRYPTO_CURRENTDIR_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/crypto/o_fips.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/mem_sec.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/init.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/arm_arch.h
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/mips_arch.h
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/ppc_arch.h
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/s390x_arch.h
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/sparc_arch.h
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/vms_rms.h
+    ${CMAKE_SOURCE_DIR}/openssl/e_os.h
     buildinf.h
 )
 

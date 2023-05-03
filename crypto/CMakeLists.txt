@@ -39,7 +39,6 @@ if (DEFINED CACHE{OPENSSL_MIN_API_LEVEL})
 endif()
 
 # bn_ops
-# TODO: reconsider following, use OPENSSL_TARGET_ARCH
 
 #cmakedefine I386_ONLY
 set(I386_ONLY ${OPENSSL_386})
