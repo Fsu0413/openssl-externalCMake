@@ -83,15 +83,6 @@ cmake_dependent_option(OPENSSL_ZLIB_DYNAMIC "build ZLIB as dynamic loaded object
 # --with-krb5-*
 OPTION(OPENSSL_KRB5 "build OpenSSL with Kerberos 5" OFF)
 
-# 386
-option(OPENSSL_386 "generate 80386 code in assembly modules" OFF)
-if (OPENSSL_386)
-    set(OPENSSL_USE_386 "386" CACHE STRING "" FORCE)
-endif()
-
-# no-sse2
-cmake_dependent_option(OPENSSL_SSE2 "Enable SSE2 instructions in assembly" ON "NOT OPENSSL_386" OFF)
-
 # static_engine
 cmake_dependent_option(OPENSSL_STATIC_ENGINE "generate static engine library" OFF "BUILD_SHARED_LIBS" ON)
 
@@ -329,6 +320,24 @@ if ( NOT OPENSSL_TARGET_ARCH )
             set(OPENSSL_TARGET_ARCH "arm32")
         endif()
     endif()
+endif()
+
+# 386 and SSE2
+if (OPENSSL_TARGET_ARCH STREQUAL "x64")
+    set(OPENSSL_386 ON CACHE BOOL "generate 80386 code in assembly modules" FORCE)
+elseif (OPENSSL_TARGET_ARCH STREQUAL "x86")
+    option(OPENSSL_386 "generate 80386 code in assembly modules" OFF)
+else()
+    set(OPENSSL_386 OFF CACHE BOOL "generate 80386 code in assembly modules" FORCE)
+endif()
+if (OPENSSL_386)
+    set(OPENSSL_USE_386 "386" CACHE STRING "" FORCE)
+endif()
+if (OPENSSL_TARGET_ARCH STREQUAL "x64" OR OPENSSL_TARGET_ARCH STREQUAL "x86")
+    # no-sse2
+    cmake_dependent_option(OPENSSL_SSE2 "Enable SSE2 instructions in assembly" ON "NOT OPENSSL_386" OFF)
+else()
+    set(OPENSSL_SSE2 OFF CACHE BOOL "Enable SSE2 instructions in assembly" FORCE)
 endif()
 
 # list the original platform descriptions - How can this be so complicated?
