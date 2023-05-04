@@ -57,7 +57,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        runner: [ "11", "12" ]
+        runner: [ "11", "12", "13" ]
         asm: [ "YES", "NO" ]
         zlib: [ "YES", "NO" ]
         threads: [ "YES", "NO" ]
@@ -98,7 +98,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        runner: [ "11", "12" ]
+        runner: [ "11", "12", "13" ]
         asm: [ "YES", "NO" ]
         zlib: [ "YES", "NO" ]
         threads: [ "YES", "NO" ]
@@ -136,7 +136,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        runner: [ "11", "12" ]
+        runner: [ "11", "12", "13" ]
         # can't build ASM on unified.
         zlib: [ "YES", "NO" ]
         threads: [ "YES", "NO" ]
