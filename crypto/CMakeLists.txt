@@ -78,7 +78,10 @@ else()
 endif()
 
 #define RC4_INT unsigned @OPENSSL_RC4_INT@
-if (NOT WIN32)
+if(        ( ANDROID AND NOT ( OPENSSL_TARGET_ARCH STREQUAL "x86" ) )
+        OR ( CMAKE_SYSTEM_NAME MATCHES "[Ll]inux" AND NOT ( OPENSSL_TARGET_ARCH STREQUAL "x86" ) AND NOT ( OPENSSL_TARGET_ARCH STREQUAL "x64" ) )
+        OR IOS
+    )
     set(OPENSSL_RC4_INT "char")
 else()
     set(OPENSSL_RC4_INT "int")
