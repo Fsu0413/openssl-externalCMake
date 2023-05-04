@@ -653,10 +653,10 @@ set_target_properties(crypto PROPERTIES
 )
 
 target_include_directories(crypto
-    PRIVATE ${CMAKE_BINARY_DIR}/include
+    PUBLIC  ${CMAKE_BINARY_DIR}/include
             ${CMAKE_CURRENT_BINARY_DIR}
             ${CMAKE_SOURCE_DIR}/openssl
-            ${CMAKE_SOURCE_DIR}/openssl/crypto
+    PRIVATE ${CMAKE_SOURCE_DIR}/openssl/crypto
             ${CMAKE_SOURCE_DIR}/openssl/crypto/modes
             ${CMAKE_SOURCE_DIR}/openssl/crypto/asn1
             ${CMAKE_SOURCE_DIR}/openssl/crypto/evp
