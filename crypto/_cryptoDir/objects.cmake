@@ -48,6 +48,7 @@ set(LIBCRYPTO_CURRENTDIR_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/crypto/o_dir.h
     ${CMAKE_SOURCE_DIR}/openssl/crypto/constant_time_locl.h
     ${CMAKE_SOURCE_DIR}/openssl/crypto/bn_int.h
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/arm_arch.h
     buildinf.h
 )
 

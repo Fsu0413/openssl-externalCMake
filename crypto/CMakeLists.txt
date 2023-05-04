@@ -455,7 +455,6 @@ endmacro()
 # we create a variable for recording the C / S files...
 set(LIBCRYPTO_SOURCES)
 set(LIBCRYPTO_DIRECTORIES _cryptoDir)
-set(LIBCRYPTO_SOURCE_DIRECTORIES_ABSOLUTE)
 set(LIBCRYPTO_CFLAGS)
 if (WIN32)
     set(LIBCRYPTO_CFLAGS ${LIBCRYPTO_CFLAGS} "-DOPENSSL_SYSNAME_WIN32" "-DWIN32_LEAN_AND_MEAN" "-D_WINSOCK_DEPRECATED_NO_WARNINGS")
@@ -524,7 +523,6 @@ foreach (_DIRECTORY IN ITEMS
     string(REPLACE "-" "_" _CIPHER_SYMBOL ${_CIPHER_UPPER})
     if (OPENSSL_${_CIPHER_SYMBOL})
         set(LIBCRYPTO_DIRECTORIES ${LIBCRYPTO_DIRECTORIES} ${_DIRECTORY})
-        set(LIBCRYPTO_SOURCE_DIRECTORIES_ABSOLUTE ${LIBCRYPTO_SOURCE_DIRECTORIES_ABSOLUTE} ${CMAKE_SOURCE_DIR}/openssl/crypto/${_DIRECTORY})
     endif()
     unset(_CIPHER_SYMBOL)
     unset(_CIPHER_UPPER)
@@ -655,13 +653,16 @@ set_target_properties(crypto PROPERTIES
 )
 
 target_include_directories(crypto
-    PUBLIC ${CMAKE_BINARY_DIR}/include
-           ${CMAKE_CURRENT_BINARY_DIR}
-           ${CMAKE_SOURCE_DIR}/openssl
-           ${CMAKE_SOURCE_DIR}/openssl/crypto
-           ${LIBCRYPTO_SOURCE_DIRECTORIES_ABSOLUTE}
+    PRIVATE ${CMAKE_BINARY_DIR}/include
+            ${CMAKE_CURRENT_BINARY_DIR}
+            ${CMAKE_SOURCE_DIR}/openssl
+            ${CMAKE_SOURCE_DIR}/openssl/crypto
+            ${CMAKE_SOURCE_DIR}/openssl/crypto/modes
+            ${CMAKE_SOURCE_DIR}/openssl/crypto/asn1
+            ${CMAKE_SOURCE_DIR}/openssl/crypto/evp
 )
 
+# TODO: change this to private
 target_compile_definitions(crypto
     PUBLIC ${LIBCRYPTO_CFLAGS}
 )
