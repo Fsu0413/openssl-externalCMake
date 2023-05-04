@@ -395,6 +395,11 @@ if (OPENSSL_ASM)
     if (NOT PERL_FOUND)
         message(FATAL_ERROR "building OpenSSL with ASM needs Perl installed - Please set PERL_EXECUTABLE before running CMake or set OPENSSL_ASM to OFF and reconfigure")
     endif()
+
+    if (ANDROID AND ( ANDROID_NDK_REVISION VERSION_GREATER_EQUAL 130.1000000 ) AND ( ANDROID_NDK_VERSION VERSION_LESS_EQUAL 139.9999999 ) )
+        # workaround NDK r13 cmake toolchain problem
+        set(CMAKE_ASM_FLAGS ${CMAKE_C_FLAGS} ${CMAKE_ASM_FLAGS})
+    endif()
 endif()
 
 # Usage:
