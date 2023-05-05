@@ -429,6 +429,11 @@ macro (perlasm_generate_src OUT_ASMFILE SRC_PERLFILE)
             set(${_CURRENTPARSING} ${${_CURRENTPARSING}} ${_ITEM})
         endif()
     endforeach()
+    if ( BUILD_SHARED_LIBS AND NOT ( WIN32 OR CYGWIN ) AND OPENSSL_TARGET_ARCH STREQUAL "x86" )
+        # PIC needs to be specified manually...???
+        # Only recoginzed when target is x86
+        set(FLAGS ${FLAGS} -fPIC)
+    endif()
     if (STDOUT)
         set(FLAGS ${FLAGS} ">" ${OUT_ASMFILE})
     else()
