@@ -11,14 +11,11 @@ if (OPENSSL_ASM)
     elseif ( ( OPENSSL_TARGET_ARCH STREQUAL "x86" ) AND (
                ( CMAKE_SYSTEM_NAME MATCHES "BSD" )
             OR CYGWIN
-            OR WIN32
+            OR ( WIN32 AND ( ( MSVC AND OPENSSL_NASM ) ) OR NOT MSVC )
             OR ANDROID
             OR ( CMAKE_SYSTEM_NAME MATCHES "[Ll]inux" )
     ) )
-        # TODO
-        if (FALSE)
-            set(LIBCRYPTO_CFLAGS ${LIBCRYPTO_CFLAGS} "-DSHA1_ASM" "-DSHA256_ASM" "-DSHA512_ASM")
-        endif()
+        set(LIBCRYPTO_CFLAGS ${LIBCRYPTO_CFLAGS} "-DSHA1_ASM" "-DSHA256_ASM" "-DSHA512_ASM")
     elseif ( ( OPENSSL_TARGET_ARCH STREQUAL "arm32" ) AND (
                ANDROID
             OR ( CMAKE_SYSTEM_NAME MATCHES "[Ll]inux")

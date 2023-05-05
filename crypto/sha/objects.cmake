@@ -179,18 +179,15 @@ if (OPENSSL_ASM)
     elseif ( ( OPENSSL_TARGET_ARCH STREQUAL "x86" ) AND (
                ( CMAKE_SYSTEM_NAME MATCHES "BSD" )
             OR CYGWIN
-            OR WIN32
+            OR ( WIN32 AND ( ( MSVC AND OPENSSL_NASM ) ) OR NOT MSVC )
             OR ANDROID
             OR ( CMAKE_SYSTEM_NAME MATCHES "[Ll]inux" )
     ) )
-        # TODO
-        if (FALSE)
-            set(LIBCRYPTO_CURRENTDIR_ASM_SOURCES
-                sha1-586${OPENSSL_ASM_PREPROCESSED}
-                sha256-586${OPENSSL_ASM_PREPROCESSED}
-                sha512-586${OPENSSL_ASM_PREPROCESSED}
-            )
-        endif()
+        set(LIBCRYPTO_CURRENTDIR_ASM_SOURCES
+            sha1-586${OPENSSL_ASM_PREPROCESSED}
+            sha256-586${OPENSSL_ASM_PREPROCESSED}
+            sha512-586${OPENSSL_ASM_PREPROCESSED}
+        )
     elseif ( ( OPENSSL_TARGET_ARCH STREQUAL "arm32" ) AND (
                ANDROID
             OR ( CMAKE_SYSTEM_NAME MATCHES "[Ll]inux")
