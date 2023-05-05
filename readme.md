@@ -29,6 +29,7 @@ In order not to touch OpenSSL source tree we'd build it externally.
 
 1. CMake is widely used in open source projects. It supports a majority of common platforms and is easy for users to using it.
 1. I'm slightly more familiar with CMake than other Makefile generators.
+1. CMake itself is also a full-featured script interpretor with a lot of common file operations built-in (cmake -P / -E). With CMake one can create a simple runnable script on its own and does not depends on any other script interpretor.
 
 Not using autotools is because it has poor support on Windows.
 Not using other generators is because I have never used them before.
@@ -78,7 +79,14 @@ I think that's why OpenSSL team decided to use Perl for code generation.
 
 I'm using original OpenSSL as subproject and won't fix any problem which original OpenSSL have.
 
+### Build and test of Krb5
+
+It does not build on macOS on 1.0.2 branch and got removed on 1.1.1.
+
+### Extra tests on submodule of OpenSSL
+
+They are not even released to users. Maybe they are some kinds of internal test run by OpenSSL developers. I don't care if and how the internal tests passes.
+
 ## How to use this project? Or how to use CMake to build OpenSSL?
 
 Just typical CMake procedure will work.
-
