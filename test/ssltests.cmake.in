@@ -660,3 +660,13 @@ function(testsslproxy)
         endforeach()
     endforeach()
 endfunction()
+
+execute_process(COMMAND "@CMAKE_BINARY_DIR@/apps/ssltest" -test_cipherlist
+                WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@
+                COMMAND_ERROR_IS_FATAL ANY
+)
+
+testssl(keyU.ss certU.ss certCA.ss)
+testssl(keyU.ss certU.ss certCA.ss -rle)
+testsslproxy(keyP1.ss certP1.ss intP1.ss)
+testsslproxy(keyP2.ss certP2.ss intP2.ss)
