@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.22)
 
 project(OpenSSL
-    VERSION 1.1.1.20
+    VERSION 1.1.1.21
     DESCRIPTION "TLS/SSL and crypto library"
     HOMEPAGE_URL "https://www.openssl.org/"
     LANGUAGES C CXX
