@@ -180,11 +180,11 @@ endforeach()
 foreach (_CIPHER IN ITEMS
         ssl des ec sock dgram dtls tls crypto-mdebug engine afalgeng stdio comp sm3 unit-test msan # dependent
         ssl3-method tls1-method tls1_1-method tls1_2-method dtls1-method dtls1_2-method # method
-        aes asn1 bio bn buffer conf evp hmac kdf lhash md5 modes objects pem pkcs12 pkcs7 rand rsa sha stack store ts txt_db x509 x509v3 # directories
+        aes asn1 bio bn buffer conf evp hmac kdf lhash md5 modes objects pem pkcs12 pkcs7 rand rsa sha stack store txt_db x509 x509v3 # directories
+        dtls1_2 dtls1 tls1_3 tls1_2 tls1_1 tls1 ssl3  # TLS protocol
         aria asan async autoalginit autoerrinit autoload-config bf blake2 camellia capieng cast chacha cmac cms crypto-mdebug-backtrace ct deprecated devcryptoeng dh dsa ec2m ecdh
         ecdsa ec_nistp_64_gcc_128 egd err filenames fuzz-libfuzzer fuzz-afl gost heartbeats idea makedepend md2 md4 mdc2 multiblock nextprotoneg pinshared ocb ocsp poly1305
-        posix-io psk rc2 rc4 rc5 rdrand rfc3779 rmd160 scrypt sctp seed siphash sm2 sm4 srp srtp ssl-trace ts ubsan ui-console whirlpool weak-ssl-ciphers ssl3 tls1 tls1_1 tls1_2
-        tls1_3 dtls1 dtls1_2
+        posix-io psk rc2 rc4 rc5 rdrand rfc3779 rmd160 scrypt sctp seed siphash sm2 sm4 srp srtp ssl-trace ts ubsan ui-console whirlpool weak-ssl-ciphers
 )
     list(FIND OPENSSL_DEFAULT_DISABLED_CIPHERS ${_CIPHER} _CIPHER_IS_DEFAULT_DISABLED)
     set(_CIPHER_DEFAULT ON)
@@ -213,7 +213,7 @@ foreach (_CIPHER IN ITEMS
     elseif (_CIPHER STREQUAL "dgram")
         cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "OPENSSL_SOCK" OFF)
     elseif (_CIPHER STREQUAL "dtls1")
-        cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "OPENSSL_DTLS;OPENSSL_DTLS_1_METHOD" OFF)
+        cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "OPENSSL_DTLS1_2;OPENSSL_DTLS;OPENSSL_DTLS_1_METHOD" OFF)
     elseif (_CIPHER STREQUAL "dtls1_2")
         cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "OPENSSL_DTLS;OPENSSL_DTLS1_2_METHOD" OFF)
     elseif (_CIPHER STREQUAL "dtls1-method")
@@ -221,11 +221,11 @@ foreach (_CIPHER IN ITEMS
     elseif (_CIPHER STREQUAL "dtls1_2-method")
         cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "OPENSSL_DTLS" OFF)
     elseif (_CIPHER STREQUAL "tls1")
-        cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "OPENSSL_TLS;OPENSSL_TLS1_METHOD" OFF)
+        cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "OPENSSL_TLS1_1;OPENSSL_TLS;OPENSSL_TLS1_METHOD" OFF)
     elseif (_CIPHER STREQUAL "tls1_1")
-        cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "OPENSSL_TLS;OPENSSL_TLS1_1_METHOD" OFF)
+        cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "OPENSSL_TLS1_2;OPENSSL_TLS;OPENSSL_TLS1_1_METHOD" OFF)
     elseif (_CIPHER STREQUAL "tls1_2")
-        cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "OPENSSL_TLS;OPENSSL_TLS1_2_METHOD" OFF)
+        cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "OPENSSL_TLS1_3;OPENSSL_TLS;OPENSSL_TLS1_2_METHOD" OFF)
     elseif (_CIPHER STREQUAL "tls1_3")
         cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "OPENSSL_TLS;OPENSSL_EC" OFF)
     elseif (_CIPHER STREQUAL "tls1-method")
