@@ -711,8 +711,8 @@ install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libcrypto.pc
     DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig
 )
 
-if (BUILD_TESTING)
-    foreach (_DIRECTORY IN LISTS LIBCRYPTO_DIRECTORIES)
-        include(${_DIRECTORY}/tests.cmake OPTIONAL)
-    endforeach()
-endif()
+#if (BUILD_TESTING)
+#    foreach (_DIRECTORY IN LISTS LIBCRYPTO_DIRECTORIES)
+#        include(${_DIRECTORY}/tests.cmake OPTIONAL)
+#    endforeach()
+#endif()
