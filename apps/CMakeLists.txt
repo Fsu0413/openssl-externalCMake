@@ -147,6 +147,11 @@ if (WIN32)
     )
 endif()
 
+if (WIN32)
+    configure_file(apps.rc.cmake.in apps.rc @ONLY)
+    set(OPENSSL_SOURCES ${OPENSSL_SOURCES} apps.rc)
+endif()
+
 add_executable(openssl
     ${OPENSSL_SOURCES}
     ${OPENSSL_OPTIONAL_SOURCES}
