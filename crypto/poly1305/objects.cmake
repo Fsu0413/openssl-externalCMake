@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: Unlicense
 
 perlasm_generate_src(poly1305-sparcv9.S ${CMAKE_SOURCE_DIR}/openssl/crypto/poly1305/asm/poly1305-sparcv9.pl
     FLAGS ${OPENSSL_PERLASM_SCHEME}

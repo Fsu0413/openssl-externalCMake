@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: Unlicense
 
 set(LIBSSL_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/ssl/pqueue.c

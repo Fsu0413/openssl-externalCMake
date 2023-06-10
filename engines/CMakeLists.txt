@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: Unlicense
 
 if (OPENSSL_HW AND BUILD_SHARED_LIBS AND OPENSSL_DYNAMIC_ENGINE)
     # workaround, there is no OPENSSL_HW_OSSLTEST / OPENSSL_HW_DASYNC but they should be always built

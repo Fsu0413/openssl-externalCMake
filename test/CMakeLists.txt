@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: Unlicense
 
 # I reaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaally reaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaally reaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaally don't like the "lib<some executable>.a" thing.
 # Creating static library with -fpie seems ridiculous, but on platforms such as Android we need to do so!

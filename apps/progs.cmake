@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: Unlicense
 
 # TODO: license?
 # Can we use public domain for the generated file? Does it violate the original OpenSSL license?

@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: Unlicense
 
 # What? m4?
 # TODO: find_program(m4)

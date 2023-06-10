@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: Unlicense
 
 set(OPENSSL_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/apps/apps.c

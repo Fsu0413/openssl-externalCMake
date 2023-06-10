@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: Unlicense
 
 find_program(POD2MAN "pod2man" REQUIRED)
 

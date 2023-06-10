@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: Unlicense
 
 set(ENGINE_CURRENTDIR_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/engines/e_ossltest.c
