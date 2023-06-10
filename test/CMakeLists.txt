@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: Unlicense
 
 if (WIN32 AND BUILD_SHARED_LIBS)
     add_custom_command(OUTPUT "${CMAKE_BINARY_DIR}/test/libeay32.dll"

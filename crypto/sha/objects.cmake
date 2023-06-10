@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: Unlicense
 
 perlasm_generate_src(sha1-586${OPENSSL_ASM_PREPROCESSED} ${CMAKE_SOURCE_DIR}/openssl/crypto/sha/asm/sha1-586.pl
     DEPENDENCIES ${CMAKE_SOURCE_DIR}/openssl/crypto/perlasm/x86asm.pl

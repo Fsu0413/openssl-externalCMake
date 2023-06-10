@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: Unlicense
 
 if (OPENSSL_ASM)
     if ( ( OPENSSL_TARGET_ARCH STREQUAL "x64" ) AND (

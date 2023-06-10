@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: Unlicense
 
 set(OPENSSL_SYS_DEFINE)
 if (MSVC)

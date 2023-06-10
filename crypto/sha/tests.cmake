@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Unlicense
+
 add_executable(shatest EXCLUDE_FROM_ALL ${CMAKE_SOURCE_DIR}/openssl/crypto/sha/shatest.c)
 target_link_libraries(shatest PUBLIC OpenSSLTest crypto)
 add_dependencies(check shatest)

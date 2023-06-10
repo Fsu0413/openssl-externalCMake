@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: Unlicense
 
 get_filename_component(POD_DIR "${PODFILEPATH}" DIRECTORY)
 get_filename_component(POD_FILE "${PODFILEPATH}" NAME)

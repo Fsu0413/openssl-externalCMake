@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: Unlicense
 
 execute_process(COMMAND @CMAKE_COMMAND@ -E copy @CMAKE_SOURCE_DIR@/openssl/test/CAss.cnf @CMAKE_SOURCE_DIR@/openssl/test/Uss.cnf @CMAKE_SOURCE_DIR@/openssl/test/P1ss.cnf @CMAKE_SOURCE_DIR@/openssl/test/P2ss.cnf @CMAKE_CURRENT_BINARY_DIR@
                 WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@

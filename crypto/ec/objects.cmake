@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: Unlicense
 
 perlasm_generate_src(ecp_nistz256-x86_64${OPENSSL_ASM_PREPROCESSED} ${CMAKE_SOURCE_DIR}/openssl/crypto/ec/asm/ecp_nistz256-x86_64.pl
     FLAGS ${OPENSSL_PERLASM_SCHEME}

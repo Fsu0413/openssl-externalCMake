@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: Unlicense
 
 foreach (TESTFILE IN ITEMS testx509.pem v3-cert1.pem v3-cert2.pem)
     execute_process(COMMAND @CMAKE_COMMAND@ -E copy @CMAKE_SOURCE_DIR@/openssl/test/${TESTFILE} @CMAKE_CURRENT_BINARY_DIR@/x509-fff.p

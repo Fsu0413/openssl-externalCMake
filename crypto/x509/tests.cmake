@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Unlicense
+
 configure_file(${CMAKE_SOURCE_DIR}/openssl/test/certs/roots.pem certs/roots.pem COPYONLY)
 configure_file(${CMAKE_SOURCE_DIR}/openssl/test/certs/untrusted.pem certs/untrusted.pem COPYONLY)
 configure_file(${CMAKE_SOURCE_DIR}/openssl/test/certs/bad.pem certs/bad.pem COPYONLY)

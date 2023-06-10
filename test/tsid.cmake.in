@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: Unlicense
 
 message(NOTICE "testing session-id conversions")
 

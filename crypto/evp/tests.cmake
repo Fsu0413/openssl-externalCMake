@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Unlicense
+
 configure_file(${CMAKE_SOURCE_DIR}/openssl/crypto/evp/evptests.txt evptests.txt COPYONLY)
 
 add_executable(evp_test EXCLUDE_FROM_ALL ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/evp_test.c)

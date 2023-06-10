@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: Unlicense
 
 if (OPENSSL_HW AND BUILD_SHARED_LIBS AND OPENSSL_DYNAMIC_ENGINE)
     foreach (_OPTION IN ITEMS 4758-cca aep atalla cswift gmp chil nuron sureware ubsec padlock capi ccgost)

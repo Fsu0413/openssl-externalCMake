@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: Unlicense
 
 # There is some uncommon method of generating targets.
 # A script reads and writes the same file at same time.

@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Unlicense
+
 add_executable(bntest EXCLUDE_FROM_ALL ${CMAKE_SOURCE_DIR}/openssl/crypto/bn/bntest.c)
 target_link_libraries(bntest PUBLIC OpenSSLTest crypto)
 add_dependencies(check bntest)

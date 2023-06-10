@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: Unlicense
 
 configure_file(${CMAKE_SOURCE_DIR}/openssl/ssl/ssl.h ${CMAKE_BINARY_DIR}/include/openssl/ssl.h COPYONLY)
 configure_file(${CMAKE_SOURCE_DIR}/openssl/ssl/ssl2.h ${CMAKE_BINARY_DIR}/include/openssl/ssl2.h COPYONLY)

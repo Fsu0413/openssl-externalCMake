@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: Unlicense
 
 perlasm_generate_src(md5-586${OPENSSL_ASM_PREPROCESSED} ${CMAKE_SOURCE_DIR}/openssl/crypto/md5/asm/md5-586.pl
     DEPENDENCIES ${CMAKE_SOURCE_DIR}/openssl/crypto/perlasm/x86asm.pl

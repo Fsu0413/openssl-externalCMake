@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: Unlicense
 
 message(NOTICE "testing pkcs7 conversions (2)")
 execute_process(COMMAND @CMAKE_COMMAND@ -E copy @CMAKE_SOURCE_DIR@/openssl/test/pkcs7-1.pem @CMAKE_CURRENT_BINARY_DIR@/p7d-fff.p

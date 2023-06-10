@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: Unlicense
 
 message(NOTICE "starting big number library test, could take a while...")
 
