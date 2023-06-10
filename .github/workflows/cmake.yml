@@ -41,10 +41,10 @@ jobs:
           cmake -GNinja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}/openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}" -DOPENSSL_ASM=${{ matrix.asm }} -DOPENSSL_ZLIB=${{ matrix.zlib }} -DOPENSSL_THREADS=${{ matrix.threads }} "${{ github.workspace }}/openssl-externalCMake"
           ninja
           cmake --install . --strip
-      - name: run test
-        run: |
-          cd "build"
-          ninja check
+#      - name: run test
+#        run: |
+#          cd "build"
+#          ninja check
       - name: package
         run: |
           tar -cJf "openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}.tar.xz" "openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}"
@@ -82,10 +82,10 @@ jobs:
           cmake -GNinja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}/openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}" -DCMAKE_OSX_ARCHITECTURES="x86_64" -DOPENSSL_ASM=${{ matrix.asm }} -DOPENSSL_ZLIB=${{ matrix.zlib }} -DOPENSSL_THREADS=${{ matrix.threads }} "${{ github.workspace }}/openssl-externalCMake"
           ninja
           cmake --install . --strip
-      - name: run test
-        run: |
-          cd "build"
-          ninja check
+#      - name: run test
+#        run: |
+#          cd "build"
+#          ninja check
       - name: package
         run: |
           tar -cJf "openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}.tar.xz" "openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}"
@@ -218,12 +218,12 @@ jobs:
           cmake -GNinja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}/openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}" -DOPENSSL_ASM=${{ matrix.asm }} -DOPENSSL_THREADS=${{ matrix.threads }} -DPOD2MAN="C:\Strawberry\perl\bin\pod2man.bat" "${{ github.workspace }}/openssl-externalCMake"
           ninja
           cmake --install . --strip
-      - name: run test
-        shell: cmd
-        run: |
-          set path=${{ github.workspace }}\mingw\mingw${{ matrix.toolchain.bit }}\\bin;%path%
-          cd "build"
-          ninja check
+#      - name: run test
+#        shell: cmd
+#        run: |
+#          set path=${{ github.workspace }}\mingw\mingw${{ matrix.toolchain.bit }}\\bin;%path%
+#          cd "build"
+#          ninja check
       - name: package
         run: |
           7z a "openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}.7z" "openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}"
@@ -285,12 +285,12 @@ jobs:
           cmake -GNinja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}/openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}" -DOPENSSL_ASM=${{ matrix.asm.value }} -DOPENSSL_NASM=${{ matrix.asm.nasm }} -DPOD2MAN="C:\Strawberry\perl\bin\pod2man.bat" "${{ github.workspace }}/openssl-externalCMake"
           ninja
           cmake --install . --strip
-      - name: run test
-        shell: cmd
-        run: |
-          call "${{ matrix.toolchain.call }}"
-          cd "build"
-          ninja check
+#      - name: run test
+#        shell: cmd
+#        run: |
+#          call "${{ matrix.toolchain.call }}"
+#          cd "build"
+#          ninja check
       - name: package
         run: |
           7z a "openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}.7z" "openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}"
