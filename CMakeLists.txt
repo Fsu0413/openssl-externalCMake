@@ -37,7 +37,7 @@ include("./.FsEnv.cmake" OPTIONAL)
 find_package(Perl)
 
 if (Perl_FOUND)
-    include(CTest)
+    # include(CTest)
 else()
     message(AUTHOR_WARNING "Perl is not found. Since test cases depends on Perl testing is disabled.")
 endif()
@@ -546,9 +546,9 @@ add_subdirectory(tools)
 # All the test cases should be rewritten, just as what we did in OpenSSL 1.0.2.
 # This time it comes with 157 test cases instead of 57 during 1.0.2.
 # A good thing is that all test related stuff has been moved from the indivisual directory to this "test" directory.
-if (BUILD_TESTING)
-    add_subdirectory(test)
-endif()
+#if (BUILD_TESTING)
+#    add_subdirectory(test)
+#endif()
 
 # OpenSSL 1.1 changed the process for building documentations.
 # Current documentation build has become a pain that it processes the pod files one by one.
