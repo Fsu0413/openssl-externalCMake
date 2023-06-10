@@ -90,3 +90,11 @@ They are not even released to users. Maybe they are some kinds of internal test 
 ## How to use this project? Or how to use CMake to build OpenSSL?
 
 Just typical CMake procedure will work.
+
+## TODOs
+
+Sort by priority
+
+### On 1.0.2 branch:
+
+1. `make check` support
