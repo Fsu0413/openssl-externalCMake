@@ -368,6 +368,7 @@ elseif (APPLE AND NOT IOS)
         if (OPENSSL_TARGET_ARCH STREQUAL "x64")
             set(OPENSSL_BUILD_PLATFORM "darwin64-x86_64-cc")
         elseif (OPENSSL_TARGET_ARCH STREQUAL "arm64")
+            # This is not something OpenSSL 1.0.2 is currently supporting.
             set(OPENSSL_BUILD_PLATFORM "darwin64-arm64-cc")
         endif()
     endif()
