@@ -294,22 +294,6 @@ endforeach()
 
 # Here is the middle of the workaround - the file is loaded as FILECONTENTSASCII with end-of-string backslash replaced by CR
 
-function(kill_code_quote inputstr outvar)
-    set(result "${inputstr}")
-    string(LENGTH "${inputstr}" inputlen)
-    if (inputlen LESS 2)
-        message(FATAL_ERROR "Length of ${inputstr} is less than 2")
-    endif()
-    math(EXPR inputlenminus1 "${inputlen} - 1")
-    math(EXPR inputlenminus2 "${inputlen} - 2")
-    string(SUBSTRING "${inputstr}" 0 1 inputstrhead)
-    string(SUBSTRING "${inputstr}" ${inputlenminus1} 1 inputstrtail)
-    if (inputstrhead STREQUAL "\"" AND inputstrtail STREQUAL "\"")
-        string(SUBSTRING "${inputstr}" 1 ${inputlenminus2} result)
-    endif()
-    set(${outvar} "${result}" PARENT_SCOPE)
-endfunction()
-
 set(OUTPUT_CONTENTS)
 
 if (OUTPUT_FORMAT STREQUAL "d")
