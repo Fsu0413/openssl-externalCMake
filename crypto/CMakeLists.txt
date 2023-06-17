@@ -209,7 +209,6 @@ endif()
 # Usage:
 # perlasm_generate_src(<out-asmfile> <src-perlfile>
 #                   [DEPENDENDCIES <depend1> <depend2> ...]
-#                   [FLAGS <flag1> <flag2> ...]
 # )
 macro (perlasm_generate_src OUT_ASMFILE SRC_PERLFILE)
     set(DEPENDENCIES)
@@ -232,7 +231,7 @@ macro (perlasm_generate_src OUT_ASMFILE SRC_PERLFILE)
     endif()
     add_custom_command(
         OUTPUT ${OUT_ASMFILE}
-        COMMAND ${PERL_EXECUTABLE} ${SRC_PERLFILE} ${FLAGS} ${OUT_ASMFILE}
+        COMMAND ${CMAKE_COMMAND} -E env "CC=\"${CMAKE_C_COMPILER}\"" ${PERL_EXECUTABLE} ${SRC_PERLFILE} ${FLAGS} ${OUT_ASMFILE}
         MAIN_DEPENDENCY ${SRC_PERLFILE}
         DEPENDS ${DEPENDENCIES}
         USES_TERMINAL
