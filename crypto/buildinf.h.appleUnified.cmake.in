@@ -6,9 +6,8 @@ static char compiler_flags[] = {
     '\0'
 };
 #ifdef __aarch64__
-// match future OpenSSL versions
-#define PLATFORM "platform: darwin64-arm64-cc"
+#define PLATFORM "platform: darwin64-arm64"
 #else
-#define PLATFORM "platform: darwin64-x86_64-cc"
+#define PLATFORM "platform: darwin64-x86_64"
 #endif
 #define DATE "built on: @OPENSSL_BUILD_TIMESTAMP@"
