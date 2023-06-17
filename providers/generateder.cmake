@@ -126,8 +126,22 @@ function(generate_c_hdr C_name output_var)
         list(APPEND C_LIST "${O_I}")
     endforeach()
 
-    list(LENGTH C_LIST oid_size)
-    list(JOIN C_LIST ", " C_bytes)
+    set(C_LIST_STANDARDIZE)
+
+    foreach (I IN LISTS C_LIST)
+        string(TOUPPER ${I} I_0)
+        string(REPLACE "X" "x" I_1 "${I_0}")
+        string(LENGTH "${I_1}" I_1_LENGTH)
+        if (I_1_LENGTH EQUAL 3)
+            string(REPLACE "x" "x0" I_2 "${I_1}")
+        else()
+            set(I_2 "${I_1}")
+        endif()
+        list(APPEND C_LIST_STANDARDIZE "${I_2}")
+    endforeach()
+
+    list(LENGTH C_LIST_STANDARDIZE oid_size)
+    list(JOIN C_LIST_STANDARDIZE ", " C_bytes)
     math(EXPR C_bytes_size "${oid_size} + 2")
 
     set(output "
