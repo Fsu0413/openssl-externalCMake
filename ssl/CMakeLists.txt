@@ -2,7 +2,6 @@
 
 set(LIBSSL_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/ssl/pqueue.c
-    ${CMAKE_SOURCE_DIR}/openssl/ssl/packet.c
     ${CMAKE_SOURCE_DIR}/openssl/ssl/statem/statem_srvr.c
     ${CMAKE_SOURCE_DIR}/openssl/ssl/statem/statem_clnt.c
     ${CMAKE_SOURCE_DIR}/openssl/ssl/s3_lib.c
@@ -13,7 +12,6 @@ set(LIBSSL_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/ssl/statem/extensions_srvr.c
     ${CMAKE_SOURCE_DIR}/openssl/ssl/statem/extensions_clnt.c
     ${CMAKE_SOURCE_DIR}/openssl/ssl/statem/extensions_cust.c
-    ${CMAKE_SOURCE_DIR}/openssl/ssl/s3_cbc.c
     ${CMAKE_SOURCE_DIR}/openssl/ssl/s3_msg.c
     ${CMAKE_SOURCE_DIR}/openssl/ssl/methods.c
     ${CMAKE_SOURCE_DIR}/openssl/ssl/t1_lib.c
@@ -37,6 +35,7 @@ set(LIBSSL_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/ssl/ssl_mcnf.c
     ${CMAKE_SOURCE_DIR}/openssl/ssl/bio_ssl.c
     ${CMAKE_SOURCE_DIR}/openssl/ssl/ssl_err.c
+    ${CMAKE_SOURCE_DIR}/openssl/ssl/ssl_err_legacy.c
     ${CMAKE_SOURCE_DIR}/openssl/ssl/tls_srp.c
     ${CMAKE_SOURCE_DIR}/openssl/ssl/t1_trce.c
     ${CMAKE_SOURCE_DIR}/openssl/ssl/ssl_utst.c
@@ -45,44 +44,46 @@ set(LIBSSL_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/ssl/record/dtls1_bitmap.c
     ${CMAKE_SOURCE_DIR}/openssl/ssl/statem/statem.c
     ${CMAKE_SOURCE_DIR}/openssl/ssl/record/ssl3_record_tls13.c
-    ${CMAKE_SOURCE_DIR}/openssl/ssl/packet_local.h
+    ${CMAKE_SOURCE_DIR}/openssl/ssl/tls_depr.c
+    ${CMAKE_SOURCE_DIR}/openssl/ssl/record/tls_pad.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/packet.c
+    ${CMAKE_SOURCE_DIR}/openssl/ssl/record/record.h
+    ${CMAKE_SOURCE_DIR}/openssl/ssl/record/record_local.h
+    ${CMAKE_SOURCE_DIR}/openssl/ssl/sslerr.h
     ${CMAKE_SOURCE_DIR}/openssl/ssl/ssl_cert_table.h
     ${CMAKE_SOURCE_DIR}/openssl/ssl/ssl_local.h
-    ${CMAKE_SOURCE_DIR}/openssl/ssl/record/record_local.h
+    ${CMAKE_SOURCE_DIR}/openssl/ssl/statem/statem.h
     ${CMAKE_SOURCE_DIR}/openssl/ssl/statem/statem_local.h
-    ${CMAKE_SOURCE_DIR}/openssl/include/openssl/asn1t.h
-    ${CMAKE_SOURCE_DIR}/openssl/include/openssl/async.h
-    ${CMAKE_SOURCE_DIR}/openssl/include/openssl/bio.h
-    ${CMAKE_SOURCE_DIR}/openssl/include/openssl/bn.h
-    ${CMAKE_SOURCE_DIR}/openssl/include/openssl/buffer.h
-    ${CMAKE_SOURCE_DIR}/openssl/include/openssl/comp.h
-    ${CMAKE_SOURCE_DIR}/openssl/include/openssl/conf.h
-    ${CMAKE_SOURCE_DIR}/openssl/include/openssl/crypto.h
-    ${CMAKE_SOURCE_DIR}/openssl/include/openssl/ct.h
-    ${CMAKE_SOURCE_DIR}/openssl/include/openssl/dh.h
-    ${CMAKE_SOURCE_DIR}/openssl/include/openssl/dsa.h
-    ${CMAKE_SOURCE_DIR}/openssl/include/openssl/e_os2.h
-    ${CMAKE_SOURCE_DIR}/openssl/include/openssl/engine.h
-    ${CMAKE_SOURCE_DIR}/openssl/include/openssl/err.h
-    ${CMAKE_SOURCE_DIR}/openssl/include/openssl/evp.h
-    ${CMAKE_SOURCE_DIR}/openssl/include/openssl/hmac.h
-    ${CMAKE_SOURCE_DIR}/openssl/include/openssl/kdf.h
-    ${CMAKE_SOURCE_DIR}/openssl/include/openssl/md5.h
-    ${CMAKE_SOURCE_DIR}/openssl/include/openssl/objects.h
-    ${CMAKE_SOURCE_DIR}/openssl/include/openssl/ocsp.h
-    ${CMAKE_SOURCE_DIR}/openssl/include/openssl/pem.h
-    ${CMAKE_SOURCE_DIR}/openssl/include/openssl/rand.h
-    ${CMAKE_SOURCE_DIR}/openssl/include/openssl/rand_drbg.h
-    ${CMAKE_SOURCE_DIR}/openssl/include/openssl/rsa.h
-    ${CMAKE_SOURCE_DIR}/openssl/include/openssl/sha.h
-    ${CMAKE_SOURCE_DIR}/openssl/include/openssl/srp.h
-    ${CMAKE_SOURCE_DIR}/openssl/include/openssl/ssl.h
-    ${CMAKE_SOURCE_DIR}/openssl/include/openssl/sslerr.h
-    ${CMAKE_SOURCE_DIR}/openssl/include/openssl/symhacks.h
-    ${CMAKE_SOURCE_DIR}/openssl/include/openssl/x509.h
-    ${CMAKE_SOURCE_DIR}/openssl/include/openssl/x509v3.h
+    ${CMAKE_SOURCE_DIR}/openssl/include/internal/bio.h
+    ${CMAKE_SOURCE_DIR}/openssl/include/internal/constant_time.h
     ${CMAKE_SOURCE_DIR}/openssl/include/internal/cryptlib.h
+    ${CMAKE_SOURCE_DIR}/openssl/include/internal/err.h
+    ${CMAKE_SOURCE_DIR}/openssl/include/internal/ktls.h
+    ${CMAKE_SOURCE_DIR}/openssl/include/internal/nelem.h
+    ${CMAKE_SOURCE_DIR}/openssl/include/internal/o_dir.h
+    ${CMAKE_SOURCE_DIR}/openssl/include/internal/packet.h
+    ${CMAKE_SOURCE_DIR}/openssl/include/internal/refcount.h
+    ${CMAKE_SOURCE_DIR}/openssl/include/internal/sizes.h
+    ${CMAKE_SOURCE_DIR}/openssl/include/internal/sslconf.h
+    ${CMAKE_SOURCE_DIR}/openssl/include/internal/thread_once.h
+    ${CMAKE_SOURCE_DIR}/openssl/include/internal/tlsgroups.h
 )
+
+if (OPENSSL_KTLS)
+    set(LIBSSL_SOURCES
+        ${LIBSSL_SOURCES}
+        ${CMAKE_SOURCE_DIR}/openssl/ssl/ktls.c
+    )
+endif()
+
+if (OPENSSL_DEPRECATED_3_0)
+    set(LIBSSL_SOURCES
+        ${LIBSSL_SOURCES}
+        ${CMAKE_SOURCE_DIR}/openssl/ssl/s3_cbc.c
+        ${CMAKE_SOURCE_DIR}/openssl/ssl/ssl_rsa_legacy.c
+    )
+endif()
+
 if (WIN32)
     configure_file(ssl.rc.cmake.in ssl.rc @ONLY)
     set(LIBSSL_SOURCES ${LIBSSL_SOURCES} ssl.rc)
@@ -90,14 +91,22 @@ endif()
 add_library(ssl
     ${LIBSSL_SOURCES}
 )
+if (OPENSSL_ASM)
+    if ( ( OPENSSL_TARGET_ARCH STREQUAL "x64" ) OR ( OPENSSL_TARGET_ARCH STREQUAL "x86" ) )
+        target_compile_definitions(ssl
+            PRIVATE -DAES_ASM
+        )
+    endif()
+endif()
+
 if (WIN32)
     if (OPENSSL_TARGET_ARCH STREQUAL x64)
         set_target_properties(ssl PROPERTIES
-            RUNTIME_OUTPUT_NAME libssl-1_1-x64
+            RUNTIME_OUTPUT_NAME libssl-3-x64
         )
     else()
         set_target_properties(ssl PROPERTIES
-            RUNTIME_OUTPUT_NAME libssl-1_1
+            RUNTIME_OUTPUT_NAME libssl-3
         )
     endif()
     if (MSVC)
@@ -107,7 +116,7 @@ if (WIN32)
     endif()
 endif()
 set_target_properties(ssl PROPERTIES
-    SOVERSION 1.1
+    SOVERSION 3
     VERSION ${OPENSSL_VERSION_REAL}
 )
 

@@ -17,14 +17,14 @@ set(LIBCRYPTO_CURRENTDIR_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/x509_v3.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/x509_ext.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/x509_att.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/x509type.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/x509_meth.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/x509_lu.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/x_all.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/x509_txt.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/x509_trs.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/x509_trust.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/by_file.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/by_dir.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/by_store.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/x509_vpm.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/x_crl.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/t_crl.c
@@ -37,8 +37,58 @@ set(LIBCRYPTO_CURRENTDIR_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/x_attrib.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/x_exten.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/x_name.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/v3_bcons.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/v3_bitst.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/v3_conf.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/v3_extku.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/v3_ia5.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/v3_utf8.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/v3_lib.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/v3_prn.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/v3_utl.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/v3err.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/v3_genn.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/v3_san.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/v3_skid.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/v3_akid.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/v3_pku.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/v3_int.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/v3_enum.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/v3_sxnet.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/v3_cpols.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/v3_crld.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/v3_purp.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/v3_info.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/v3_akeya.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/v3_pmaps.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/v3_pcons.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/v3_ncons.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/v3_pcia.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/v3_pci.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/v3_ist.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/pcy_cache.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/pcy_node.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/pcy_data.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/pcy_map.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/pcy_tree.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/pcy_lib.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/v3_asid.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/v3_addr.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/v3_tlsf.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/v3_admis.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/ext_dat.h
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/pcy_local.h
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/standard_exts.h
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/v3_admis.h
     ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/x509_local.h
 )
+
+if ( OPENSSL_DEPRECATED_3_0 )
+    set(LIBCRYPTO_CURRENTDIR_SOURCES
+        ${LIBCRYPTO_CURRENTDIR_SOURCES}
+        ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/x509type.c
+    )
+endif()
 
 set(LIBCRYPTO_SOURCES ${LIBCRYPTO_SOURCES} ${LIBCRYPTO_CURRENTDIR_SOURCES})
 

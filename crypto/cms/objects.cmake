@@ -15,6 +15,9 @@ set(LIBCRYPTO_CURRENTDIR_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/crypto/cms/cms_ess.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/cms/cms_pwri.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/cms/cms_kari.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/cms/cms_rsa.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/cms/cms_dh.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/cms/cms_ec.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/cms/cms_local.h
 )
 

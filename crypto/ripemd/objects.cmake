@@ -1,8 +1,7 @@
 # SPDX-License-Identifier: Unlicense
 
-perlasm_generate_src(rmd-586${OPENSSL_ASM_PREPROCESSED} ${CMAKE_SOURCE_DIR}/openssl/crypto/ripemd/asm/rmd-586.pl
+perlasm_generate_src(rmd-586.S ${CMAKE_SOURCE_DIR}/openssl/crypto/ripemd/asm/rmd-586.pl
     DEPENDENCIES ${CMAKE_SOURCE_DIR}/openssl/crypto/perlasm/x86asm.pl
-    FLAGS ${OPENSSL_PERLASM_SCHEME} ${LIBCRYPTO_CFLAGS}
 )
 
 set(LIBCRYPTO_CURRENTDIR_SOURCES
@@ -20,7 +19,7 @@ if (OPENSSL_ASM)
         # no-asm
     elseif ( OPENSSL_TARGET_ARCH STREQUAL "x86" )
         set(LIBCRYPTO_CURRENTDIR_ASM_SOURCES
-            rmd-586${OPENSSL_ASM_PREPROCESSED}
+            rmd-586.S${OPENSSL_ASM_PREPROCESSED_X86}
         )
     elseif ( OPENSSL_TARGET_ARCH STREQUAL "arm32" )
         # no-asm

@@ -1,9 +1,8 @@
 # SPDX-License-Identifier: Unlicense
 
-perlasm_generate_src(cast-586${OPENSSL_ASM_PREPROCESSED} ${CMAKE_SOURCE_DIR}/openssl/crypto/cast/asm/cast-586.pl
+perlasm_generate_src(cast-586.S ${CMAKE_SOURCE_DIR}/openssl/crypto/cast/asm/cast-586.pl
     DEPENDENCIES ${CMAKE_SOURCE_DIR}/openssl/crypto/perlasm/x86asm.pl
-    DEPENDENCIES ${CMAKE_SOURCE_DIR}/openssl/crypto/perlasm/cbc.pl
-    FLAGS ${OPENSSL_PERLASM_SCHEME} ${LIBCRYPTO_CFLAGS} ${OPENSSL_USE_386}
+                 ${CMAKE_SOURCE_DIR}/openssl/crypto/perlasm/cbc.pl
 )
 
 set(LIBCRYPTO_CURRENTDIR_SOURCES
@@ -19,12 +18,12 @@ set(LIBCRYPTO_CURRENTDIR_ASM_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/crypto/cast/c_enc.c
 )
 # CAST assembler is not PIC
-if ( OPENSSL_ASM AND NOT BUILD_SHARED_LIBS )
+if ( OPENSSL_ASM AND NOT CMAKE_POSITION_INDEPENDENT_CODE )
     if ( OPENSSL_TARGET_ARCH STREQUAL "x64" )
         # no-asm
     elseif ( OPENSSL_TARGET_ARCH STREQUAL "x86" )
         set(LIBCRYPTO_CURRENTDIR_ASM_SOURCES
-            cast-586${OPENSSL_ASM_PREPROCESSED}
+            cast-586.S${OPENSSL_ASM_PREPROCESSED_X86}
         )
     elseif ( OPENSSL_TARGET_ARCH STREQUAL "arm32" )
         # no-asm

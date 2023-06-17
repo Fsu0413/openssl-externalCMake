@@ -10,25 +10,21 @@ add_custom_command(
     USES_TERMINAL
 )
 
-perlasm_generate_src(dest4-sparcv9${OPENSSL_ASM_PREPROCESSED} ${CMAKE_SOURCE_DIR}/openssl/crypto/des/asm/dest4-sparcv9.pl
-    FLAGS ${OPENSSL_PERLASM_SCHEME}
-)
-perlasm_generate_src(des-586${OPENSSL_ASM_PREPROCESSED} ${CMAKE_SOURCE_DIR}/openssl/crypto/des/asm/des-586.pl
+perlasm_generate_src(dest4-sparcv9${OPENSSL_ASM_PREPROCESSED} ${CMAKE_SOURCE_DIR}/openssl/crypto/des/asm/dest4-sparcv9.pl)
+perlasm_generate_src(des-586.S ${CMAKE_SOURCE_DIR}/openssl/crypto/des/asm/des-586.pl
     DEPENDENCIES ${CMAKE_SOURCE_DIR}/openssl/crypto/perlasm/x86asm.pl
                  ${CMAKE_SOURCE_DIR}/openssl/crypto/perlasm/cbc.pl
-    FLAGS ${OPENSSL_PERLASM_SCHEME} ${LIBCRYPTO_CFLAGS} ${OPENSSL_USE_386}
 )
-perlasm_generate_src(crypt586${OPENSSL_ASM_PREPROCESSED} ${CMAKE_SOURCE_DIR}/openssl/crypto/des/asm/crypt586.pl
+perlasm_generate_src(crypt586.S ${CMAKE_SOURCE_DIR}/openssl/crypto/des/asm/crypt586.pl
     DEPENDENCIES ${CMAKE_SOURCE_DIR}/openssl/crypto/perlasm/x86asm.pl
                  ${CMAKE_SOURCE_DIR}/openssl/crypto/perlasm/cbc.pl
-    FLAGS ${OPENSSL_PERLASM_SCHEME} ${LIBCRYPTO_CFLAGS} ${OPENSSL_USE_386}
 )
 
 set(LIBCRYPTO_CURRENTDIR_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/crypto/des/set_key.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/des/ecb3_enc.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/des/ecb_enc.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/des/cbc_enc.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/des/ecb3_enc.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/des/cfb64enc.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/des/cfb64ede.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/des/cfb_enc.c
@@ -55,8 +51,8 @@ if (OPENSSL_ASM)
         # no-asm
     elseif ( OPENSSL_TARGET_ARCH STREQUAL "x86" )
         set(LIBCRYPTO_CURRENTDIR_ASM_SOURCES
-            des-586${OPENSSL_ASM_PREPROCESSED}
-            crypt586${OPENSSL_ASM_PREPROCESSED}
+            des-586.S${OPENSSL_ASM_PREPROCESSED_X86}
+            crypt586.S${OPENSSL_ASM_PREPROCESSED_X86}
         )
     elseif ( OPENSSL_TARGET_ARCH STREQUAL "arm32" )
         # no-asm

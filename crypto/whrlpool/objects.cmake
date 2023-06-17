@@ -1,12 +1,9 @@
 # SPDX-License-Identifier: Unlicense
 
-perlasm_generate_src(wp-mmx${OPENSSL_ASM_PREPROCESSED} ${CMAKE_SOURCE_DIR}/openssl/crypto/whrlpool/asm/wp-mmx.pl
+perlasm_generate_src(wp-mmx.S ${CMAKE_SOURCE_DIR}/openssl/crypto/whrlpool/asm/wp-mmx.pl
     DEPENDENCIES ${CMAKE_SOURCE_DIR}/openssl/crypto/perlasm/x86asm.pl
-    FLAGS ${OPENSSL_PERLASM_SCHEME} ${LIBCRYPTO_CFLAGS} ${OPENSSL_USE_386}
 )
-perlasm_generate_src(wp-x86_64${OPENSSL_ASM_PREPROCESSED} ${CMAKE_SOURCE_DIR}/openssl/crypto/whrlpool/asm/wp-x86_64.pl
-    FLAGS ${OPENSSL_PERLASM_SCHEME}
-)
+perlasm_generate_src(wp-x86_64${OPENSSL_ASM_PREPROCESSED} ${CMAKE_SOURCE_DIR}/openssl/crypto/whrlpool/asm/wp-x86_64.pl)
 
 set(LIBCRYPTO_CURRENTDIR_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/crypto/whrlpool/wp_dgst.c
@@ -22,10 +19,12 @@ if (OPENSSL_ASM)
             wp-x86_64${OPENSSL_ASM_PREPROCESSED}
         )
     elseif ( OPENSSL_TARGET_ARCH STREQUAL "x86" )
-        set(LIBCRYPTO_CURRENTDIR_ASM_SOURCES
-            ${CMAKE_SOURCE_DIR}/openssl/crypto/whrlpool/wp_block.c
-            wp-mmx${OPENSSL_ASM_PREPROCESSED}
-        )
+        if (NOT OPENSSL_386)
+            set(LIBCRYPTO_CURRENTDIR_ASM_SOURCES
+                ${CMAKE_SOURCE_DIR}/openssl/crypto/whrlpool/wp_block.c
+                wp-mmx.S${OPENSSL_ASM_PREPROCESSED_X86}
+            )
+        endif()
     elseif ( OPENSSL_TARGET_ARCH STREQUAL "arm32" )
         # no-asm
     elseif ( OPENSSL_TARGET_ARCH STREQUAL "arm64" )
