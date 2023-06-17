@@ -151,9 +151,6 @@ const unsigned char ossl_der_oid_${C_name}[DER_OID_SZ_${C_name}] = {
 endfunction()
 
 macro(readasn1 _filename)
-    message(NOTICE "--------------------------------------------")
-    message(NOTICE "${_filename}")
-
     # do not use file(STRINGS ... REGEX) since the regular expression should be matched cross lines
     file(READ "${_filename}" FILECONTENTS)
     string(REGEX MATCHALL "${GENERATEDER_LINEREGEX}" FILECONTENTS_MATCHED "${FILECONTENTS}")
@@ -169,36 +166,6 @@ macro(readasn1 _filename)
         endif()
     endforeach()
 endmacro()
-
-#readasn1("${CMAKE_CURRENT_LIST_DIR}/../openssl/providers/common/der/NIST.asn1")
-#readasn1("${CMAKE_CURRENT_LIST_DIR}/../openssl/providers/common/der/DIGESTS.asn1")
-#readasn1("${CMAKE_CURRENT_LIST_DIR}/../openssl/providers/common/der/DSA.asn1")
-#readasn1("${CMAKE_CURRENT_LIST_DIR}/../openssl/providers/common/der/EC.asn1")
-#readasn1("${CMAKE_CURRENT_LIST_DIR}/../openssl/providers/common/der/ECX.asn1")
-#readasn1("${CMAKE_CURRENT_LIST_DIR}/../openssl/providers/common/der/RSA.asn1")
-#readasn1("${CMAKE_CURRENT_LIST_DIR}/../openssl/providers/common/der/SM2.asn1")
-#readasn1("${CMAKE_CURRENT_LIST_DIR}/../openssl/providers/common/der/wrap.asn1")
-
-## print
-#list(REMOVE_DUPLICATES GENERATEDER_KNOWN_IDENTIFIER)
-#message(NOTICE "${GENERATEDER_KNOWN_IDENTIFIER}")
-
-#foreach (K IN LISTS GENERATEDER_KNOWN_IDENTIFIER)
-#    message(NOTICE "--------------------------------------------")
-#    set(K_LEAF_DESCRIPTION "(leaf)")
-#    if (DEFINED ${K}_IS_ARC AND ${K}_IS_ARC)
-#        set(K_LEAF_DESCRIPTION "(arc)")
-#    endif()
-#    message(NOTICE "Identifier: ${K} ${K_LEAF_DESCRIPTION}")
-#    message(NOTICE "Arguments:")
-#    message(NOTICE "\t${${K}}")
-#    if (DEFINED ${K}_IS_ARC AND ${K}_IS_ARC)
-#    else()
-#        unset(K_OUTPUT)
-#        generate_c_hdr(${K} K_OUTPUT)
-#        message(NOTICE "${K_OUTPUT}")
-#    endif()
-#endforeach()
 
 set(START_ARGN)
 foreach (I RANGE ${CMAKE_ARGC})

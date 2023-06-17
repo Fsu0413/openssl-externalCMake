@@ -243,8 +243,7 @@ macro (perlasm_generate_src OUT_ASMFILE SRC_PERLFILE)
         )
     endif()
     if (MSVC AND ( OPENSSL_TARGET_ARCH STREQUAL "x86" ) )
-        # need to figure out how x86 ASMs are generated now, since current X86 asm are all .S <captialized S>
-        # MSVC does not support asm with preprocessor, so we need to manually run preprocessor
+        # need to figure out if this works under clang-cl
         add_custom_command(
             OUTPUT ${OUT_ASMFILE}${OPENSSL_ASM_PREPROCESSED_X86}
             COMMAND ${CMAKE_C_COMPILER} "/EP" "-D__ASSEMBLER__" ${CMAKE_C_FLAGS} ${LIBCRYPTO_CFLAGS} ${OUT_ASMFILE} > ${OUT_ASMFILE}${OPENSSL_ASM_PREPROCESSED_X86}
@@ -269,8 +268,6 @@ if (OPENSSL_SSE2)
     set(LIBCRYPTO_CFLAGS ${LIBCRYPTO_CFLAGS} "-DOPENSSL_IA32_SSE2")
 endif()
 if (OPENSSL_THREADS)
-    # set(LIBCRYPTO_CFLAGS ${LIBCRYPTO_CFLAGS} "-DOPENSSL_THREADS")
-
     if (   ( CMAKE_SYSTEM_NAME MATCHES "BSD" ))
         set(LIBCRYPTO_CFLAGS ${LIBCRYPTO_CFLAGS} "-D_THREAD_SAFE" "-D_REENTRANT")
     elseif (   ANDROID
