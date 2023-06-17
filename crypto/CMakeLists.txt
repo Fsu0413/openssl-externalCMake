@@ -740,10 +740,16 @@ target_link_libraries(crypto
     PRIVATE libdefault
             libcommon
 )
-if (OPENSSL_LEGACY AND ( NOT OPENSSL_MODULE ) )
-    target_link_libraries(crypto
-        PRIVATE legacy
-    )
+if (OPENSSL_LEGACY)
+    if ( NOT OPENSSL_MODULE )
+        target_link_libraries(crypto
+            PRIVATE legacy
+        )
+    else()
+        target_link_libraries(legacy
+            PRIVATE crypto
+        )
+    endif()
 endif()
 
 if (OPENSSL_THREADS)

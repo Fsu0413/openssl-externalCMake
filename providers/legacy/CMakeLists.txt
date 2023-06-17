@@ -1,15 +1,5 @@
 
-if (NOT OPENSSL_MODULE)
-    set(_LEGACY_LIBRARY_TYPE_AND_RUNNER_FILE STATIC)
-else()
-    set(_LEGACY_LIBRARY_TYPE_AND_RUNNER_FILE MODULE
-        ${CMAKE_SOURCE_DIR}/openssl/providers/prov_running.c
-        ${CMAKE_SOURCE_DIR}/openssl/providers/common/provider_util.c
-    )
-endif()
-
-add_library(legacy ${_LEGACY_LIBRARY_TYPE_AND_RUNNER_FILE}
-
+set(LIBLEGACY_SOURCES
     ${CMAKE_BINARY_DIR}/include/openssl/opensslv.h
     ${CMAKE_BINARY_DIR}/include/openssl/configuration.h
     ${CMAKE_BINARY_DIR}/include/openssl/asn1.h
@@ -36,6 +26,135 @@ add_library(legacy ${_LEGACY_LIBRARY_TYPE_AND_RUNNER_FILE}
     ${CMAKE_BINARY_DIR}/include/openssl/x509v3.h
 
     ${CMAKE_SOURCE_DIR}/openssl/providers/legacyprov.c
+    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/kdfs/pbkdf1.c
+)
+
+set(LIBLEGACY_SOURCES_MODULE
+    ${CMAKE_SOURCE_DIR}/openssl/providers/prov_running.c
+    ${CMAKE_SOURCE_DIR}/openssl/providers/common/provider_util.c
+)
+
+if (OPENSSL_DES)
+    set(LIBLEGACY_SOURCES
+        ${LIBLEGACY_SOURCES}
+        ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/cipher_desx.c
+        ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/cipher_desx_hw.c
+        ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/cipher_des.c
+        ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/cipher_des_hw.c
+    )
+    set(LIBLEGACY_SOURCES_MODULE
+        ${LIBLEGACY_SOURCES_MODULE}
+        ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/cipher_tdes_common.c
+    )
+endif()
+
+if (OPENSSL_BF)
+    set(LIBLEGACY_SOURCES
+        ${LIBLEGACY_SOURCES}
+        ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/cipher_blowfish.c
+        ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/cipher_blowfish_hw.c
+    )
+endif()
+
+if (OPENSSL_IDEA)
+    set(LIBLEGACY_SOURCES
+        ${LIBLEGACY_SOURCES}
+        ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/cipher_idea.c
+        ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/cipher_idea_hw.c
+    )
+endif()
+
+if (OPENSSL_CAST)
+    set(LIBLEGACY_SOURCES
+        ${LIBLEGACY_SOURCES}
+        ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/cipher_cast5.c
+        ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/cipher_cast5_hw.c
+    )
+endif()
+
+if (OPENSSL_SEED)
+    set(LIBLEGACY_SOURCES
+        ${LIBLEGACY_SOURCES}
+        ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/cipher_seed.c
+        ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/cipher_seed_hw.c
+    )
+endif()
+
+if (OPENSSL_RC4)
+    set(LIBLEGACY_SOURCES
+        ${LIBLEGACY_SOURCES}
+        ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/cipher_rc4.c
+        ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/cipher_rc4_hw.c
+    )
+    if (OPENSSL_MD5)
+        set(LIBLEGACY_SOURCES
+            ${LIBLEGACY_SOURCES}
+            ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/cipher_rc4_hmac_md5.c
+            ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/cipher_rc4_hmac_md5_hw.c
+        )
+    endif()
+endif()
+
+if (OPENSSL_RC5)
+    set(LIBLEGACY_SOURCES
+        ${LIBLEGACY_SOURCES}
+        ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/cipher_rc5.c
+        ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/cipher_rc5_hw.c
+    )
+endif()
+
+if (OPENSSL_RC2)
+    set(LIBLEGACY_SOURCES
+        ${LIBLEGACY_SOURCES}
+        ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/cipher_rc2.c
+        ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/cipher_rc2_hw.c
+    )
+endif()
+
+if (OPENSSL_MD2)
+    set(LIBLEGACY_SOURCES
+        ${LIBLEGACY_SOURCES}
+        ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/digests/md2_prov.c
+    )
+endif()
+
+if (OPENSSL_MD4)
+    set(LIBLEGACY_SOURCES
+        ${LIBLEGACY_SOURCES}
+        ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/digests/md4_prov.c
+    )
+endif()
+
+if (OPENSSL_MDC2)
+    set(LIBLEGACY_SOURCES
+        ${LIBLEGACY_SOURCES}
+        ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/digests/mdc2_prov.c
+    )
+endif()
+
+if (OPENSSL_WHIRLPOOL)
+    set(LIBLEGACY_SOURCES
+        ${LIBLEGACY_SOURCES}
+        ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/digests/wp_prov.c
+    )
+endif()
+
+if (OPENSSL_RMD160)
+    set(LIBLEGACY_SOURCES_MODULE
+        ${LIBLEGACY_SOURCES_MODULE}
+        ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/digests/ripemd_prov.c
+    )
+endif()
+
+if (NOT OPENSSL_MODULE)
+    set(LIBLEGACY_LIBRARY_TYPE STATIC)
+else()
+    set(LIBLEGACY_LIBRARY_TYPE MODULE)
+    set(LIBLEGACY_SOURCES ${LIBLEGACY_SOURCES} ${LIBLEGACY_SOURCES_MODULE})
+endif()
+
+add_library(legacy "${LIBLEGACY_LIBRARY_TYPE}"
+    ${LIBLEGACY_SOURCES}
 )
 
 target_include_directories(legacy
@@ -45,8 +164,16 @@ target_include_directories(legacy
             ${CMAKE_SOURCE_DIR}/openssl
             ${CMAKE_SOURCE_DIR}/openssl/include
             ${CMAKE_SOURCE_DIR}/openssl/crypto
-            ${CMAKE_BINARY_DIR}/providers/include
+            ${CMAKE_BINARY_DIR}/providers/common/include
             ${CMAKE_SOURCE_DIR}/openssl/providers/include
+)
+
+target_compile_definitions(legacy
+    PRIVATE ${LIBCRYPTO_CFLAGS}
+            -DOPENSSL_BUILDING_OPENSSL
+            "-DOPENSSLDIR=\"${OPENSSL_OPENSSLDIR_ABSOLUTE}\""
+            "-DENGINESDIR=\"${OPENSSL_ENGINESDIR_ABSOLUTE}\""
+            "-DMODULESDIR=\"${OPENSSL_MODULESDIR_ABSOLUTE}\""
 )
 
 if (OPENSSL_MODULE)
@@ -54,104 +181,3 @@ if (OPENSSL_MODULE)
         LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}/ossl-modules"
     )
 endif()
-
-# D:\openssl\openssl-3.0.9\providers\implementations\ciphers
-#$DES_GOAL=../../liblegacy.a
-#IF[{- !$disabled{des} -}]
-#  SOURCE[$DES_GOAL]=\
-#      cipher_desx.c cipher_desx_hw.c \
-#      cipher_des.c cipher_des_hw.c
-# IF[{- !$disabled{module} -}]
-#   SOURCE[$DES_GOAL]=\
-#       cipher_tdes_common.c
-# ENDIF
-#ENDIF
-
-# D:\openssl\openssl-3.0.9\providers\implementations\ciphers
-#$BLOWFISH_GOAL=../../liblegacy.a
-#IF[{- !$disabled{bf} -}]
-#  SOURCE[$BLOWFISH_GOAL]=\
-#      cipher_blowfish.c cipher_blowfish_hw.c
-#ENDIF
-
-# D:\openssl\openssl-3.0.9\providers\implementations\ciphers
-#$IDEA_GOAL=../../liblegacy.a
-#IF[{- !$disabled{idea} -}]
-#  SOURCE[$IDEA_GOAL]=\
-#      cipher_idea.c cipher_idea_hw.c
-#ENDIF
-
-# D:\openssl\openssl-3.0.9\providers\implementations\ciphers
-#$CAST5_GOAL=../../liblegacy.a
-#IF[{- !$disabled{cast} -}]
-#  SOURCE[$CAST5_GOAL]=\
-#      cipher_cast5.c cipher_cast5_hw.c
-#ENDIF
-
-# D:\openssl\openssl-3.0.9\providers\implementations\ciphers
-#$SEED_GOAL=../../liblegacy.a
-#IF[{- !$disabled{seed} -}]
-#  SOURCE[$SEED_GOAL]=\
-#      cipher_seed.c cipher_seed_hw.c
-#ENDIF
-
-# D:\openssl\openssl-3.0.9\providers\implementations\ciphers
-#$RC4_GOAL=../../liblegacy.a
-#IF[{- !$disabled{rc4} -}]
-#  SOURCE[$RC4_GOAL]=\
-#      cipher_rc4.c cipher_rc4_hw.c
-# IF[{- !$disabled{md5} -}]
-#   SOURCE[$RC4_GOAL]=\
-#       cipher_rc4_hmac_md5.c cipher_rc4_hmac_md5_hw.c
-# ENDIF
-#ENDIF
-
-# D:\openssl\openssl-3.0.9\providers\implementations\ciphers
-#$RC5_GOAL=../../liblegacy.a
-#IF[{- !$disabled{rc5} -}]
-#  SOURCE[$RC5_GOAL]=\
-#      cipher_rc5.c cipher_rc5_hw.c
-#ENDIF
-
-# D:\openssl\openssl-3.0.9\providers\implementations\ciphers
-#$RC2_GOAL=../../liblegacy.a
-#IF[{- !$disabled{rc2} -}]
-#  SOURCE[$RC2_GOAL]=\
-#      cipher_rc2.c cipher_rc2_hw.c
-#ENDIF
-
-# D:\openssl\openssl-3.0.9\providers\implementations\digests
-#$MD2_GOAL=../../liblegacy.a
-#$MD4_GOAL=../../liblegacy.a
-#$MDC2_GOAL=../../liblegacy.a
-#$WHIRLPOOL_GOAL=../../liblegacy.a
-
-#IF[{- !$disabled{md2} -}]
-#  SOURCE[$MD2_GOAL]=md2_prov.c
-#ENDIF
-
-#IF[{- !$disabled{md4} -}]
-#  SOURCE[$MD4_GOAL]=md4_prov.c
-#ENDIF
-
-#IF[{- !$disabled{mdc2} -}]
-#  SOURCE[$MDC2_GOAL]=mdc2_prov.c
-#ENDIF
-
-#IF[{- !$disabled{whirlpool} -}]
-#  SOURCE[$WHIRLPOOL_GOAL]=wp_prov.c
-#ENDIF
-
-# D:\openssl\openssl-3.0.9\providers\implementations\digests
-#IF[{- !$disabled{module} -}]
-#  $RIPEMD_GOAL=../../libdefault.a ../../liblegacy.a
-#ELSE
-#  $RIPEMD_GOAL=../../libdefault.a
-#ENDIF
-#IF[{- !$disabled{rmd160} -}]
-#  SOURCE[$RIPEMD_GOAL]=ripemd_prov.c
-#ENDIF
-
-#D:\openssl\openssl-3.0.9\providers\implementations\kdfs
-#$PBKDF1_GOAL=../../liblegacy.a
-#SOURCE[$PBKDF1_GOAL]=pbkdf1.c
