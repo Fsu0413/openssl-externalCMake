@@ -417,6 +417,66 @@ if (WIN32)
     set(LIBCRYPTO_SOURCES ${LIBCRYPTO_SOURCES} crypto.rc)
 endif()
 
+foreach (_STACKHASH_HEADER_FILE_PATH IN ITEMS
+    ${CMAKE_SOURCE_DIR}/openssl/include/openssl/asn1.h.in
+    ${CMAKE_SOURCE_DIR}/openssl/include/openssl/asn1t.h.in
+    ${CMAKE_SOURCE_DIR}/openssl/include/openssl/bio.h.in
+    ${CMAKE_SOURCE_DIR}/openssl/include/openssl/cmp.h.in
+    ${CMAKE_SOURCE_DIR}/openssl/include/openssl/cms.h.in
+    ${CMAKE_SOURCE_DIR}/openssl/include/openssl/conf.h.in
+    ${CMAKE_SOURCE_DIR}/openssl/include/openssl/crmf.h.in
+    ${CMAKE_SOURCE_DIR}/openssl/include/openssl/crypto.h.in
+    ${CMAKE_SOURCE_DIR}/openssl/include/openssl/ct.h.in
+    ${CMAKE_SOURCE_DIR}/openssl/include/openssl/err.h.in
+    ${CMAKE_SOURCE_DIR}/openssl/include/openssl/ess.h.in
+    ${CMAKE_SOURCE_DIR}/openssl/include/openssl/lhash.h.in
+    ${CMAKE_SOURCE_DIR}/openssl/include/openssl/ocsp.h.in
+    ${CMAKE_SOURCE_DIR}/openssl/include/openssl/pkcs7.h.in
+    ${CMAKE_SOURCE_DIR}/openssl/include/openssl/pkcs12.h.in
+    ${CMAKE_SOURCE_DIR}/openssl/include/openssl/safestack.h.in
+    ${CMAKE_SOURCE_DIR}/openssl/include/openssl/srp.h.in
+    ${CMAKE_SOURCE_DIR}/openssl/include/openssl/ssl.h.in
+    ${CMAKE_SOURCE_DIR}/openssl/include/openssl/ui.h.in
+    ${CMAKE_SOURCE_DIR}/openssl/include/openssl/x509.h.in
+    ${CMAKE_SOURCE_DIR}/openssl/include/openssl/x509_vfy.h.in
+    ${CMAKE_SOURCE_DIR}/openssl/include/openssl/x509v3.h.in
+)
+    get_filename_component(_STACKHASH_HEADER_FILE_NAME "${_STACKHASH_HEADER_FILE_PATH}" NAME_WLE)
+    add_custom_command(
+        OUTPUT "${CMAKE_BINARY_DIR}/include/openssl/${_STACKHASH_HEADER_FILE_NAME}"
+        COMMAND ${CMAKE_COMMAND} -DOUTPUT_FILE_NAME="${CMAKE_BINARY_DIR}/include/openssl/${_STACKHASH_HEADER_FILE_NAME}" -P "${CMAKE_CURRENT_SOURCE_DIR}/stackhash.cmake" "${_STACKHASH_HEADER_FILE_PATH}"
+        MAIN_DEPENDENCY "${_STACKHASH_HEADER_FILE_PATH}"
+        DEPENDS stackhash.cmake
+        USES_TERMINAL
+    )
+endforeach()
+add_custom_target(generate_stackhash SOURCES
+    ${CMAKE_BINARY_DIR}/include/openssl/asn1.h
+    ${CMAKE_BINARY_DIR}/include/openssl/asn1t.h
+    ${CMAKE_BINARY_DIR}/include/openssl/bio.h
+    ${CMAKE_BINARY_DIR}/include/openssl/cmp.h
+    ${CMAKE_BINARY_DIR}/include/openssl/cms.h
+    ${CMAKE_BINARY_DIR}/include/openssl/conf.h
+    ${CMAKE_BINARY_DIR}/include/openssl/crmf.h
+    ${CMAKE_BINARY_DIR}/include/openssl/crypto.h
+    ${CMAKE_BINARY_DIR}/include/openssl/ct.h
+    ${CMAKE_BINARY_DIR}/include/openssl/err.h
+    ${CMAKE_BINARY_DIR}/include/openssl/ess.h
+    ${CMAKE_BINARY_DIR}/include/openssl/lhash.h
+    ${CMAKE_BINARY_DIR}/include/openssl/ocsp.h
+    ${CMAKE_BINARY_DIR}/include/openssl/pkcs7.h
+    ${CMAKE_BINARY_DIR}/include/openssl/pkcs12.h
+    ${CMAKE_BINARY_DIR}/include/openssl/safestack.h
+    ${CMAKE_BINARY_DIR}/include/openssl/srp.h
+    ${CMAKE_BINARY_DIR}/include/openssl/ssl.h
+    ${CMAKE_BINARY_DIR}/include/openssl/ui.h
+    ${CMAKE_BINARY_DIR}/include/openssl/x509.h
+    ${CMAKE_BINARY_DIR}/include/openssl/x509_vfy.h
+    ${CMAKE_BINARY_DIR}/include/openssl/x509v3.h
+)
+
+add_subdirectory(../providers ../providers)
+
 add_library(crypto
     ${CMAKE_BINARY_DIR}/include/openssl/opensslv.h
     ${CMAKE_BINARY_DIR}/include/openssl/configuration.h

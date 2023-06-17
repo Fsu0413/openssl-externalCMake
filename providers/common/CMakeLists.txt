@@ -86,3 +86,11 @@ target_include_directories(libcommon
             ${CMAKE_BINARY_DIR}/providers/common/include
             ${CMAKE_SOURCE_DIR}/openssl/providers/include
 )
+
+target_compile_definitions(libcommon
+    PRIVATE ${LIBCRYPTO_CFLAGS}
+            -DOPENSSL_BUILDING_OPENSSL
+            "-DOPENSSLDIR=\"${OPENSSL_OPENSSLDIR_ABSOLUTE}\""
+            "-DENGINESDIR=\"${OPENSSL_ENGINESDIR_ABSOLUTE}\""
+            "-DMODULESDIR=\"${OPENSSL_MODULESDIR_ABSOLUTE}\""
+)
