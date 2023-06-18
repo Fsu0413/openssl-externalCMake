@@ -101,6 +101,44 @@ set(LIBDEFAULT_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/storemgmt/file_store_any2obj.c
 
     ${CMAKE_SOURCE_DIR}/openssl/ssl/s3_cbc.c
+
+    ${CMAKE_SOURCE_DIR}/openssl/providers/common/include/prov/bio.h
+    ${CMAKE_SOURCE_DIR}/openssl/providers/common/include/prov/provider_ctx.h
+    ${CMAKE_SOURCE_DIR}/openssl/providers/common/include/prov/provider_util.h
+    ${CMAKE_SOURCE_DIR}/openssl/providers/common/include/prov/providercommon.h
+    ${CMAKE_SOURCE_DIR}/openssl/providers/common/include/prov/securitycheck.h
+    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/cipher_aes.h
+    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/cipher_aes_cbc_hmac_sha.h
+    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/cipher_aes_ccm.h
+    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/cipher_aes_cts.inc
+    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/cipher_aes_gcm.h
+    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/cipher_aes_ocb.h
+    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/cipher_aes_siv.h
+    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/cipher_aes_xts.h
+    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/cipher_aria.h
+    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/cipher_aria_ccm.h
+    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/cipher_aria_gcm.h
+    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/cipher_camellia.h
+    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/cipher_chacha20.h
+    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/cipher_chacha20_poly1305.h
+    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/cipher_cts.h
+    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/cipher_sm4.h
+    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/cipher_tdes.h
+    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/cipher_tdes_default.h
+    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/digests/blake2_impl.h
+    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/encode_decode/endecoder_local.h
+    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/include/prov/blake2.h
+    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/include/prov/ciphercommon.h
+    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/include/prov/ciphercommon_aead.h
+    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/include/prov/digestcommon.h
+    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/include/prov/implementations.h
+    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/include/prov/kdfexchange.h
+    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/include/prov/macsignature.h
+    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/include/prov/md5_sha1.h
+    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/include/prov/seeding.h
+    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/kdfs/pbkdf2.h
+    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/rands/drbg_local.h
+    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/storemgmt/file_store_local.h
 )
 
 if (OPENSSL_SM2)

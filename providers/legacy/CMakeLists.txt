@@ -27,6 +27,25 @@ set(LIBLEGACY_SOURCES
 
     ${CMAKE_SOURCE_DIR}/openssl/providers/legacyprov.c
     ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/kdfs/pbkdf1.c
+
+    ${CMAKE_SOURCE_DIR}/openssl/providers/common/include/prov/provider_ctx.h
+    ${CMAKE_SOURCE_DIR}/openssl/providers/common/include/prov/provider_util.h
+    ${CMAKE_SOURCE_DIR}/openssl/providers/common/include/prov/providercommon.h
+    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/cipher_blowfish.h
+    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/cipher_cast.h
+    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/cipher_des.h
+    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/cipher_idea.h
+    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/cipher_rc2.h
+    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/cipher_rc4.h
+    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/cipher_rc4_hmac_md5.h
+    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/cipher_rc5.h
+    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/cipher_seed.h
+    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/cipher_tdes.h
+    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/cipher_tdes_default.h
+    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/include/prov/ciphercommon.h
+    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/include/prov/digestcommon.h
+    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/include/prov/implementations.h
+    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/include/prov/names.h
 )
 
 set(LIBLEGACY_SOURCES_MODULE
