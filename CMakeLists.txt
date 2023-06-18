@@ -81,6 +81,8 @@ cmake_dependent_option(OPENSSL_DSO "use dymamic shared object loader code" ON "B
 # fips
 cmake_dependent_option(OPENSSL_FIPS "use FIPS" OFF "OPENSSL_MODULE;OPENSSL_DSO" OFF)
 
+set(OPENSSL_FIPS_KEY "f4556650ac31d35461610bac4ed81b1a181b2d8a43ea2854cbae22ca74560813" CACHE STRING "echo -n 'holy hand grenade of antioch' | openssl sha256")
+
 cmake_dependent_option(OPENSSL_BUILD_DOCS "Build documentation" ON "Perl_FOUND" OFF)
 
 foreach (_OPTION IN ITEMS hw asm err nasm deprecated)
@@ -639,7 +641,7 @@ endif()
 add_subdirectory(crypto)
 add_subdirectory(ssl)
 if (OPENSSL_AUTOALGINIT AND OPENSSL_STDIO)
-#    add_subdirectory(apps)
+    add_subdirectory(apps)
 endif()
 #add_subdirectory(engines)
 #add_subdirectory(tools)
