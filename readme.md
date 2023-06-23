@@ -95,22 +95,24 @@ Sort by priority
 
 ### On 3.0 branch:
 
+1. engines build
+1. tools build
+1. `make install` support
 1. `make check` support
 
 ### All branches:
 
-1. 3.0 series support
 1. 3.1 series support
 1. 3.2 series support
 1. Check how to test on cross built platforms
-1. `OpenSSLConfig.cmake` generation
 1. 1.1.0 series support
 1. 1.0.1 series support
 1. 1.0.0 series support
 1. 0.9.8 series support
+1. `OpenSSLConfig.cmake` generation (will be done after OpenSSL did them)
 1. uplink / applink for Win32 Windows. Currently it is commented out (I don't even know what it does!)
 1. Support for BSDs
-1. Support for mips(64) and arm(64) Linux
+1. Support for loongson64, riscv64 and arm (32/64) Linux (mips has lots of variant so temporarily ignore it)
 1. Other uncommon platform
 
 Note: I won't support building **ON** OpenVMS provided CMake can't be run on it. However cross build for OpenVMS should be supported when I start working on uncommon platform.
