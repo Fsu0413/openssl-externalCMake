@@ -341,10 +341,10 @@ install(TARGETS openssl
 #    DESTINATION ${OPENSSL_OPENSSLDIR}
 #)
 
-#configure_file(openssl.pc.cmake.in openssl.pc @ONLY)
-#install(FILES ${CMAKE_CURRENT_BINARY_DIR}/openssl.pc
-#    DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig
-#)
+configure_file(openssl.pc.cmake.in openssl.pc @ONLY)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/openssl.pc
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig
+)
 
 #if (BUILD_TESTING)
 #    if ( ( WIN32 OR CYGWIN ) AND BUILD_SHARED_LIBS )
