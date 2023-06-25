@@ -4,6 +4,19 @@ This is a totally external CMake project for building OpenSSL.
 
 This branch is for OpenSSL 1.0.2 series.
 
+## Disclaimer
+
+This project includes a full OpenSSL source code tree.  
+The OpenSSL part of source is not made by me and I have no control of them. I just wrote build system for them.  
+For any problem caused by OpenSSL please consult the responsible person for them, not me.  
+I am not responsible for any problem caused by original OpenSSL.  
+Also this project is using the Unlicense. Please check the LICENSE file for details of this license.
+
+Recently I have received E-mails about the security problem and licensing issue of this project, in which I should register some kinds of VIP account for checking them out.  
+I believe that the problems should comes with the OpenSSL part since this project includes EOL versions of OpenSSL in branches of past version (currently only 1.0.2).  
+So stop checking this project for security issues since it always exists, where I can do nothing for it. Also stop bothering me with this kinds of E-mail with registration wall, I have no interest for registering VIP for any site.  
+If problem is occuring in my part, file an issue here on GitHub, or E-mailing me with clear information. E-mails with registration walls will be simply ignored.
+
 ## Why another makefile generator?
 
 OpenSSL itself originally comes with its hand-craft Perl-based Makefile generator.
