@@ -2,13 +2,16 @@
 
 get_filename_component(POD_DIR "${PODFILEPATH}" DIRECTORY)
 get_filename_component(POD_FILE "${PODFILEPATH}" NAME)
+get_filename_component(POD_FILE_WE "${PODFILEPATH}" NAME_WLE)
+string(TOUPPER "${POD_FILE_WE}" POD_NAME)
 get_filename_component(OUTFILEPATH_ABSOLUTE "${OUTPUTFILEPATH}" ABSOLUTE BASE_DIR @CMAKE_CURRENT_BINARY_DIR@)
 get_filename_component(OUT_DIR "${OUTFILEPATH_ABSOLUTE}" DIRECTORY)
 execute_process(COMMAND @CMAKE_COMMAND@ -E
                         make_directory ${OUT_DIR}
                 )
 execute_process(COMMAND @POD2MAN@
-                        "--section=${SECTION}"
+                        "--name=${POD_NAME}"
+                        "--section=${SECTION}ossl"
                         "--center=OpenSSL"
                         "--release=@OPENSSL_VERSION_REAL@"
                         ${POD_FILE}
