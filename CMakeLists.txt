@@ -644,7 +644,7 @@ if (OPENSSL_AUTOALGINIT AND OPENSSL_STDIO)
     add_subdirectory(apps)
 endif()
 #add_subdirectory(engines)
-#add_subdirectory(tools)
+add_subdirectory(tools)
 
 # OpenSSL 1.1 redesigns the whole test program.
 # It currently depends on configdata.pm (It did "eval" it instead of "use" it. See "util/perl/OpenSSL/Test/Utils.pm", line 87) which we never generate in CMake.

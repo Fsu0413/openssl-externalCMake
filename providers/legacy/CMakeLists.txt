@@ -176,6 +176,10 @@ add_library(legacy "${LIBLEGACY_LIBRARY_TYPE}"
     ${LIBLEGACY_SOURCES}
 )
 
+set_target_properties(legacy PROPERTIES
+    PREFIX ""
+)
+
 target_include_directories(legacy
     PRIVATE ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/include
             ${CMAKE_SOURCE_DIR}/openssl/providers/common/include

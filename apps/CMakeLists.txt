@@ -319,27 +319,33 @@ install(TARGETS openssl
     RUNTIME
 )
 
+install(PROGRAMS CA.pl
+    DESTINATION ${OPENSSL_OPENSSLDIR}/misc
+)
 
-#  SCRIPTS{misc}=CA.pl
-#  SOURCE[CA.pl]=CA.pl.in
-#  # linkname tells build files that a symbolic link or copy of this script
-#  # without extension must be installed as well.  Unix or Unix lookalike only.
-#  SCRIPTS{misc,linkname=tsget}=tsget.pl
-#  SOURCE[tsget.pl]=tsget.in
+configure_file(tsget.cmake.in tsget.pl @ONLY)
+install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/tsget.pl
+    DESTINATION ${OPENSSL_OPENSSLDIR}/misc
+)
+install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/tsget.pl
+    DESTINATION ${OPENSSL_OPENSSLDIR}/misc
+    RENAME tsget
+)
 
-
-#install(PROGRAMS CA.pl
-#    DESTINATION ${OPENSSL_OPENSSLDIR}/misc
-#)
-
-#configure_file(tsget.cmake.in tsget @ONLY)
-#install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/tsget
-#    DESTINATION ${OPENSSL_OPENSSLDIR}/misc
-#)
-
-#install(FILES ${CMAKE_SOURCE_DIR}/openssl/apps/openssl.cnf
-#    DESTINATION ${OPENSSL_OPENSSLDIR}
-#)
+install(FILES ${CMAKE_SOURCE_DIR}/openssl/apps/openssl.cnf
+    DESTINATION ${OPENSSL_OPENSSLDIR}
+)
+install(FILES ${CMAKE_SOURCE_DIR}/openssl/apps/openssl.cnf
+    DESTINATION ${OPENSSL_OPENSSLDIR}
+    RENAME openssl.cnf.dist
+)
+install(FILES ${CMAKE_SOURCE_DIR}/openssl/apps/ct_log_list.cnf
+    DESTINATION ${OPENSSL_OPENSSLDIR}
+)
+install(FILES ${CMAKE_SOURCE_DIR}/openssl/apps/ct_log_list.cnf
+    DESTINATION ${OPENSSL_OPENSSLDIR}
+    RENAME ct_log_list.cnf.dist
+)
 
 configure_file(openssl.pc.cmake.in openssl.pc @ONLY)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/openssl.pc
