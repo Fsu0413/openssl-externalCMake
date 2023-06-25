@@ -660,5 +660,5 @@ endif()
 # Current documentation build has become a pain that it processes the pod files one by one.
 # Probably we'd take previous 1.0.2 procedure back into our local repository...??
 if (OPENSSL_BUILD_DOCS)
-    # add_subdirectory(doc)
+    add_subdirectory(doc)
 endif()
