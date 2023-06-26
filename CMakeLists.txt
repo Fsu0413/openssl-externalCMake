@@ -643,7 +643,7 @@ add_subdirectory(ssl)
 if (OPENSSL_AUTOALGINIT AND OPENSSL_STDIO)
     add_subdirectory(apps)
 endif()
-#add_subdirectory(engines)
+add_subdirectory(engines)
 add_subdirectory(tools)
 
 # OpenSSL 1.1 redesigns the whole test program.
