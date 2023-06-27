@@ -108,9 +108,6 @@ Sort by priority
 
 ### On 3.0 branch:
 
-1. engines build
-1. tools build
-1. `make install` support
 1. `make check` support
 
 ### All branches:

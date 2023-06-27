@@ -352,7 +352,9 @@ foreach (I IN LISTS FILECONTENTSASCII)
     endif()
 
     if (NOT OUTPUT_FORMAT STREQUAL "d")
-        string(APPEND OUTPUT_CONTENTS "${OUTPUTLINE}" "\n")
+        if (NOT FUNCPROCESSING)
+            string(APPEND OUTPUT_CONTENTS "${OUTPUTLINE}" "\n")
+        endif()
     endif()
 endforeach()
 
