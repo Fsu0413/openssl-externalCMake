@@ -362,71 +362,13 @@ endif()
 # cflags = -DOPENSSL_USE_APPLINK
 # cpuid_obj += uplink.o uplink-x86.o
 
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
+
+include(OpenSslExternalCMakeCheckArchitecture)
+
 # undocumented!
 if ( NOT OPENSSL_TARGET_ARCH )
-    set(OPENSSL_TARGET_ARCH_GET ${CMAKE_SYSTEM_PROCESSOR})
-    set(OPENSSL_TARGET_ARCH)
-
-    # !!! for some platform host can run multiple architecture.
-    # e.g. Windows amd64 can run / build Windows x86 in NATIVE.
-    # Linux amd64 can run / build Linux x86 in NATIVE.
-    # macOS arm64 can run / build macOS x86_64 in NATIVE.
-    # need to figure out all these conditions?
-
-    # for cross build on Apple platform
-    if (APPLE AND ( NOT IOS ) AND CMAKE_OSX_ARCHITECTURES)
-        list(LENGTH CMAKE_OSX_ARCHITECTURES OPENSSL_OSX_ARCHITECTURES_LENGTH)
-        if (OPENSSL_OSX_ARCHITECTURES_LENGTH GREATER 1)
-            if (OPENSSL_ASM)
-                # TODO: complete this when CMake supports building different sets of file for different architectures
-                # Currently only method for implementing it is to generate 2 set of libraries and use 'lipo' to combine them, since the compile flags are totally different.
-                message(FATAL_ERROR "OPENSSL_ASM is incompatible with more than one CMAKE_OSX_ARCHITECTURES set on macOS, due to the file and compiler flags used for building it "
-                                    "are totally different. "
-                                    "If a multi-architecture build should be done, either build the all-in-one package with OPENSSL_ASM set to OFF or build them separately "
-                                    "with OPENSSL_ASM set to ON and combine them using lipo provided by Apple.")
-            endif()
-        elseif (OPENSSL_OSX_ARCHITECTURES_LENGTH EQUAL 1)
-            # the only target is the one from CMAKE_OSX_ARCHITECTURES
-            list(GET CMAKE_OSX_ARCHITECTURES 0 OPENSSL_TARGET_ARCH_GET)
-        else()
-            # use CMAKE_SYSTEM_PROCESSOR directly since it is a fixed host build
-        endif()
-    elseif ( (NOT CMAKE_CROSSCOMPILING) OR ( CMAKE_SYSTEM_NAME STREQUAL CMAKE_HOST_SYSTEM_NAME ) )
-        # treat this is host build if CMAKE_CROSSCOMPILING is not set or CMAKE_SYSTEM_NAME equals CMAKE_HST_SYSTEM_NAME
-        # Normally CMake treats current build is cross build if CMAKE_SYSTEM_NAME is manually set
-        # but it's not the case for Apple platforms!!
-
-        if (MSVC)
-            if ( ( DEFINED ENV{VSCMD_ARG_TGT_ARCH} ) AND ( NOT ( "x$ENV{VSCMD_ARG_TGT_ARCH}" STREQUAL "x" ) ) )
-                # MSVC 2017 and later sets environment variable VSCMD_ARG_TGT_ARCH on execution of vcvars*.bat
-                set(OPENSSL_TARGET_ARCH_GET $ENV{VSCMD_ARG_TGT_ARCH})
-            elseif ( ( DEFINED ENV{PLATFORM} ) AND ( NOT ( "x$ENV{PLATFORM}" STREQUAL "x" ) ) )
-                # MSVC 2015 sets environment variable PLATFORM on execution of vcvars*.bat
-                set(OPENSSL_TARGET_ARCH_GET $ENV{PLATFORM})
-            else()
-                message(FATAL_ERROR "Please run vcvars*.bat before building using MSVC.")
-            endif()
-        elseif (CMAKE_SIZEOF_VOID_P EQUAL 4)
-            # TODO: need to figure out if this is proper
-            string(REGEX REPLACE "[\\-_]?64" "" OPENSSL_TARGET_ARCH_GET ${CMAKE_SYSTEM_PROCESSOR})
-            string(TOUPPER ${OPENSSL_TARGET_ARCH_GET} OPENSSL_TARGET_ARCH_UPPER)
-            if (OPENSSL_TARGET_ARCH_UPPER STREQUAL "AMD")
-                set(OPENSSL_TARGET_ARCH_GET "x86")
-            endif()
-        endif()
-    endif()
-
-    if ( ( OPENSSL_TARGET_ARCH_GET MATCHES "[Aa][Mm][Dd]64" ) OR ( OPENSSL_TARGET_ARCH_GET MATCHES "[Xx]86[_\\-]64" ) OR ( OPENSSL_TARGET_ARCH_GET MATCHES "[Xx]64" ))
-        set(OPENSSL_TARGET_ARCH "x64")
-    elseif ( ( OPENSSL_TARGET_ARCH_GET MATCHES "i[2-7]86" ) OR ( OPENSSL_TARGET_ARCH_GET MATCHES "[Xx]86" ) )
-        set(OPENSSL_TARGET_ARCH "x86")
-    elseif ( ( OPENSSL_TARGET_ARCH_GET MATCHES "[Aa][Rr][Mm]") OR ( OPENSSL_TARGET_ARCH_GET MATCHES "aarch" ) )
-        if (OPENSSL_TARGET_ARCH_GET MATCHES "64")
-            set(OPENSSL_TARGET_ARCH "arm64")
-        else()
-            set(OPENSSL_TARGET_ARCH "arm32")
-        endif()
-    endif()
+    openssl_external_cmake_detect_target_arch(OPENSSL_TARGET_ARCH)
 endif()
 
 # 386 and SSE2
