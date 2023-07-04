@@ -10,19 +10,15 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        runner:
-          - ver: "20.04"
-            codename: "focal"
-          - ver: "22.04"
-            codename: "jammy"
+        runner: [ "20.04", "22.04" ]
         asm: [ "YES", "NO" ]
         zlib: [ "YES", "NO" ]
         threads: [ "YES", "NO" ]
     continue-on-error: true
-    runs-on: ubuntu-${{ matrix.runner.ver }}
-    name: "build-ubuntu-${{ matrix.runner.ver }} (ASM: ${{ matrix.asm }}, Zlib: ${{ matrix.zlib }}), Threads: ${{ matrix.threads }}"
+    runs-on: ubuntu-${{ matrix.runner }}
+    name: "build-ubuntu-${{ matrix.runner }} (ASM: ${{ matrix.asm }}, Zlib: ${{ matrix.zlib }}), Threads: ${{ matrix.threads }}"
     env:
-      FS_OPENSSL_PACKAGE_STR: Ubuntu${{ matrix.runner.ver }}-x86_64-ASM${{ matrix.asm }}-Zlib${{ matrix.zlib }}-Threads${{ matrix.threads }}
+      FS_OPENSSL_PACKAGE_STR: Ubuntu${{ matrix.runner }}-x86_64-ASM${{ matrix.asm }}-Zlib${{ matrix.zlib }}-Threads${{ matrix.threads }}
     steps:
       - uses: actions/checkout@v3
         with:
@@ -31,7 +27,7 @@ jobs:
       - name: add CMake repository and needed softwares
         run: |
           wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null | gpg --dearmor - | sudo tee /usr/share/keyrings/kitware-archive-keyring.gpg >/dev/null
-          echo 'deb [signed-by=/usr/share/keyrings/kitware-archive-keyring.gpg] https://apt.kitware.com/ubuntu/ ${{ matrix.runner.codename }} main' | sudo tee /etc/apt/sources.list.d/kitware.list >/dev/null
+          echo 'deb [signed-by=/usr/share/keyrings/kitware-archive-keyring.gpg] https://apt.kitware.com/ubuntu/ '"$(. /etc/os-release; echo ${VERSION_CODENAME})"' main' | sudo tee /etc/apt/sources.list.d/kitware.list >/dev/null
           sudo apt-get update
           sudo apt-get install cmake ninja-build perl build-essential zlib1g-dev
       - name: run CMake + Ninja
@@ -333,10 +329,9 @@ jobs:
           submodules: true
           path: openssl-externalCMake
       - name: add CMake repository and needed softwares
-        # TODO: replace "jammy" to something which can be get from environment
         run: |
           wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null | gpg --dearmor - | sudo tee /usr/share/keyrings/kitware-archive-keyring.gpg >/dev/null
-          echo 'deb [signed-by=/usr/share/keyrings/kitware-archive-keyring.gpg] https://apt.kitware.com/ubuntu/ jammy main' | sudo tee /etc/apt/sources.list.d/kitware.list >/dev/null
+          echo 'deb [signed-by=/usr/share/keyrings/kitware-archive-keyring.gpg] https://apt.kitware.com/ubuntu/ '"$(. /etc/os-release; echo ${VERSION_CODENAME})"' main' | sudo tee /etc/apt/sources.list.d/kitware.list >/dev/null
           sudo apt-get update
           sudo apt-get install cmake ninja-build perl
       - name: run CMake + Ninja
