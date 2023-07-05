@@ -69,8 +69,7 @@ jobs:
           path: openssl-externalCMake
       - name: install cmake and ninja
         run: |
-          unset HOMEBREW_NO_INSTALL_FROM_API
-          brew update
+          while ! brew update; do :; done
           brew install cmake ninja
       - name: run CMake + Ninja
         run: |
@@ -111,8 +110,7 @@ jobs:
           path: openssl-externalCMake
       - name: install cmake and ninja
         run: |
-          unset HOMEBREW_NO_INSTALL_FROM_API
-          brew update
+          while ! brew update; do :; done
           brew install cmake ninja
       - name: run CMake + Ninja
         run: |
@@ -150,8 +148,7 @@ jobs:
           path: openssl-externalCMake
       - name: install cmake and ninja
         run: |
-          unset HOMEBREW_NO_INSTALL_FROM_API
-          brew update
+          while ! brew update; do :; done
           brew install cmake ninja
       - name: run CMake + Ninja
         run: |
