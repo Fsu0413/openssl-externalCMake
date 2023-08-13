@@ -296,8 +296,6 @@ foreach (_DIRECTORY IN ITEMS
         set(_CIPHER "whirlpool")
     elseif (_CIPHER STREQUAL "ripemd")
         set(_CIPHER "rmd160")
-    elseif (_CIPHER STREQUAL "ui")
-        set(_CIPHER "ui-console")
     endif()
     string(TOUPPER ${_CIPHER} _CIPHER_UPPER)
     string(REPLACE "-" "_" _CIPHER_SYMBOL ${_CIPHER_UPPER})

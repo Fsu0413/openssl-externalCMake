@@ -73,6 +73,14 @@ set(OPENSSL_HEADERS
     progs.h
 )
 
+set(OPENSSL_OPTIONAL_SOURCES)
+
+if (WIN32)
+    list(APPEND OPENSSL_OPTIONAL_SOURCES
+        ${CMAKE_SOURCE_DIR}/openssl/apps/win32_init.c
+    )
+endif()
+
 if (WIN32)
     configure_file(apps.rc.cmake.in apps.rc @ONLY)
     set(OPENSSL_SOURCES ${OPENSSL_SOURCES} apps.rc)
@@ -80,6 +88,7 @@ endif()
 
 add_executable(openssl
     ${OPENSSL_SOURCES}
+    ${OPENSSL_OPTIONAL_SOURCES}
     ${OPENSSL_HEADERS}
 )
 

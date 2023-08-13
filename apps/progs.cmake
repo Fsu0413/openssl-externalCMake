@@ -115,7 +115,7 @@ set(DISABLEABLES # "rsa" # original disableables have no RSA??
     "crypto-mdebug-backtrace" "ct" "deprecated" "des" "devcryptoeng" "dgram" "dh" "dsa" "dso" "dtls" "dynamic-engine" "ec" "ec2m" "ecdh" "ecdsa" "ec_nistp_64_gcc_128" "egd"
     "engine" "err" "external-tests" "filenames" "fuzz-libfuzzer" "fuzz-afl" "gost" "heartbeats" "hw(-.+)?" "idea" "makedepend" "md2" "md4" "mdc2" "msan" "multiblock" "nextprotoneg"
     "pinshared" "ocb" "ocsp" "pic" "poly1305" "posix-io" "psk" "rc2" "rc4" "rc5" "rdrand" "rfc3779" "rmd160" "scrypt" "sctp" "seed" "shared" "siphash" "sm2" "sm3" "sm4" "sock"
-    "srp" "srtp" "sse2" "ssl" "ssl-trace" "static-engine" "stdio" "tests" "threads" "tls" "ts" "ubsan" "ui-console" "unit-test" "whirlpool" "weak-ssl-ciphers" "zlib" "zlib-dynamic"
+    "srp" "srtp" "sse2" "ssl" "ssl-trace" "static-engine" "stdio" "tests" "threads" "tls" "ts" "ubsan" "ui" "unit-test" "whirlpool" "weak-ssl-ciphers" "zlib" "zlib-dynamic"
 )
 
 foreach (RUNCOMMAND IN LISTS COMMANDS)
