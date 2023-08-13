@@ -2,7 +2,7 @@
 
 This is a totally external CMake project for building OpenSSL.
 
-This branch is for OpenSSL 3.0 series.
+This branch is for OpenSSL 3.1 series.
 
 ## Disclaimer
 
@@ -106,23 +106,6 @@ Just typical CMake procedure will work.
 
 Sort by priority
 
-### On 3.0 branch:
+### On 3.1 branch:
 
 1. `make check` support
-
-### All branches:
-
-1. 3.1 series support
-1. 3.2 series support
-1. Check how to test on cross built platforms
-1. 1.1.0 series support
-1. 1.0.1 series support
-1. 1.0.0 series support
-1. 0.9.8 series support
-1. `OpenSSLConfig.cmake` generation (will be done after OpenSSL did them)
-1. uplink / applink for Win32 Windows. Currently it is commented out (I don't even know what it does!)
-1. Support for BSDs
-1. Support for loongson64, riscv64 and arm (32/64) Linux (mips has lots of variant so temporarily ignore it)
-1. Other uncommon platform
-
-Note: I won't support building **ON** OpenVMS provided CMake can't be run on it. However cross build for OpenVMS should be supported when I start working on uncommon platform.
