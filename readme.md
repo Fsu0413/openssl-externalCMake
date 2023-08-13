@@ -1,4 +1,6 @@
-﻿# openssl-externalCMake
+# openssl-externalCMake
+
+![Build Status](https://github.com/Fsu0413/openssl-externalCMake/actions/workflows/cmake.yml/badge.svg?branch=3.1)
 
 This is a totally external CMake project for building OpenSSL.
 
