@@ -10,7 +10,7 @@ project(OpenSSL
 )
 
 # for generating opensslv.h
-set(OPENSSL_RELEASE_DATE "30 May 2023")
+set(OPENSSL_RELEASE_DATE "1 Aug 2023")
 
 if (PROJECT_VERSION_MAJOR LESS 3)
     set(OPENSSL_VERSION_PRE3_SUFFICES
