@@ -595,6 +595,7 @@ add_library(crypto
     ${CMAKE_SOURCE_DIR}/openssl/include/internal/der.h
     ${CMAKE_SOURCE_DIR}/openssl/include/internal/dso.h
     ${CMAKE_SOURCE_DIR}/openssl/include/internal/dsoerr.h
+    ${CMAKE_SOURCE_DIR}/openssl/include/internal/e_os.h
     ${CMAKE_SOURCE_DIR}/openssl/include/internal/endian.h
     ${CMAKE_SOURCE_DIR}/openssl/include/internal/err.h
     ${CMAKE_SOURCE_DIR}/openssl/include/internal/ffc.h

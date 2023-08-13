@@ -2,6 +2,7 @@
 
 perlasm_generate_src(md5-586.S ${CMAKE_SOURCE_DIR}/openssl/crypto/md5/asm/md5-586.pl)
 perlasm_generate_src(md5-x86_64${OPENSSL_ASM_PREPROCESSED} ${CMAKE_SOURCE_DIR}/openssl/crypto/md5/asm/md5-x86_64.pl)
+perlasm_generate_src(md5-aarch64.S ${CMAKE_SOURCE_DIR}/openssl/crypto/md5/asm/md5-aarch64.pl)
 perlasm_generate_src(md5-sparcv9.S ${CMAKE_SOURCE_DIR}/openssl/crypto/md5/asm/md5-sparcv9.pl)
 
 set(LIBCRYPTO_CURRENTDIR_SOURCES
@@ -26,7 +27,9 @@ if (OPENSSL_ASM)
     elseif ( OPENSSL_TARGET_ARCH STREQUAL "arm32" )
         # no-asm
     elseif ( OPENSSL_TARGET_ARCH STREQUAL "arm64" )
-        # no-asm
+        set(LIBCRYPTO_CURRENTDIR_ASM_SOURCES
+            md5-aarch64.S
+        )
     endif()
 endif()
 

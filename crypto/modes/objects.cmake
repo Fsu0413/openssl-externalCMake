@@ -4,6 +4,7 @@ perlasm_generate_src(ghash-ia64${OPENSSL_ASM_PREPROCESSED} ${CMAKE_SOURCE_DIR}/o
 perlasm_generate_src(ghash-x86.S ${CMAKE_SOURCE_DIR}/openssl/crypto/modes/asm/ghash-x86.pl)
 perlasm_generate_src(ghash-x86_64${OPENSSL_ASM_PREPROCESSED} ${CMAKE_SOURCE_DIR}/openssl/crypto/modes/asm/ghash-x86_64.pl)
 perlasm_generate_src(aesni-gcm-x86_64${OPENSSL_ASM_PREPROCESSED} ${CMAKE_SOURCE_DIR}/openssl/crypto/modes/asm/aesni-gcm-x86_64.pl)
+perlasm_generate_src(aes-gcm-avx512${OPENSSL_ASM_PREPROCESSED} ${CMAKE_SOURCE_DIR}/openssl/crypto/modes/asm/aes-gcm-avx512.pl)
 perlasm_generate_src(ghash-sparcv9.S ${CMAKE_SOURCE_DIR}/openssl/crypto/modes/asm/ghash-sparcv9.pl)
 perlasm_generate_src(ghash-alpha.S ${CMAKE_SOURCE_DIR}/openssl/crypto/modes/asm/ghash-alpha.pl)
 perlasm_generate_src(ghash-parisc${OPENSSL_ASM_PREPROCESSED} ${CMAKE_SOURCE_DIR}/openssl/crypto/modes/asm/ghash-parisc.pl)
@@ -11,6 +12,7 @@ perlasm_generate_src(ghashp8-ppc${OPENSSL_ASM_PREPROCESSED} ${CMAKE_SOURCE_DIR}/
 perlasm_generate_src(ghash-armv4.S ${CMAKE_SOURCE_DIR}/openssl/crypto/modes/asm/ghash-armv4.pl)
 perlasm_generate_src(ghashv8-armx.S ${CMAKE_SOURCE_DIR}/openssl/crypto/modes/asm/ghashv8-armx.pl)
 perlasm_generate_src(aes-gcm-armv8_64.S ${CMAKE_SOURCE_DIR}/openssl/crypto/modes/asm/aes-gcm-armv8_64.pl)
+perlasm_generate_src(aes-gcm-armv8-unroll8_64.S ${CMAKE_SOURCE_DIR}/openssl/crypto/modes/asm/aes-gcm-armv8-unroll8_64.pl)
 perlasm_generate_src(ghash-s390x.S ${CMAKE_SOURCE_DIR}/openssl/crypto/modes/asm/ghash-s390x.pl)
 perlasm_generate_src(ghash-c64xplus.S ${CMAKE_SOURCE_DIR}/openssl/crypto/modes/asm/ghash-c64xplus.pl)
 
@@ -36,6 +38,7 @@ if (OPENSSL_ASM)
         set(LIBCRYPTO_CURRENTDIR_ASM_SOURCES
             ghash-x86_64${OPENSSL_ASM_PREPROCESSED}
             aesni-gcm-x86_64${OPENSSL_ASM_PREPROCESSED}
+            aes-gcm-avx512${OPENSSL_ASM_PREPROCESSED}
         )
     elseif ( OPENSSL_TARGET_ARCH STREQUAL "x86" )
         set(LIBCRYPTO_CURRENTDIR_ASM_SOURCES
@@ -50,6 +53,7 @@ if (OPENSSL_ASM)
         set(LIBCRYPTO_CURRENTDIR_ASM_SOURCES
             ghashv8-armx.S
             aes-gcm-armv8_64.S
+            aes-gcm-armv8-unroll8_64.S
         )
     endif()
 endif()

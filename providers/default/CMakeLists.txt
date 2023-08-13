@@ -87,7 +87,6 @@ set(LIBDEFAULT_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/rands/seeding/rand_unix.c
     ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/rands/seeding/rand_win.c
     ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/rands/seeding/rand_tsc.c
-    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/rands/seeding/rand_cpu_x86.c
     ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/rands/drbg.c
     ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/rands/test_rng.c
     ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/rands/drbg_ctr.c
@@ -140,6 +139,18 @@ set(LIBDEFAULT_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/rands/drbg_local.h
     ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/storemgmt/file_store_local.h
 )
+
+if ( OPENSSL_ASM AND ( OPENSSL_TARGET_ARCH MATCHES "aarch64" ) )
+    set(LIBDEFAULT_SOURCES
+        ${LIBDEFAULT_SOURCES}
+        ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/rands/seeding/rand_cpu_arm64.c
+    )
+else()
+    set(LIBDEFAULT_SOURCES
+        ${LIBDEFAULT_SOURCES}
+        ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/rands/seeding/rand_cpu_x86.c
+    )
+endif()
 
 if (OPENSSL_SM2)
     set(LIBDEFAULT_SOURCES
@@ -199,6 +210,10 @@ if (OPENSSL_SM4)
         ${LIBDEFAULT_SOURCES}
         ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/cipher_sm4.c
         ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/cipher_sm4_hw.c
+        ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/cipher_sm4_gcm.c
+        ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/cipher_sm4_gcm_hw.c
+        ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/cipher_sm4_ccm.c
+        ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/cipher_sm4_ccm_hw.c
     )
 endif()
 

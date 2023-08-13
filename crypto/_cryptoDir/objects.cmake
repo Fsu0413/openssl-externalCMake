@@ -63,7 +63,6 @@ set(LIBCRYPTO_CURRENTDIR_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/crypto/provider_local.h
     ${CMAKE_SOURCE_DIR}/openssl/crypto/s390x_arch.h
     ${CMAKE_SOURCE_DIR}/openssl/crypto/vms_rms.h
-    ${CMAKE_SOURCE_DIR}/openssl/e_os.h
     buildinf.h
 )
 

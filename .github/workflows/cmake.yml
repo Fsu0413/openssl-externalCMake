@@ -3,7 +3,7 @@ name: CMake
 on: [push]
 
 env:
-  FS_OPENSSL_VERSION_STR: "3.0.10"
+  FS_OPENSSL_VERSION_STR: "3.1.2"
 
 jobs:
   build-ubuntu:

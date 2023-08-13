@@ -27,6 +27,7 @@ perlasm_generate_src(aesp8-ppc${OPENSSL_ASM_PREPROCESSED} ${CMAKE_SOURCE_DIR}/op
 perlasm_generate_src(aes-parisc${OPENSSL_ASM_PREPROCESSED} ${CMAKE_SOURCE_DIR}/openssl/crypto/aes/asm/aes-parisc.pl)
 perlasm_generate_src(aes-mips.S ${CMAKE_SOURCE_DIR}/openssl/crypto/aes/asm/aes-mips.pl)
 perlasm_generate_src(aesv8-armx.S ${CMAKE_SOURCE_DIR}/openssl/crypto/aes/asm/aesv8-armx.pl)
+perlasm_generate_src(bsaes-armv8.S ${CMAKE_SOURCE_DIR}/openssl/crypto/aes/asm/bsaes-armv8.pl)
 perlasm_generate_src(vpaes-armv8.S ${CMAKE_SOURCE_DIR}/openssl/crypto/aes/asm/vpaes-armv8.pl)
 perlasm_generate_src(aes-armv4.S ${CMAKE_SOURCE_DIR}/openssl/crypto/aes/asm/aes-armv4.pl)
 perlasm_generate_src(bsaes-armv7.S ${CMAKE_SOURCE_DIR}/openssl/crypto/aes/asm/bsaes-armv7.pl)
@@ -81,6 +82,7 @@ if (OPENSSL_ASM)
             ${CMAKE_SOURCE_DIR}/openssl/crypto/aes/aes_core.c
             ${CMAKE_SOURCE_DIR}/openssl/crypto/aes/aes_cbc.c
             aesv8-armx.S
+            bsaes-armv8.S
             vpaes-armv8.S
         )
     endif()
