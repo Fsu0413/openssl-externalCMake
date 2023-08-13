@@ -6,7 +6,7 @@ set(LIBCRYPTO_CURRENTDIR_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/crypto/rc2/rc2_cbc.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/rc2/rc2cfb64.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/rc2/rc2ofb64.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/rc2/rc2_local.h
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/rc2/rc2_locl.h
 )
 
 set(LIBCRYPTO_SOURCES ${LIBCRYPTO_SOURCES} ${LIBCRYPTO_CURRENTDIR_SOURCES})

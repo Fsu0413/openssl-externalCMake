@@ -24,19 +24,13 @@ perlasm_generate_src(poly1305-armv8.S ${CMAKE_SOURCE_DIR}/openssl/crypto/poly130
 perlasm_generate_src(poly1305-mips.S ${CMAKE_SOURCE_DIR}/openssl/crypto/poly1305/asm/poly1305-mips.pl
     FLAGS ${OPENSSL_PERLASM_SCHEME}
 )
-perlasm_generate_src(poly1305-s390x.S ${CMAKE_SOURCE_DIR}/openssl/crypto/poly1305/asm/poly1305-s390x.pl
-    FLAGS ${OPENSSL_PERLASM_SCHEME}
-)
 # catch-all can't be used in CMake
 perlasm_generate_src(poly1305-c64xplus.S ${CMAKE_SOURCE_DIR}/openssl/crypto/poly1305/asm/poly1305-c64xplus.pl
     FLAGS ${OPENSSL_PERLASM_SCHEME}
 )
 
 set(LIBCRYPTO_CURRENTDIR_SOURCES
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/poly1305/poly1305_pmeth.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/poly1305/poly1305_ameth.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/poly1305/poly1305.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/poly1305/poly1305_local.h
 )
 
 set(LIBCRYPTO_CURRENTDIR_ASM_SOURCES

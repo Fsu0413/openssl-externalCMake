@@ -3,7 +3,7 @@
 cmake_minimum_required(VERSION 3.22)
 
 project(OpenSSL
-    VERSION 1.1.1.22
+    VERSION 1.1.0.12
     DESCRIPTION "TLS/SSL and crypto library"
     HOMEPAGE_URL "https://www.openssl.org/"
     LANGUAGES C CXX
@@ -141,7 +141,7 @@ endif()
 unset(OPENSSL_KNOWN_RAND_SEED)
 
 # no-<cipher>
-set(OPENSSL_DEFAULT_DISABLED_CIPHERS asan crypto-mdebug crypto-mdebug-backtrace devcryptoeng ec_nistp_64_gcc_128 egd external-tests fuzz-libfuzzer fuzz-afl heartbeats md2 msan rc5
+set(OPENSSL_DEFAULT_DISABLED_CIPHERS asan crypto-mdebug crypto-mdebug-backtrace ec_nistp_64_gcc_128 egd external-tests fuzz-libfuzzer fuzz-afl heartbeats md2 msan rc5
                                      sctp ssl-trace ssl3 ssl3-method ubsan unit-test weak-ssl-ciphers)
 
 macro (get_current_cipher_name_instead_of_deprecated)
@@ -149,16 +149,13 @@ macro (get_current_cipher_name_instead_of_deprecated)
     set(OUTPUTVAR ${ARGV1})
     if (CIPHERNAME STREQUAL "ripemd")
         set(${OUTPUTVAR} "rmd160")
-    elseif(CIPHERNAME STREQUAL "ui")
-        set(${OUTPUTVAR} "ui-console")
-    else()
         message(FATAL_ERROR "${CIPHERNAME} is not deprecated.")
     endif()
     unset(OUTPUTVAR)
     unset(CIPHERNAME)
 endmacro()
 
-foreach (_CIPHER IN ITEMS ripemd ui)
+foreach (_CIPHER IN ITEMS ripemd)
     # option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}")
     string(TOUPPER ${_CIPHER} _CIPHER_UPPER)
     string(REPLACE "-" "_" _CIPHER_SYMBOL ${_CIPHER_UPPER})
@@ -180,13 +177,13 @@ foreach (_CIPHER IN ITEMS ripemd ui)
 endforeach()
 
 foreach (_CIPHER IN ITEMS
-        ssl des ec sock dgram dtls tls crypto-mdebug engine afalgeng stdio comp sm3 unit-test msan # dependent
+        ssl des ec sock dgram dtls tls crypto-mdebug engine afalgeng stdio comp unit-test msan # dependent
         ssl3-method tls1-method tls1_1-method tls1_2-method dtls1-method dtls1_2-method # method
-        aes asn1 bio bn buffer conf evp hmac kdf lhash md5 modes objects pem pkcs12 pkcs7 rand rsa sha stack store txt_db x509 x509v3 # directories
-        dtls1_2 dtls1 tls1_3 tls1_2 tls1_1 tls1 ssl3  # TLS protocol
-        aria asan async autoalginit autoerrinit autoload-config bf blake2 camellia capieng cast chacha cmac cms crypto-mdebug-backtrace ct deprecated devcryptoeng dh dsa ec2m ecdh
+        aes asn1 bio bn buffer conf evp hmac kdf lhash md5 modes objects pem pkcs12 pkcs7 rand rsa sha stack txt_db x509 x509v3 # directories
+        dtls1_2 dtls1 tls1_2 tls1_1 tls1 ssl3  # TLS protocol
+        asan async autoalginit autoerrinit autoload-config bf blake2 camellia capieng cast chacha cmac cms crypto-mdebug-backtrace ct deprecated devcryptoeng dh dsa ec2m ecdh
         ecdsa ec_nistp_64_gcc_128 egd err filenames fuzz-libfuzzer fuzz-afl gost heartbeats idea makedepend md2 md4 mdc2 multiblock nextprotoneg pinshared ocb ocsp poly1305
-        posix-io psk rc2 rc4 rc5 rdrand rfc3779 rmd160 scrypt sctp seed siphash sm2 sm4 srp srtp ssl-trace ts ubsan ui-console whirlpool weak-ssl-ciphers
+        posix-io psk rc2 rc4 rc5 rdrand rfc3779 rmd160 scrypt sctp seed srp srtp ssl-trace ts ubsan ui whirlpool weak-ssl-ciphers
 )
     list(FIND OPENSSL_DEFAULT_DISABLED_CIPHERS ${_CIPHER} _CIPHER_IS_DEFAULT_DISABLED)
     set(_CIPHER_DEFAULT ON)
@@ -227,9 +224,7 @@ foreach (_CIPHER IN ITEMS
     elseif (_CIPHER STREQUAL "tls1_1")
         cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "OPENSSL_TLS1_2;OPENSSL_TLS;OPENSSL_TLS1_1_METHOD" OFF)
     elseif (_CIPHER STREQUAL "tls1_2")
-        cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "OPENSSL_TLS1_3;OPENSSL_TLS;OPENSSL_TLS1_2_METHOD" OFF)
-    elseif (_CIPHER STREQUAL "tls1_3")
-        cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "OPENSSL_TLS;OPENSSL_EC" OFF)
+        cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "OPENSSL_TLS;OPENSSL_TLS1_2_METHOD" OFF)
     elseif (_CIPHER STREQUAL "tls1-method")
         cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "OPENSSL_TLS" OFF)
     elseif (_CIPHER STREQUAL "tls1_1-method")
@@ -250,8 +245,6 @@ foreach (_CIPHER IN ITEMS
         # cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "NOT OPENSSL_RAND_SEED_EGD" ON) # original Configure deleted $disabled{'egd'}
     elseif (_CIPHER STREQUAL "comp")
         cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "OPENSSL_ZLIB" OFF)
-    elseif (_CIPHER STREQUAL "sm2")
-        cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "OPENSSL_SM3;OPENSSL_EC" OFF)
     elseif (_CIPHER STREQUAL "heartbeats")
         cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "OPENSSL_NO_UNITTEST" OFF)
     else()

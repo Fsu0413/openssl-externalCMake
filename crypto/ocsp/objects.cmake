@@ -11,7 +11,7 @@ set(LIBCRYPTO_CURRENTDIR_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/crypto/ocsp/ocsp_vfy.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/ocsp/ocsp_err.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/ocsp/v3_ocsp.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/ocsp/ocsp_local.h
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/ocsp/ocsp_lcl.h
 )
 
 set(LIBCRYPTO_SOURCES ${LIBCRYPTO_SOURCES} ${LIBCRYPTO_CURRENTDIR_SOURCES})

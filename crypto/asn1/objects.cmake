@@ -64,12 +64,8 @@ set(LIBCRYPTO_CURRENTDIR_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/crypto/asn1/p8_pkey.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/asn1/asn_moid.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/asn1/asn_mstbl.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/asn1/asn1_item_list.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/asn1/asn1_item_list.h
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/asn1/asn1_local.h
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/asn1/asn1_locl.h
     ${CMAKE_SOURCE_DIR}/openssl/crypto/asn1/charmap.h
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/asn1/standard_methods.h
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/asn1/tbl_standard.h
 )
 
 set(LIBCRYPTO_SOURCES ${LIBCRYPTO_SOURCES} ${LIBCRYPTO_CURRENTDIR_SOURCES})

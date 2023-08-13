@@ -10,7 +10,7 @@ perlasm_generate_src(wp-x86_64${OPENSSL_ASM_PREPROCESSED} ${CMAKE_SOURCE_DIR}/op
 
 set(LIBCRYPTO_CURRENTDIR_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/crypto/whrlpool/wp_dgst.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/whrlpool/wp_local.h
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/whrlpool/wp_locl.h
 )
 
 set(LIBCRYPTO_CURRENTDIR_ASM_SOURCES

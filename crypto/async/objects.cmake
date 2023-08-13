@@ -10,7 +10,7 @@ set(LIBCRYPTO_CURRENTDIR_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/crypto/async/arch/async_null.h
     ${CMAKE_SOURCE_DIR}/openssl/crypto/async/arch/async_posix.h
     ${CMAKE_SOURCE_DIR}/openssl/crypto/async/arch/async_win.h
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/async/async_local.h
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/async/async_locl.h
 )
 
 set(LIBCRYPTO_SOURCES ${LIBCRYPTO_SOURCES} ${LIBCRYPTO_CURRENTDIR_SOURCES})

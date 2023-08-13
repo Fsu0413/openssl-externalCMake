@@ -117,7 +117,7 @@ set(LIBCRYPTO_CURRENTDIR_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/crypto/bn/bn_intern.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/bn/bn_dh.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/bn/bn_srp.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/bn/bn_local.h
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/bn/bn_lcl.h
     ${CMAKE_SOURCE_DIR}/openssl/crypto/bn/bn_prime.h
 )
 

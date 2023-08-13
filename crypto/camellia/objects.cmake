@@ -17,7 +17,7 @@ set(LIBCRYPTO_CURRENTDIR_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/crypto/camellia/cmll_ofb.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/camellia/cmll_cfb.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/camellia/cmll_ctr.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/camellia/cmll_local.h
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/camellia/cmll_locl.h
 )
 
 set(LIBCRYPTO_CURRENTDIR_ASM_SOURCES

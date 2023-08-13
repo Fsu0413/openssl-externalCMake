@@ -12,7 +12,7 @@ set(LIBCRYPTO_CURRENTDIR_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/crypto/cast/c_cfb64.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/cast/c_ofb64.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/cast/cast_s.h
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/cast/cast_local.h
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/cast/cast_lcl.h
 )
 
 set(LIBCRYPTO_CURRENTDIR_ASM_SOURCES

@@ -39,9 +39,6 @@ perlasm_generate_src(sha256-mb-x86_64${OPENSSL_ASM_PREPROCESSED} ${CMAKE_SOURCE_
 perlasm_generate_src(sha512-x86_64${OPENSSL_ASM_PREPROCESSED} ${CMAKE_SOURCE_DIR}/openssl/crypto/sha/asm/sha512-x86_64.pl
     FLAGS ${OPENSSL_PERLASM_SCHEME}
 )
-perlasm_generate_src(keccak1600-x86_64${OPENSSL_ASM_PREPROCESSED} ${CMAKE_SOURCE_DIR}/openssl/crypto/sha/asm/keccak1600-x86_64.pl
-    FLAGS ${OPENSSL_PERLASM_SCHEME}
-)
 perlasm_generate_src(sha1-sparcv9.S ${CMAKE_SOURCE_DIR}/openssl/crypto/sha/asm/sha1-sparcv9.pl
     FLAGS ${OPENSSL_PERLASM_SCHEME}
 )
@@ -64,9 +61,6 @@ perlasm_generate_src(sha256p8-ppc${OPENSSL_ASM_PREPROCESSED} ${CMAKE_SOURCE_DIR}
     FLAGS ${OPENSSL_PERLASM_SCHEME}
 )
 perlasm_generate_src(sha512p8-ppc${OPENSSL_ASM_PREPROCESSED} ${CMAKE_SOURCE_DIR}/openssl/crypto/sha/asm/sha512p8-ppc.pl
-    FLAGS ${OPENSSL_PERLASM_SCHEME}
-)
-perlasm_generate_src(keccak1600-ppc64${OPENSSL_ASM_PREPROCESSED} ${CMAKE_SOURCE_DIR}/openssl/crypto/sha/asm/keccak1600-ppc64.pl
     FLAGS ${OPENSSL_PERLASM_SCHEME}
 )
 perlasm_generate_src(sha1-parisc${OPENSSL_ASM_PREPROCESSED} ${CMAKE_SOURCE_DIR}/openssl/crypto/sha/asm/sha1-parisc.pl
@@ -96,9 +90,6 @@ perlasm_generate_src(sha256-armv4.S ${CMAKE_SOURCE_DIR}/openssl/crypto/sha/asm/s
 perlasm_generate_src(sha512-armv4.S ${CMAKE_SOURCE_DIR}/openssl/crypto/sha/asm/sha512-armv4.pl
     FLAGS ${OPENSSL_PERLASM_SCHEME}
 )
-perlasm_generate_src(keccak1600-armv4.S ${CMAKE_SOURCE_DIR}/openssl/crypto/sha/asm/keccak1600-armv4.pl
-    FLAGS ${OPENSSL_PERLASM_SCHEME}
-)
 perlasm_generate_src(sha1-armv8.S ${CMAKE_SOURCE_DIR}/openssl/crypto/sha/asm/sha1-armv8.pl
     FLAGS ${OPENSSL_PERLASM_SCHEME}
 )
@@ -108,9 +99,6 @@ perlasm_generate_src(sha256-armv8.S ${CMAKE_SOURCE_DIR}/openssl/crypto/sha/asm/s
 perlasm_generate_src(sha512-armv8.S ${CMAKE_SOURCE_DIR}/openssl/crypto/sha/asm/sha512-armv8.pl
     FLAGS ${OPENSSL_PERLASM_SCHEME}
 )
-perlasm_generate_src(keccak1600-armv8.S ${CMAKE_SOURCE_DIR}/openssl/crypto/sha/asm/keccak1600-armv8.pl
-    FLAGS ${OPENSSL_PERLASM_SCHEME}
-)
 perlasm_generate_src(sha1-s390x.S ${CMAKE_SOURCE_DIR}/openssl/crypto/sha/asm/sha1-s390x.pl
     FLAGS ${OPENSSL_PERLASM_SCHEME}
 )
@@ -118,9 +106,6 @@ perlasm_generate_src(sha256-s390x.S ${CMAKE_SOURCE_DIR}/openssl/crypto/sha/asm/s
     FLAGS ${OPENSSL_PERLASM_SCHEME}
 )
 perlasm_generate_src(sha512-s390x.S ${CMAKE_SOURCE_DIR}/openssl/crypto/sha/asm/sha512-s390x.pl
-    FLAGS ${OPENSSL_PERLASM_SCHEME}
-)
-perlasm_generate_src(keccak1600-s390x.S ${CMAKE_SOURCE_DIR}/openssl/crypto/sha/asm/keccak1600-s390x.pl
     FLAGS ${OPENSSL_PERLASM_SCHEME}
 )
 # catch-all can't be used in CMake
@@ -145,11 +130,11 @@ set(LIBCRYPTO_CURRENTDIR_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/crypto/sha/sha1_one.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/sha/sha256.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/sha/sha512.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/sha/sha_local.h
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/sha/sha_locl.h
 )
 
 set(LIBCRYPTO_CURRENTDIR_ASM_SOURCES
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/sha/keccak1600.c
+    # empty by default
 )
 if (OPENSSL_ASM)
     if ( OPENSSL_TARGET_ARCH STREQUAL "x64" )
@@ -159,7 +144,6 @@ if (OPENSSL_ASM)
             sha256-x86_64${OPENSSL_ASM_PREPROCESSED}
             sha256-mb-x86_64${OPENSSL_ASM_PREPROCESSED}
             sha512-x86_64${OPENSSL_ASM_PREPROCESSED}
-            keccak1600-x86_64${OPENSSL_ASM_PREPROCESSED}
         )
     elseif ( OPENSSL_TARGET_ARCH STREQUAL "x86" )
         set(LIBCRYPTO_CURRENTDIR_ASM_SOURCES
@@ -173,14 +157,12 @@ if (OPENSSL_ASM)
             sha1-armv4-large.S
             sha256-armv4.S
             sha512-armv4.S
-            keccak1600-armv4.S
         )
     elseif ( OPENSSL_TARGET_ARCH STREQUAL "arm64" )
         set(LIBCRYPTO_CURRENTDIR_ASM_SOURCES
             sha1-armv8.S
             sha256-armv8.S
             sha512-armv8.S
-            keccak1600-armv8.S
         )
     endif()
 endif()

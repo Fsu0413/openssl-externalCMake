@@ -12,7 +12,7 @@ set(LIBCRYPTO_CURRENTDIR_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/crypto/bf/bf_cfb64.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/bf/bf_ofb64.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/bf/bf_pi.h
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/bf/bf_local.h
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/bf/bf_locl.h
 )
 
 set(LIBCRYPTO_CURRENTDIR_ASM_SOURCES

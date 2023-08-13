@@ -12,7 +12,7 @@ set(LIBCRYPTO_CURRENTDIR_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/crypto/ts/ts_lib.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/ts/ts_conf.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/ts/ts_asn1.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/ts/ts_local.h
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/ts/ts_lcl.h
 )
 
 set(LIBCRYPTO_SOURCES ${LIBCRYPTO_SOURCES} ${LIBCRYPTO_CURRENTDIR_SOURCES})

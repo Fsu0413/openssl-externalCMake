@@ -60,26 +60,23 @@ perlasm_generate_src(aes-armv4.S ${CMAKE_SOURCE_DIR}/openssl/crypto/aes/asm/aes-
 perlasm_generate_src(bsaes-armv7.S ${CMAKE_SOURCE_DIR}/openssl/crypto/aes/asm/bsaes-armv7.pl
     FLAGS ${OPENSSL_PERLASM_SCHEME}
 )
-perlasm_generate_src(aes-s390x.S ${CMAKE_SOURCE_DIR}/openssl/crypto/aes/asm/aes-s390x.pl
-    FLAGS ${OPENSSL_PERLASM_SCHEME}
-)
 # catch-all can't be used in CMake
 perlasm_generate_src(aes-c64xplus.S ${CMAKE_SOURCE_DIR}/openssl/crypto/aes/asm/aes-c64xplus.pl
     FLAGS ${OPENSSL_PERLASM_SCHEME}
 )
 
 set(LIBCRYPTO_CURRENTDIR_SOURCES
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/aes/aes_core.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/aes/aes_misc.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/aes/aes_ecb.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/aes/aes_cfb.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/aes/aes_ofb.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/aes/aes_ige.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/aes/aes_wrap.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/aes/aes_local.h
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/aes/aes_locl.h
 )
 
 set(LIBCRYPTO_CURRENTDIR_ASM_SOURCES
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/aes/aes_core.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/aes/aes_cbc.c
 )
 if (OPENSSL_ASM)
@@ -109,7 +106,6 @@ if (OPENSSL_ASM)
         )
     elseif ( OPENSSL_TARGET_ARCH STREQUAL "arm64" )
         set(LIBCRYPTO_CURRENTDIR_ASM_SOURCES
-            ${CMAKE_SOURCE_DIR}/openssl/crypto/aes/aes_core.c
             ${CMAKE_SOURCE_DIR}/openssl/crypto/aes/aes_cbc.c
             aesv8-armx.S
             vpaes-armv8.S

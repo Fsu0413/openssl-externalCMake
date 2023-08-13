@@ -1,14 +1,7 @@
 # SPDX-License-Identifier: Unlicense
 
 set(LIBCRYPTO_CURRENTDIR_SOURCES
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/rand/drbg_ctr.c
-)
-
-set_source_files_properties(${LIBCRYPTO_CURRENTDIR_SOURCES} PROPERTIES INCLUDE_DIRECTORIES
-    "${CMAKE_SOURCE_DIR}/openssl/crypto/modes"
-)
-
-set(LIBCRYPTO_CURRENTDIR_SOURCES ${LIBCRYPTO_CURRENTDIR_SOURCES}
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/rand/md_rand.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/rand/randfile.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/rand/rand_lib.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/rand/rand_err.c
@@ -16,8 +9,7 @@ set(LIBCRYPTO_CURRENTDIR_SOURCES ${LIBCRYPTO_CURRENTDIR_SOURCES}
     ${CMAKE_SOURCE_DIR}/openssl/crypto/rand/rand_win.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/rand/rand_unix.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/rand/rand_vms.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/rand/drbg_lib.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/rand/rand_local.h
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/rand/rand_lcl.h
 )
 
 set(LIBCRYPTO_SOURCES ${LIBCRYPTO_SOURCES} ${LIBCRYPTO_CURRENTDIR_SOURCES})

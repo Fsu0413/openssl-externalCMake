@@ -24,7 +24,7 @@ set(LIBCRYPTO_CURRENTDIR_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/crypto/bio/bss_dgram.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/bio/bio_meth.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/bio/bf_lbuf.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/bio/bio_local.h
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/bio/bio_lcl.h
 )
 
 set(LIBCRYPTO_SOURCES ${LIBCRYPTO_SOURCES} ${LIBCRYPTO_CURRENTDIR_SOURCES})

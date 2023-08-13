@@ -18,25 +18,6 @@ perlasm_generate_src(ecp_nistz256-armv8.S ${CMAKE_SOURCE_DIR}/openssl/crypto/ec/
 perlasm_generate_src(ecp_nistz256-ppc64${OPENSSL_ASM_PREPROCESSED} ${CMAKE_SOURCE_DIR}/openssl/crypto/ec/asm/ecp_nistz256-ppc64.pl
     FLAGS ${OPENSSL_PERLASM_SCHEME}
 )
-perlasm_generate_src(x25519-x86_64${OPENSSL_ASM_PREPROCESSED} ${CMAKE_SOURCE_DIR}/openssl/crypto/ec/asm/x25519-x86_64.pl
-    FLAGS ${OPENSSL_PERLASM_SCHEME}
-)
-perlasm_generate_src(x25519-ppc64${OPENSSL_ASM_PREPROCESSED} ${CMAKE_SOURCE_DIR}/openssl/crypto/ec/asm/x25519-ppc64.pl
-    FLAGS ${OPENSSL_PERLASM_SCHEME}
-)
-
-set(LIBCRYPTO_CURRENTDIR_SOURCES
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/ec/curve448/arch_32/f_impl.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/ec/curve448/f_generic.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/ec/curve448/scalar.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/ec/curve448/curve448_tables.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/ec/curve448/eddsa.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/ec/curve448/curve448.c
-)
-
-set_source_files_properties(${LIBCRYPTO_CURRENTDIR_SOURCES} PROPERTIES INCLUDE_DIRECTORIES
-    "${CMAKE_SOURCE_DIR}/openssl/crypto/ec/curve448;${CMAKE_SOURCE_DIR}/openssl/crypto/ec/curve448/arch_32"
-)
 
 set(LIBCRYPTO_CURRENTDIR_SOURCES ${LIBCRYPTO_CURRENTDIR_SOURCES}
     ${CMAKE_SOURCE_DIR}/openssl/crypto/ec/ec_lib.c
@@ -52,6 +33,7 @@ set(LIBCRYPTO_CURRENTDIR_SOURCES ${LIBCRYPTO_CURRENTDIR_SOURCES}
     ${CMAKE_SOURCE_DIR}/openssl/crypto/ec/ec_asn1.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/ec/ec_key.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/ec/ec2_smpl.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/ec/ec2_mult.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/ec/ec_ameth.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/ec/ec_pmeth.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/ec/eck_prn.c
@@ -70,14 +52,7 @@ set(LIBCRYPTO_CURRENTDIR_SOURCES ${LIBCRYPTO_CURRENTDIR_SOURCES}
     ${CMAKE_SOURCE_DIR}/openssl/crypto/ec/ecdsa_vrf.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/ec/curve25519.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/ec/ecx_meth.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/ec/ec_local.h
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/ec/curve448/arch_32/arch_intrinsics.h
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/ec/curve448/arch_32/f_impl.h
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/ec/curve448/curve448_local.h
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/ec/curve448/ed448.h
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/ec/curve448/field.h
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/ec/curve448/point_448.h
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/ec/curve448/word.h
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/ec/ec_lcl.h
 )
 
 set(LIBCRYPTO_CURRENTDIR_ASM_SOURCES
@@ -88,7 +63,6 @@ if (OPENSSL_ASM)
         set(LIBCRYPTO_CURRENTDIR_ASM_SOURCES
             ${CMAKE_SOURCE_DIR}/openssl/crypto/ec/ecp_nistz256.c
             ecp_nistz256-x86_64${OPENSSL_ASM_PREPROCESSED}
-            x25519-x86_64${OPENSSL_ASM_PREPROCESSED}
         )
     elseif ( OPENSSL_TARGET_ARCH STREQUAL "x86" )
         set(LIBCRYPTO_CURRENTDIR_ASM_SOURCES

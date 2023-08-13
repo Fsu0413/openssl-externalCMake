@@ -4,9 +4,7 @@ set(LIBCRYPTO_CURRENTDIR_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/e_aes.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/e_aes_cbc_hmac_sha1.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/e_aes_cbc_hmac_sha256.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/e_aria.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/e_camellia.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/e_sm4.c
 )
 
 set_source_files_properties(${LIBCRYPTO_CURRENTDIR_SOURCES} PROPERTIES INCLUDE_DIRECTORIES
@@ -39,7 +37,6 @@ set(LIBCRYPTO_CURRENTDIR_SOURCES ${LIBCRYPTO_CURRENTDIR_SOURCES}
     ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/m_md5_sha1.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/m_mdc2.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/m_ripemd.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/m_sha3.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/p_open.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/p_seal.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/p_sign.c
@@ -60,7 +57,7 @@ set(LIBCRYPTO_CURRENTDIR_SOURCES ${LIBCRYPTO_CURRENTDIR_SOURCES}
     ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/evp_pbe.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/p5_crpt.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/p5_crpt2.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/pbe_scrypt.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/scrypt.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/e_old.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/pmeth_lib.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/pmeth_fn.c
@@ -69,7 +66,7 @@ set(LIBCRYPTO_CURRENTDIR_SOURCES ${LIBCRYPTO_CURRENTDIR_SOURCES}
     ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/e_rc4_hmac_md5.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/e_chacha20_poly1305.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/cmeth_lib.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/evp_local.h
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/evp_locl.h
 )
 
 set(LIBCRYPTO_SOURCES ${LIBCRYPTO_SOURCES} ${LIBCRYPTO_CURRENTDIR_SOURCES})

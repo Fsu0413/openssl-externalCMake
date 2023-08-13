@@ -37,11 +37,8 @@ set(LIBCRYPTO_CURRENTDIR_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/crypto/x509v3/v3_asid.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/x509v3/v3_addr.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/x509v3/v3_tlsf.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/x509v3/v3_admis.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/x509v3/ext_dat.h
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/x509v3/pcy_local.h
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/x509v3/standard_exts.h
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/x509v3/v3_admis.h
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/x509v3/pcy_int.h
 )
 
 set(LIBCRYPTO_SOURCES ${LIBCRYPTO_SOURCES} ${LIBCRYPTO_CURRENTDIR_SOURCES})

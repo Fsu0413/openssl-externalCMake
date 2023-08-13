@@ -13,9 +13,6 @@ perlasm_generate_src(rc4-md5-x86_64${OPENSSL_ASM_PREPROCESSED} ${CMAKE_SOURCE_DI
 perlasm_generate_src(rc4-parisc${OPENSSL_ASM_PREPROCESSED} ${CMAKE_SOURCE_DIR}/openssl/crypto/rc4/asm/rc4-parisc.pl
     FLAGS ${OPENSSL_PERLASM_SCHEME}
 )
-perlasm_generate_src(rc4-s390x${OPENSSL_ASM_PREPROCESSED} ${CMAKE_SOURCE_DIR}/openssl/crypto/rc4/asm/rc4-s390x.pl
-    FLAGS ${OPENSSL_PERLASM_SCHEME}
-)
 # catch-all can't be used in CMake
 perlasm_generate_src(rc4-c64xplus.S ${CMAKE_SOURCE_DIR}/openssl/crypto/rc4/asm/rc4-c64xplus.pl
     FLAGS ${OPENSSL_PERLASM_SCHEME}
@@ -28,7 +25,7 @@ set(LIBCRYPTO_CURRENTDIR_SOURCES
 set(LIBCRYPTO_CURRENTDIR_ASM_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/crypto/rc4/rc4_skey.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/rc4/rc4_enc.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/rc4/rc4_local.h
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/rc4/rc4_locl.h
 )
 if (OPENSSL_ASM)
     if ( OPENSSL_TARGET_ARCH STREQUAL "x64" )

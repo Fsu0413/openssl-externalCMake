@@ -46,24 +46,7 @@ my $NEWCERT = "newcert.pem";
 my $NEWP12 = "newcert.p12";
 my $RET = 0;
 my $WHAT = shift @ARGV || "";
-my @OPENSSL_CMDS = ("req", "ca", "pkcs12", "x509", "verify");
-my %EXTRA = extra_args(\@ARGV, "-extra-");
 my $FILE;
-
-sub extra_args {
-    my ($args_ref, $arg_prefix) = @_;
-    my %eargs = map {
-	if ($_ < $#$args_ref) {
-	    my ($arg, $value) = splice(@$args_ref, $_, 2);
-	    $arg =~ s/$arg_prefix//;
-	    ($arg, $value);
-	} else {
-	    ();
-	}
-    } reverse grep($$args_ref[$_] =~ /$arg_prefix/, 0..$#$args_ref);
-    my %empty = map { ($_, "") } @OPENSSL_CMDS;
-    return (%empty, %eargs);
-}
 
 # See if reason for a CRL entry is valid; exit if not.
 sub crl_reason_ok
@@ -113,23 +96,22 @@ sub run
 
 
 if ( $WHAT =~ /^(-\?|-h|-help)$/ ) {
-    print STDERR "usage: CA.pl -newcert | -newreq | -newreq-nodes | -xsign | -sign | -signCA | -signcert | -crl | -newca [-extra-cmd extra-params]\n";
-    print STDERR "       CA.pl -pkcs12 [-extra-pkcs12 extra-params] [certname]\n";
-    print STDERR "       CA.pl -verify [-extra-verify extra-params] certfile ...\n";
-    print STDERR "       CA.pl -revoke [-extra-ca extra-params] certfile [reason]\n";
+    print STDERR "usage: CA -newcert|-newreq|-newreq-nodes|-newca|-sign|-signcert|-verify\n";
+    print STDERR "       CA -pkcs12 [certname]\n";
+    print STDERR "       CA -crl|-revoke cert-filename [reason]\n";
     exit 0;
 }
 if ($WHAT eq '-newcert' ) {
     # create a certificate
-    $RET = run("$REQ -new -x509 -keyout $NEWKEY -out $NEWCERT $DAYS $EXTRA{req}");
+    $RET = run("$REQ -new -x509 -keyout $NEWKEY -out $NEWCERT $DAYS");
     print "Cert is in $NEWCERT, private key is in $NEWKEY\n" if $RET == 0;
-} elsif ($WHAT eq '-precert' ) {
-    # create a pre-certificate
-    $RET = run("$REQ -x509 -precert -keyout $NEWKEY -out $NEWCERT $DAYS");
-    print "Pre-cert is in $NEWCERT, private key is in $NEWKEY\n" if $RET == 0;
-} elsif ($WHAT =~ /^\-newreq(\-nodes)?$/ ) {
+} elsif ($WHAT eq '-newreq' ) {
     # create a certificate request
-    $RET = run("$REQ -new $1 -keyout $NEWKEY -out $NEWREQ $DAYS $EXTRA{req}");
+    $RET = run("$REQ -new -keyout $NEWKEY -out $NEWREQ $DAYS");
+    print "Request is in $NEWREQ, private key is in $NEWKEY\n" if $RET == 0;
+} elsif ($WHAT eq '-newreq-nodes' ) {
+    # create a certificate request
+    $RET = run("$REQ -new -nodes -keyout $NEWKEY -out $NEWREQ $DAYS");
     print "Request is in $NEWREQ, private key is in $NEWKEY\n" if $RET == 0;
 } elsif ($WHAT eq '-newca' ) {
     # create the directory hierarchy
@@ -154,11 +136,11 @@ if ($WHAT eq '-newcert' ) {
         print "Making CA certificate ...\n";
         $RET = run("$REQ -new -keyout"
                 . " ${CATOP}/private/$CAKEY"
-                . " -out ${CATOP}/$CAREQ $EXTRA{req}");
+                . " -out ${CATOP}/$CAREQ");
         $RET = run("$CA -create_serial"
                 . " -out ${CATOP}/$CACERT $CADAYS -batch"
                 . " -keyfile ${CATOP}/private/$CAKEY -selfsign"
-                . " -extensions v3_ca $EXTRA{ca}"
+                . " -extensions v3_ca"
                 . " -infiles ${CATOP}/$CAREQ") if $RET == 0;
         print "CA certificate is in ${CATOP}/$CACERT\n" if $RET == 0;
     }
@@ -168,32 +150,32 @@ if ($WHAT eq '-newcert' ) {
     $RET = run("$PKCS12 -in $NEWCERT -inkey $NEWKEY"
             . " -certfile ${CATOP}/$CACERT"
             . " -out $NEWP12"
-            . " -export -name \"$cname\" $EXTRA{pkcs12}");
+            . " -export -name \"$cname\"");
     print "PKCS #12 file is in $NEWP12\n" if $RET == 0;
 } elsif ($WHAT eq '-xsign' ) {
-    $RET = run("$CA -policy policy_anything $EXTRA{ca} -infiles $NEWREQ");
+    $RET = run("$CA -policy policy_anything -infiles $NEWREQ");
 } elsif ($WHAT eq '-sign' ) {
-    $RET = run("$CA -policy policy_anything -out $NEWCERT $EXTRA{ca} -infiles $NEWREQ");
+    $RET = run("$CA -policy policy_anything -out $NEWCERT -infiles $NEWREQ");
     print "Signed certificate is in $NEWCERT\n" if $RET == 0;
 } elsif ($WHAT eq '-signCA' ) {
     $RET = run("$CA -policy policy_anything -out $NEWCERT"
-            . " -extensions v3_ca $EXTRA{ca} -infiles $NEWREQ");
+            . " -extensions v3_ca -infiles $NEWREQ");
     print "Signed CA certificate is in $NEWCERT\n" if $RET == 0;
 } elsif ($WHAT eq '-signcert' ) {
     $RET = run("$X509 -x509toreq -in $NEWREQ -signkey $NEWREQ"
-            . " -out tmp.pem $EXTRA{x509}");
+            . " -out tmp.pem");
     $RET = run("$CA -policy policy_anything -out $NEWCERT"
-            . "$EXTRA{ca} -infiles tmp.pem") if $RET == 0;
+            . " -infiles tmp.pem") if $RET == 0;
     print "Signed certificate is in $NEWCERT\n" if $RET == 0;
 } elsif ($WHAT eq '-verify' ) {
     my @files = @ARGV ? @ARGV : ( $NEWCERT );
     my $file;
     foreach $file (@files) {
-        my $status = run("$VERIFY \"-CAfile\" ${CATOP}/$CACERT $file $EXTRA{verify}");
+        my $status = run("$VERIFY \"-CAfile\" ${CATOP}/$CACERT $file");
         $RET = $status if $status != 0;
     }
 } elsif ($WHAT eq '-crl' ) {
-    $RET = run("$CA -gencrl -out ${CATOP}/crl/$CACRL $EXTRA{ca}");
+    $RET = run("$CA -gencrl -out ${CATOP}/crl/$CACRL");
     print "Generated CRL is in ${CATOP}/crl/$CACRL\n" if $RET == 0;
 } elsif ($WHAT eq '-revoke' ) {
     my $cname = $ARGV[0];
@@ -204,7 +186,7 @@ if ($WHAT eq '-newcert' ) {
     my $reason = $ARGV[1];
     $reason = " -crl_reason $reason"
         if defined $reason && crl_reason_ok($reason);
-    $RET = run("$CA -revoke \"$cname\"" . $reason . $EXTRA{ca});
+    $RET = run("$CA -revoke \"$cname\"" . $reason);
 } else {
     print STDERR "Unknown arg \"$WHAT\"\n";
     print STDERR "Use -help for help.\n";

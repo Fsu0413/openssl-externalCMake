@@ -22,16 +22,10 @@ set(LIBCRYPTO_CURRENTDIR_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/crypto/engine/eng_openssl.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/engine/eng_cnf.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/engine/eng_dyn.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/engine/eng_cryptodev.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/engine/eng_rdrand.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/engine/eng_local.h
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/engine/eng_int.h
 )
-
-if (OPENSSL_DEVCRYPTOENG)
-    set(LIBCRYPTO_CURRENTDIR_SOURCES
-        ${LIBCRYPTO_CURRENTDIR_SOURCES}
-        ${CMAKE_SOURCE_DIR}/openssl/crypto/engine/eng_devcrypto.c
-    )
-endif()
 
 set(LIBCRYPTO_SOURCES ${LIBCRYPTO_SOURCES} ${LIBCRYPTO_CURRENTDIR_SOURCES})
 

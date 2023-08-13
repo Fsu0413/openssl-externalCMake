@@ -13,7 +13,7 @@ perlasm_generate_src(md5-sparcv9.S ${CMAKE_SOURCE_DIR}/openssl/crypto/md5/asm/md
 set(LIBCRYPTO_CURRENTDIR_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/crypto/md5/md5_dgst.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/md5/md5_one.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/md5/md5_local.h
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/md5/md5_locl.h
 )
 
 set(LIBCRYPTO_CURRENTDIR_ASM_SOURCES

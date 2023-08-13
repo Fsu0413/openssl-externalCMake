@@ -42,8 +42,9 @@ set(LIBCRYPTO_CURRENTDIR_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/crypto/des/fcrypt.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/des/xcbc_enc.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/des/cbc_cksm.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/des/des_local.h
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/des/des_locl.h
     ${CMAKE_SOURCE_DIR}/openssl/crypto/des/spr.h
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/des/rpc_des.h
 )
 
 set(LIBCRYPTO_CURRENTDIR_ASM_SOURCES

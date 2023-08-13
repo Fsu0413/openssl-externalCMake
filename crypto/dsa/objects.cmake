@@ -14,7 +14,7 @@ set(LIBCRYPTO_CURRENTDIR_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/crypto/dsa/dsa_pmeth.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/dsa/dsa_prn.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/dsa/dsa_meth.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/dsa/dsa_local.h
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/dsa/dsa_locl.h
 )
 
 set(LIBCRYPTO_SOURCES ${LIBCRYPTO_SOURCES} ${LIBCRYPTO_CURRENTDIR_SOURCES})

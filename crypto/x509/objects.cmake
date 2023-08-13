@@ -37,7 +37,7 @@ set(LIBCRYPTO_CURRENTDIR_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/x_attrib.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/x_exten.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/x_name.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/x509_local.h
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/x509_lcl.h
 )
 
 set(LIBCRYPTO_SOURCES ${LIBCRYPTO_SOURCES} ${LIBCRYPTO_CURRENTDIR_SOURCES})

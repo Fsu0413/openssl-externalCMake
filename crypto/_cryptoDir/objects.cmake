@@ -21,9 +21,6 @@ perlasm_generate_src(arm64cpuid.S ${CMAKE_SOURCE_DIR}/openssl/crypto/arm64cpuid.
 perlasm_generate_src(armv4cpuid.S ${CMAKE_SOURCE_DIR}/openssl/crypto/armv4cpuid.pl
     FLAGS ${OPENSSL_PERLASM_SCHEME}
 )
-perlasm_generate_src(s390xcpuid.S ${CMAKE_SOURCE_DIR}/openssl/crypto/s390xcpuid.pl
-    FLAGS ${OPENSSL_PERLASM_SCHEME}
-)
 
 set(LIBCRYPTO_CURRENTDIR_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/crypto/cryptlib.c
@@ -38,7 +35,6 @@ set(LIBCRYPTO_CURRENTDIR_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/crypto/o_str.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/o_dir.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/o_fopen.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/ctype.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/threads_pthread.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/threads_win.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/threads_none.c
@@ -48,9 +44,7 @@ set(LIBCRYPTO_CURRENTDIR_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/crypto/mem_sec.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/init.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/arm_arch.h
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/mips_arch.h
     ${CMAKE_SOURCE_DIR}/openssl/crypto/ppc_arch.h
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/s390x_arch.h
     ${CMAKE_SOURCE_DIR}/openssl/crypto/sparc_arch.h
     ${CMAKE_SOURCE_DIR}/openssl/crypto/vms_rms.h
     ${CMAKE_SOURCE_DIR}/openssl/e_os.h

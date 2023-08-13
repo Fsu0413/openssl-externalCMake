@@ -30,9 +30,6 @@ perlasm_generate_src(ghash-armv4.S ${CMAKE_SOURCE_DIR}/openssl/crypto/modes/asm/
 perlasm_generate_src(ghashv8-armx.S ${CMAKE_SOURCE_DIR}/openssl/crypto/modes/asm/ghashv8-armx.pl
     FLAGS ${OPENSSL_PERLASM_SCHEME}
 )
-perlasm_generate_src(ghash-s390x.S ${CMAKE_SOURCE_DIR}/openssl/crypto/modes/asm/ghash-s390x.pl
-    FLAGS ${OPENSSL_PERLASM_SCHEME}
-)
 # catch-all can't be used in CMake
 perlasm_generate_src(ghash-c64xplus.S ${CMAKE_SOURCE_DIR}/openssl/crypto/modes/asm/ghash-c64xplus.pl
     FLAGS ${OPENSSL_PERLASM_SCHEME}
@@ -49,7 +46,7 @@ set(LIBCRYPTO_CURRENTDIR_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/crypto/modes/xts128.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/modes/wrap128.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/modes/ocb128.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/modes/modes_local.h
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/modes/modes_lcl.h
 )
 
 set(LIBCRYPTO_CURRENTDIR_ASM_SOURCES

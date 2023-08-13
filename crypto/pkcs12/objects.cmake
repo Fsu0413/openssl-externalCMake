@@ -17,7 +17,7 @@ set(LIBCRYPTO_CURRENTDIR_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/crypto/pkcs12/pk12err.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/pkcs12/p12_p8d.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/pkcs12/p12_p8e.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/pkcs12/p12_local.h
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/pkcs12/p12_lcl.h
 )
 
 set(LIBCRYPTO_SOURCES ${LIBCRYPTO_SOURCES} ${LIBCRYPTO_CURRENTDIR_SOURCES})

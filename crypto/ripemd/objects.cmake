@@ -8,7 +8,7 @@ perlasm_generate_src(rmd-586${OPENSSL_ASM_PREPROCESSED} ${CMAKE_SOURCE_DIR}/open
 set(LIBCRYPTO_CURRENTDIR_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/crypto/ripemd/rmd_dgst.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/ripemd/rmd_one.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/ripemd/rmd_local.h
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/ripemd/rmd_locl.h
     ${CMAKE_SOURCE_DIR}/openssl/crypto/ripemd/rmdconst.h
 )
 

@@ -12,6 +12,7 @@ set(LIBCRYPTO_CURRENTDIR_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/crypto/rsa/rsa_none.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/rsa/rsa_oaep.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/rsa/rsa_chk.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/rsa/rsa_null.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/rsa/rsa_pss.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/rsa/rsa_x931.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/rsa/rsa_asn1.c
@@ -22,8 +23,7 @@ set(LIBCRYPTO_CURRENTDIR_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/crypto/rsa/rsa_crpt.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/rsa/rsa_x931g.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/rsa/rsa_meth.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/rsa/rsa_mp.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/rsa/rsa_local.h
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/rsa/rsa_locl.h
 )
 
 set(LIBCRYPTO_SOURCES ${LIBCRYPTO_SOURCES} ${LIBCRYPTO_CURRENTDIR_SOURCES})

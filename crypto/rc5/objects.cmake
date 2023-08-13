@@ -11,7 +11,7 @@ set(LIBCRYPTO_CURRENTDIR_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/crypto/rc5/rc5_ecb.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/rc5/rc5cfb64.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/rc5/rc5ofb64.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/rc5/rc5_local.h
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/rc5/rc5_locl.h
 )
 
 set(LIBCRYPTO_CURRENTDIR_ASM_SOURCES

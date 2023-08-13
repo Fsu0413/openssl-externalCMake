@@ -15,9 +15,6 @@ perlasm_generate_src(chacha-armv4.S ${CMAKE_SOURCE_DIR}/openssl/crypto/chacha/as
 perlasm_generate_src(chacha-armv8.S ${CMAKE_SOURCE_DIR}/openssl/crypto/chacha/asm/chacha-armv8.pl
     FLAGS ${OPENSSL_PERLASM_SCHEME}
 )
-perlasm_generate_src(chacha-s390x.S ${CMAKE_SOURCE_DIR}/openssl/crypto/chacha/asm/chacha-s390x.pl
-    FLAGS ${OPENSSL_PERLASM_SCHEME}
-)
 perlasm_generate_src(chacha-c64xplus.S ${CMAKE_SOURCE_DIR}/openssl/crypto/chacha/asm/chacha-c64xplus.pl
     FLAGS ${OPENSSL_PERLASM_SCHEME}
 )
