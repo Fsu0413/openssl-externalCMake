@@ -2,7 +2,7 @@
 
 This is a totally external CMake project for building OpenSSL.
 
-This branch is for OpenSSL 1.1.1 series.
+This branch is for OpenSSL 1.1.0 series.
 
 ## Disclaimer
 
@@ -106,6 +106,6 @@ Just typical CMake procedure will work.
 
 Sort by priority
 
-### On 1.1.1 branch:
+### On 1.1.0 branch:
 
 1. `make check` support
