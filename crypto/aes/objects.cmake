@@ -120,6 +120,7 @@ if (OPENSSL_ASM)
         )
     elseif ( OPENSSL_TARGET_ARCH STREQUAL "arm64" )
         set(LIBCRYPTO_CURRENTDIR_ASM_SOURCES
+            ${CMAKE_SOURCE_DIR}/openssl/crypto/aes/aes_core.c
             ${CMAKE_SOURCE_DIR}/openssl/crypto/aes/aes_cbc.c
             aesv8-armx.S
             vpaes-armv8.S
