@@ -22,10 +22,12 @@ if (OPENSSL_ASM)
             wp-x86_64${OPENSSL_ASM_PREPROCESSED}
         )
     elseif ( OPENSSL_TARGET_ARCH STREQUAL "x86" )
-        set(LIBCRYPTO_CURRENTDIR_ASM_SOURCES
-            ${CMAKE_SOURCE_DIR}/openssl/crypto/whrlpool/wp_block.c
-            wp-mmx${OPENSSL_ASM_PREPROCESSED}
-        )
+        if (NOT OPENSSL_386)
+            set(LIBCRYPTO_CURRENTDIR_ASM_SOURCES
+                ${CMAKE_SOURCE_DIR}/openssl/crypto/whrlpool/wp_block.c
+                wp-mmx${OPENSSL_ASM_PREPROCESSED}
+            )
+        endif()
     elseif ( OPENSSL_TARGET_ARCH STREQUAL "arm32" )
         # no-asm
     elseif ( OPENSSL_TARGET_ARCH STREQUAL "arm64" )
