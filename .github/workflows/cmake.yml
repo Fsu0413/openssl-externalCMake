@@ -299,7 +299,7 @@ jobs:
   # clang on NDK doesn't support the "-mandroid" flag OpenSSL sets. We'd use sed to remove them from command line when using perl-based Configure
   # TODO: make a CMake toolchain file for known-good NDK r10e (Did I make it in the LibreSSL build project? I'd go search the trash)
 
-  # use r13b for build testing on Clang. OpenSSL 1.0.2 didn't support Android x86_64 so no build test for it.
+  # use r13b for build testing on GCC. OpenSSL 1.0.2 didn't support Android x86_64 so no build test for it.
 
   build-android:
     strategy:
