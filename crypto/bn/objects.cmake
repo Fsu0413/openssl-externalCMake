@@ -130,25 +130,40 @@ if (OPENSSL_ASM)
             ${CMAKE_SOURCE_DIR}/openssl/crypto/bn/asm/x86_64-gcc.c
             x86_64-mont${OPENSSL_ASM_PREPROCESSED}
             x86_64-mont5${OPENSSL_ASM_PREPROCESSED}
-            x86_64-gf2m${OPENSSL_ASM_PREPROCESSED}
             ${CMAKE_SOURCE_DIR}/openssl/crypto/bn/rsaz_exp.c
             ${CMAKE_SOURCE_DIR}/openssl/crypto/bn/rsaz_exp.h
             rsaz-x86_64${OPENSSL_ASM_PREPROCESSED}
             rsaz-avx2${OPENSSL_ASM_PREPROCESSED}
         )
+        if (OPENSSL_EC2M)
+            set(LIBCRYPTO_CURRENTDIR_ASM_SOURCES
+                ${LIBCRYPTO_CURRENTDIR_ASM_SOURCES}
+                x86_64-gf2m${OPENSSL_ASM_PREPROCESSED}
+            )
+        endif()
     elseif ( OPENSSL_TARGET_ARCH STREQUAL "x86" )
         set(LIBCRYPTO_CURRENTDIR_ASM_SOURCES
             bn-586${OPENSSL_ASM_PREPROCESSED}
             co-586${OPENSSL_ASM_PREPROCESSED}
             x86-mont${OPENSSL_ASM_PREPROCESSED}
-            x86-gf2m${OPENSSL_ASM_PREPROCESSED}
         )
+        if (OPENSSL_EC2M)
+            set(LIBCRYPTO_CURRENTDIR_ASM_SOURCES
+                ${LIBCRYPTO_CURRENTDIR_ASM_SOURCES}
+                x86-gf2m${OPENSSL_ASM_PREPROCESSED}
+            )
+        endif()
     elseif ( OPENSSL_TARGET_ARCH STREQUAL "arm32" )
         set(LIBCRYPTO_CURRENTDIR_ASM_SOURCES
             ${CMAKE_SOURCE_DIR}/openssl/crypto/bn/bn_asm.c
             armv4-mont.S
-            armv4-gf2m.S
         )
+        if (OPENSSL_EC2M)
+            set(LIBCRYPTO_CURRENTDIR_ASM_SOURCES
+                ${LIBCRYPTO_CURRENTDIR_ASM_SOURCES}
+                armv4-gf2m.S
+            )
+        endif()
     elseif ( OPENSSL_TARGET_ARCH STREQUAL "arm64" )
         set(LIBCRYPTO_CURRENTDIR_ASM_SOURCES
             ${CMAKE_SOURCE_DIR}/openssl/crypto/bn/bn_asm.c
