@@ -6,7 +6,7 @@ project(OpenSSL
     VERSION 1.1.0.12
     DESCRIPTION "TLS/SSL and crypto library"
     HOMEPAGE_URL "https://www.openssl.org/"
-    LANGUAGES C CXX
+    LANGUAGES C
 )
 
 if (PROJECT_VERSION_MAJOR LESS 3)
@@ -30,7 +30,6 @@ elseif (APPLE AND NOT IOS)
 endif()
 
 set(CMAKE_C_STANDARD 99)
-set(CMAKE_CXX_STANDARD 11)
 
 include(GNUInstallDirs)
 include(CMakeDependentOption)
@@ -114,31 +113,6 @@ if (OPENSSL_ASM)
         set(OPENSSL_ASM_PREPROCESSED ".s")
     endif()
 endif()
-
-# --with-rand-seed
-# TODO: multiple random seed support
-set(OPENSSL_RAND_SEED "os" CACHE STRING "OpenSSL Random seed")
-set(OPENSSL_KNOWN_RAND_SEED FALSE)
-foreach (_SEED IN ITEMS getrandom devrandom os egd none rdcpu librandom)
-    string(TOUPPER ${_SEED} _SEED_UPPER)
-    if (OPENSSL_RAND_SEED STREQUAL _SEED)
-        set(OPENSSL_KNOWN_RAND_SEED TRUE)
-        set(OPENSSL_RAND_SEED_${_SEED_UPPER} ON CACHE BOOL "enable OpenSSL Random Generator ${_SEED} (automatically set, use OPENSSL_RAND_SEED if this is to be modified)")
-        if (_SEED STREQUAL none)
-            message(AUTHOR_WARNING "You have selected the -DOPENSSL_RAND_SEED=none option, which effectively disables automatic reseeding of the OpenSSL random generator. "
-                                   "All operations depending on the random generator such as creating keys will not work unless the random generator is seeded manually by the "
-                                   "application. "
-                                   "Please read the 'Note on random number generation' section in the INSTALL instructions and the RAND_DRBG(7) manual page for more details."
-            )
-        endif()
-    else()
-        set(OPENSSL_RAND_SEED_${_SEED_UPPER} OFF CACHE BOOL "enable OpenSSL Random Generator ${_SEED} (automatically set, use OPENSSL_RAND_SEED if this is to be modified)")
-    endif()
-endforeach()
-if (NOT OPENSSL_KNOWN_RAND_SEED)
-    message(FATAL_ERROR "Random Seed ${OPENSSL_RAND_SEED} is not supported by OpenSSL.")
-endif()
-unset(OPENSSL_KNOWN_RAND_SEED)
 
 # no-<cipher>
 set(OPENSSL_DEFAULT_DISABLED_CIPHERS asan crypto-mdebug crypto-mdebug-backtrace ec_nistp_64_gcc_128 egd external-tests fuzz-libfuzzer fuzz-afl heartbeats md2 msan rc5
@@ -426,14 +400,12 @@ elseif (IOS)
         set(OPENSSL_BUILD_PLATFORM "iphoneos-cross")
     endif()
 elseif (ANDROID)
-    if (OPENSSL_TARGET_ARCH STREQUAL "x64")
-        set(OPENSSL_BUILD_PLATFORM "android-x86_64")
-    elseif (OPENSSL_TARGET_ARCH STREQUAL "arm32")
-        set(OPENSSL_BUILD_PLATFORM "android-arm")
+    if (OPENSSL_TARGET_ARCH STREQUAL "arm32")
+        set(OPENSSL_BUILD_PLATFORM "android-armeabi")
     elseif (OPENSSL_TARGET_ARCH STREQUAL "x86")
         set(OPENSSL_BUILD_PLATFORM "android-x86")
     elseif (OPENSSL_TARGET_ARCH STREQUAL "arm64")
-        set(OPENSSL_BUILD_PLATFORM "android-arm64")
+        set(OPENSSL_BUILD_PLATFORM "android64-aarch64")
     else()
         set(OPENSSL_BUILD_PLATFORM "android")
     endif()

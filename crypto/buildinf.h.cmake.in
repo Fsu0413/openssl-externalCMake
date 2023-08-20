@@ -1,6 +1,7 @@
 /* no include guard? */
 
-static char compiler_flags[] = {
+#define CFLAGS cflags
+static char cflags[] = {
     'c', 'o', 'm', 'p', 'i', 'l', 'e', 'r', ':', ' ',
 @LIBCRYPTO_CFLAGS_SOOOOOOOOLONG@
     '\0'

@@ -11,10 +11,6 @@
 #ifndef OSSL_CRYPTO_DSO_CONF_H
 # define OSSL_CRYPTO_DSO_CONF_H
 
-#cmakedefine DSO_WIN32
-#cmakedefine DSO_DLFCN
-#cmakedefine HAVE_DLFCN_H
-
 #define DSO_EXTENSION "@CMAKE_SHARED_MODULE_SUFFIX@"
 
 #endif

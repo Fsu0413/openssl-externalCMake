@@ -11,8 +11,6 @@
  * https://www.openssl.org/source/license.html
  */
 
-#include <openssl/opensslv.h>
-
 #ifdef __cplusplus
 extern "C"
 {
@@ -162,14 +160,6 @@ extern "C"
 #cmakedefine OPENSSL_THREADS
 #endif
 
-#cmakedefine OPENSSL_RAND_SEED_GETRANDOM
-#cmakedefine OPENSSL_RAND_SEED_DEVRANDOM
-#cmakedefine OPENSSL_RAND_SEED_OS
-#cmakedefine OPENSSL_RAND_SEED_EGD
-#cmakedefine OPENSSL_RAND_SEED_NONE
-#cmakedefine OPENSSL_RAND_SEED_RDCPU
-#cmakedefine OPENSSL_RAND_SEED_LIBRANDOM
-
 /*
  * Sometimes OPENSSSL_NO_xxx ends up with an empty file and some compilers
  * don't like that.  This will hopefully silence them.
@@ -183,16 +173,15 @@ extern "C"
  * functions.
  */
 #ifndef DECLARE_DEPRECATED
+#if defined(OPENSSL_NO_DEPRECATED)
+#define DECLARE_DEPRECATED(f)
+#else
 #define DECLARE_DEPRECATED(f) f;
 #ifdef __GNUC__
 #if __GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ > 0)
 #undef DECLARE_DEPRECATED
 #define DECLARE_DEPRECATED(f) f __attribute__((deprecated));
 #endif
-#elif defined(__SUNPRO_C)
-#if (__SUNPRO_C >= 0x5130)
-#undef DECLARE_DEPRECATED
-#define DECLARE_DEPRECATED(f) f __attribute__((deprecated));
 #endif
 #endif
 #endif
@@ -216,18 +205,6 @@ extern "C"
 #define OPENSSL_API_COMPAT OPENSSL_MIN_API
 #endif
 
-/*
- * Do not deprecate things to be deprecated in version 1.2.0 before the
- * OpenSSL version number matches.
- */
-#if OPENSSL_VERSION_NUMBER < 0x10200000L
-#define DEPRECATEDIN_1_2_0(f) f;
-#elif OPENSSL_API_COMPAT < 0x10200000L
-#define DEPRECATEDIN_1_2_0(f) DECLARE_DEPRECATED(f)
-#else
-#define DEPRECATEDIN_1_2_0(f)
-#endif
-
 #if OPENSSL_API_COMPAT < 0x10100000L
 #define DEPRECATEDIN_1_1_0(f) DECLARE_DEPRECATED(f)
 #else
@@ -245,6 +222,8 @@ extern "C"
 #else
 #define DEPRECATEDIN_0_9_8(f)
 #endif
+
+#cmakedefine OPENSSL_CPUID_OBJ
 
 /* Generate 80386 code? */
 #cmakedefine I386_ONLY
