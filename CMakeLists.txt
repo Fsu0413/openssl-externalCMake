@@ -3,14 +3,14 @@
 cmake_minimum_required(VERSION 3.22)
 
 project(OpenSSL
-    VERSION 3.1.3
+    VERSION 3.1.4
     DESCRIPTION "TLS/SSL and crypto library"
     HOMEPAGE_URL "https://www.openssl.org/"
     LANGUAGES C CXX
 )
 
 # for generating opensslv.h
-set(OPENSSL_RELEASE_DATE "19 Sep 2023")
+set(OPENSSL_RELEASE_DATE "24 Oct 2023")
 
 if (PROJECT_VERSION_MAJOR LESS 3)
     set(OPENSSL_VERSION_PRE3_SUFFICES
