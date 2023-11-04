@@ -15,7 +15,7 @@ I am not responsible for any problem caused by original OpenSSL.
 Also this project is using the Unlicense. Please check the LICENSE file for details of this license.
 
 Recently I have received E-mails about the security problem and licensing issue of this project, in which I should register some kinds of VIP account for checking them out.  
-I believe that the problems should comes with the OpenSSL part since this project includes EOL versions of OpenSSL in branches of past version (currently 1.0.2 and 1.1.0).  
+I believe that the problems should comes with the OpenSSL part since this project includes EOL versions of OpenSSL in branches of past version (currently 1.1.1 and before).  
 So stop checking this project for security issues since it always exists, where I can do nothing for it. Also stop bothering me with this kinds of E-mail with registration wall, I have no interest for registering VIP for any site.  
 If problem is occuring in my part, file an issue here on GitHub, or E-mailing me with clear information. E-mails with registration walls will be simply ignored.
 
