@@ -251,6 +251,9 @@ endif()
 
 if (OPENSSL_THREADS)
     find_package(Threads REQUIRED)
+    set(OPENSSL_NO_THREADS OFF CACHE BOOL "Build without threads supported (automatically set, use OPENSSL_THREADS if this is to be modified)" FORCE)
+else()
+    set(OPENSSL_NO_THREADS ON CACHE BOOL "Build without threads supported (automatically set, use OPENSSL_THREADS if this is to be modified)" FORCE)
 endif()
 
 # TODO: uplink platforms (if not 386)
