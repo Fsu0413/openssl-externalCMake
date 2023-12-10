@@ -144,6 +144,7 @@ set(OPENSSL_HEADERS
     ${CMAKE_SOURCE_DIR}/openssl/apps/include/names.h
     ${CMAKE_SOURCE_DIR}/openssl/apps/include/opt.h
     ${CMAKE_SOURCE_DIR}/openssl/apps/include/s_apps.h
+    ${CMAKE_SOURCE_DIR}/openssl/apps/include/log.h
 
     progs.h
 )
@@ -165,6 +166,8 @@ set(OPENSSL_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/apps/lib/engine.c
     ${CMAKE_SOURCE_DIR}/openssl/apps/lib/engine_loader.c
     ${CMAKE_SOURCE_DIR}/openssl/apps/lib/app_libctx.c
+    ${CMAKE_SOURCE_DIR}/openssl/apps/lib/log.c
+    ${CMAKE_SOURCE_DIR}/openssl/apps/lib/apps_opt_printf.c
 
     ${CMAKE_SOURCE_DIR}/openssl/apps/openssl.c
     ${CMAKE_SOURCE_DIR}/openssl/apps/asn1parse.c

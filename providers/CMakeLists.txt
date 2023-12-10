@@ -25,14 +25,22 @@ endif()
 if (OPENSSL_EC)
     set(_GENERATEDER_SOURCE_FILES_PATH
         ${_GENERATEDER_SOURCE_FILES_PATH}
-        ${CMAKE_SOURCE_DIR}/openssl/providers/common/der/der_ecx_gen.c.in
         ${CMAKE_SOURCE_DIR}/openssl/providers/common/der/der_ec_gen.c.in
     )
     set(_GENERATEDER_HEADER_FILES_PATH
         ${_GENERATEDER_HEADER_FILES_PATH}
-        ${CMAKE_SOURCE_DIR}/openssl/providers/common/include/prov/der_ecx.h.in
         ${CMAKE_SOURCE_DIR}/openssl/providers/common/include/prov/der_ec.h.in
     )
+    if (OPENSSL_ECX)
+        set(_GENERATEDER_SOURCE_FILES_PATH
+            ${_GENERATEDER_SOURCE_FILES_PATH}
+            ${CMAKE_SOURCE_DIR}/openssl/providers/common/der/der_ecx_gen.c.in
+        )
+        set(_GENERATEDER_HEADER_FILES_PATH
+            ${_GENERATEDER_HEADER_FILES_PATH}
+            ${CMAKE_SOURCE_DIR}/openssl/providers/common/include/prov/der_ecx.h.in
+        )
+    endif()
 endif()
 
 if (OPENSSL_SM2)

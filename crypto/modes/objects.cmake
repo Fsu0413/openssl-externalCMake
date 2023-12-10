@@ -24,6 +24,7 @@ set(LIBCRYPTO_CURRENTDIR_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/crypto/modes/gcm128.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/modes/ccm128.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/modes/xts128.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/modes/xts128gb.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/modes/wrap128.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/modes/cts128.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/modes/ocb128.c

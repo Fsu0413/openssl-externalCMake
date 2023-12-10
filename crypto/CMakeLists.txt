@@ -308,8 +308,8 @@ if (OPENSSL_LEGACY AND ( NOT OPENSSL_MODULE ) )
 endif()
 
 foreach (_DIRECTORY IN ITEMS
-        aes aria asn1 bf bio bn buffer camellia cast chacha cmac cmp cms comp conf crmf ct des dh dsa ec encode_decode engine ess evp ffc hmac http idea kdf lhash md2 md4 md5 mdc2
-        modes objects ocsp pem pkcs7 pkcs12 poly1305 property rand rc2 rc4 rc5 ripemd rsa seed sha siphash sm2 sm3 sm4 srp stack store ts txt_db ui whrlpool x509
+        aes aria asn1 bf bio bn buffer camellia cast chacha cmac cmp cms comp conf crmf ct des dh dsa ec encode_decode engine ess evp ffc hmac hpke http idea kdf lhash md2 md4 md5
+        mdc2 modes objects ocsp pem pkcs7 pkcs12 poly1305 property rand rc2 rc4 rc5 ripemd rsa seed sha siphash sm2 sm3 sm4 srp stack store thread ts txt_db ui whrlpool x509
     )
     set(_CIPHER ${_DIRECTORY})
     if (_CIPHER STREQUAL "whrlpool")
@@ -449,7 +449,29 @@ foreach (_STACKHASH_HEADER_FILE_PATH IN ITEMS
         USES_TERMINAL
     )
 endforeach()
-add_custom_target(generate_stackhash SOURCES
+foreach (_PARAMNAMES_FILE_PATH IN ITEMS
+    ${CMAKE_SOURCE_DIR}/openssl/include/openssl/core_names.h.in
+    ${CMAKE_SOURCE_DIR}/openssl/include/internal/param_names.h.in
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/params_idx.c.in
+)
+    get_filename_component(_PARAMNAMES_FILE_NAME "${_PARAMNAMES_FILE_PATH}" NAME_WLE)
+    get_filename_component(_PARAMNAMES_FILE_NAME_EXT "${_PARAMNAMES_FILE_NAME}" LAST_EXT)
+    set(_PARAMNAMES_FILE_OUTPUT_PATH "")
+    if (NOT _PARAMNAMES_FILE_NAME_EXT STREQUAL ".c")
+        get_filename_component(_PARAMNAMES_FILE_DIR "${_PARAMNAMES_FILE_PATH}" DIRECTORY)
+        get_filename_component(_PARAMNAMES_FILE_DIRNAME "${_PARAMNAMES_FILE_DIR}" NAME)
+        set(_PARAMNAMES_FILE_OUTPUT_PATH "${CMAKE_BINARY_DIR}/include/${_PARAMNAMES_FILE_DIRNAME}/")
+    endif()
+    add_custom_command(
+        OUTPUT "${_PARAMNAMES_FILE_OUTPUT_PATH}${_PARAMNAMES_FILE_NAME}"
+        COMMAND ${CMAKE_COMMAND} -DOUTPUT_FILE_NAME="${_PARAMNAMES_FILE_OUTPUT_PATH}${_PARAMNAMES_FILE_NAME}" -P "${CMAKE_CURRENT_SOURCE_DIR}/paramnames.cmake" "${_PARAMNAMES_FILE_PATH}"
+        MAIN_DEPENDENCY "${_PARAMNAMES_FILE_PATH}"
+        DEPENDS paramnames.cmake
+        USES_TERMINAL
+    )
+endforeach()
+add_custom_target(generate_crypto_src SOURCES
+    # Generate stackhash
     ${CMAKE_BINARY_DIR}/include/openssl/asn1.h
     ${CMAKE_BINARY_DIR}/include/openssl/asn1t.h
     ${CMAKE_BINARY_DIR}/include/openssl/bio.h
@@ -472,6 +494,11 @@ add_custom_target(generate_stackhash SOURCES
     ${CMAKE_BINARY_DIR}/include/openssl/x509.h
     ${CMAKE_BINARY_DIR}/include/openssl/x509_vfy.h
     ${CMAKE_BINARY_DIR}/include/openssl/x509v3.h
+
+    # Generate param names
+    ${CMAKE_BINARY_DIR}/include/openssl/core_names.h
+    ${CMAKE_BINARY_DIR}/include/internal/param_names.h
+    params_idx.c
 )
 
 add_subdirectory(../providers ../providers)
@@ -485,6 +512,7 @@ add_library(crypto
     ${CMAKE_BINARY_DIR}/include/openssl/cmp.h
     ${CMAKE_BINARY_DIR}/include/openssl/cms.h
     ${CMAKE_BINARY_DIR}/include/openssl/conf.h
+    ${CMAKE_BINARY_DIR}/include/openssl/core_names.h
     ${CMAKE_BINARY_DIR}/include/openssl/crmf.h
     ${CMAKE_BINARY_DIR}/include/openssl/crypto.h
     ${CMAKE_BINARY_DIR}/include/openssl/ct.h
@@ -503,6 +531,7 @@ add_library(crypto
     ${CMAKE_BINARY_DIR}/include/openssl/x509v3.h
     ${CMAKE_BINARY_DIR}/include/crypto/dso_conf.h
     ${CMAKE_BINARY_DIR}/include/crypto/bn_conf.h
+    ${CMAKE_BINARY_DIR}/include/internal/param_names.h
     ${CMAKE_SOURCE_DIR}/openssl/include/crypto/aes_platform.h
     ${CMAKE_SOURCE_DIR}/openssl/include/crypto/aria.h
     ${CMAKE_SOURCE_DIR}/openssl/include/crypto/asn1.h
@@ -621,6 +650,53 @@ add_library(crypto
     ${CMAKE_SOURCE_DIR}/openssl/include/internal/tlsgroups.h
     ${CMAKE_SOURCE_DIR}/openssl/include/internal/tsan_assist.h
     ${CMAKE_SOURCE_DIR}/openssl/include/internal/unicode.h
+    ${CMAKE_SOURCE_DIR}/openssl/include/internal/bio_addr.h
+    ${CMAKE_SOURCE_DIR}/openssl/include/internal/bio_tfo.h
+    ${CMAKE_SOURCE_DIR}/openssl/include/internal/common.h
+    ${CMAKE_SOURCE_DIR}/openssl/include/internal/deterministic_nonce.h
+    ${CMAKE_SOURCE_DIR}/openssl/include/internal/event_queue.h
+    ${CMAKE_SOURCE_DIR}/openssl/include/internal/hpke_util.h
+    ${CMAKE_SOURCE_DIR}/openssl/include/internal/list.h
+    ${CMAKE_SOURCE_DIR}/openssl/include/internal/packet_quic.h
+    ${CMAKE_SOURCE_DIR}/openssl/include/internal/params.h
+    ${CMAKE_SOURCE_DIR}/openssl/include/internal/priority_queue.h
+    ${CMAKE_SOURCE_DIR}/openssl/include/internal/quic_ackm.h
+    ${CMAKE_SOURCE_DIR}/openssl/include/internal/quic_cc.h
+    ${CMAKE_SOURCE_DIR}/openssl/include/internal/quic_cfq.h
+    ${CMAKE_SOURCE_DIR}/openssl/include/internal/quic_channel.h
+    ${CMAKE_SOURCE_DIR}/openssl/include/internal/quic_demux.h
+    ${CMAKE_SOURCE_DIR}/openssl/include/internal/quic_error.h
+    ${CMAKE_SOURCE_DIR}/openssl/include/internal/quic_fc.h
+    ${CMAKE_SOURCE_DIR}/openssl/include/internal/quic_fifd.h
+    ${CMAKE_SOURCE_DIR}/openssl/include/internal/quic_reactor.h
+    ${CMAKE_SOURCE_DIR}/openssl/include/internal/quic_record_rx.h
+    ${CMAKE_SOURCE_DIR}/openssl/include/internal/quic_record_tx.h
+    ${CMAKE_SOURCE_DIR}/openssl/include/internal/quic_record_util.h
+    ${CMAKE_SOURCE_DIR}/openssl/include/internal/quic_rx_depack.h
+    ${CMAKE_SOURCE_DIR}/openssl/include/internal/quic_sf_list.h
+    ${CMAKE_SOURCE_DIR}/openssl/include/internal/quic_ssl.h
+    ${CMAKE_SOURCE_DIR}/openssl/include/internal/quic_statm.h
+    ${CMAKE_SOURCE_DIR}/openssl/include/internal/quic_stream.h
+    ${CMAKE_SOURCE_DIR}/openssl/include/internal/quic_stream_map.h
+    ${CMAKE_SOURCE_DIR}/openssl/include/internal/quic_thread_assist.h
+    ${CMAKE_SOURCE_DIR}/openssl/include/internal/quic_tls.h
+    ${CMAKE_SOURCE_DIR}/openssl/include/internal/quic_tserver.h
+    ${CMAKE_SOURCE_DIR}/openssl/include/internal/quic_txp.h
+    ${CMAKE_SOURCE_DIR}/openssl/include/internal/quic_txpim.h
+    ${CMAKE_SOURCE_DIR}/openssl/include/internal/quic_types.h
+    ${CMAKE_SOURCE_DIR}/openssl/include/internal/quic_vlint.h
+    ${CMAKE_SOURCE_DIR}/openssl/include/internal/quic_wire.h
+    ${CMAKE_SOURCE_DIR}/openssl/include/internal/quic_wire_pkt.h
+    ${CMAKE_SOURCE_DIR}/openssl/include/internal/recordmethod.h
+    ${CMAKE_SOURCE_DIR}/openssl/include/internal/ring_buf.h
+    ${CMAKE_SOURCE_DIR}/openssl/include/internal/safe_math.h
+    ${CMAKE_SOURCE_DIR}/openssl/include/internal/ssl.h
+    ${CMAKE_SOURCE_DIR}/openssl/include/internal/ssl3_cbc.h
+    ${CMAKE_SOURCE_DIR}/openssl/include/internal/statem.h
+    ${CMAKE_SOURCE_DIR}/openssl/include/internal/thread.h
+    ${CMAKE_SOURCE_DIR}/openssl/include/internal/thread_arch.h
+    ${CMAKE_SOURCE_DIR}/openssl/include/internal/time.h
+    ${CMAKE_SOURCE_DIR}/openssl/include/internal/uint_set.h
     ${CMAKE_SOURCE_DIR}/openssl/include/openssl/aes.h
     ${CMAKE_SOURCE_DIR}/openssl/include/openssl/asn1err.h
     ${CMAKE_SOURCE_DIR}/openssl/include/openssl/asn1_mac.h
@@ -645,7 +721,6 @@ add_library(crypto
     ${CMAKE_SOURCE_DIR}/openssl/include/openssl/conf_api.h
     ${CMAKE_SOURCE_DIR}/openssl/include/openssl/core.h
     ${CMAKE_SOURCE_DIR}/openssl/include/openssl/core_dispatch.h
-    ${CMAKE_SOURCE_DIR}/openssl/include/openssl/core_names.h
     ${CMAKE_SOURCE_DIR}/openssl/include/openssl/core_object.h
     ${CMAKE_SOURCE_DIR}/openssl/include/openssl/crmferr.h
     ${CMAKE_SOURCE_DIR}/openssl/include/openssl/cryptoerr.h
@@ -731,11 +806,15 @@ add_library(crypto
     ${CMAKE_SOURCE_DIR}/openssl/include/openssl/whrlpool.h
     ${CMAKE_SOURCE_DIR}/openssl/include/openssl/x509err.h
     ${CMAKE_SOURCE_DIR}/openssl/include/openssl/x509v3err.h
+    ${CMAKE_SOURCE_DIR}/openssl/include/openssl/e_ostime.h
+    ${CMAKE_SOURCE_DIR}/openssl/include/openssl/hpke.h
+    ${CMAKE_SOURCE_DIR}/openssl/include/openssl/quic.h
+    ${CMAKE_SOURCE_DIR}/openssl/include/openssl/thread.h
     ${LIBCRYPTO_SOURCES}
     ${LIBCRYPTO_PROVIDER_SOURCES}
 )
 
-add_dependencies(crypto generate_stackhash)
+add_dependencies(crypto generate_crypto_src)
 
 target_link_libraries(crypto
     PRIVATE libdefault

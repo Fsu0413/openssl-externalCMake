@@ -8,6 +8,7 @@ set(LIBCRYPTO_CURRENTDIR_SOURCES ${LIBCRYPTO_CURRENTDIR_SOURCES}
     ${CMAKE_SOURCE_DIR}/openssl/crypto/rand/prov_seed.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/rand/rand_pool.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/rand/rand_local.h
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/rand/rand_uniform.c
 )
 
 if ( OPENSSL_EGD )

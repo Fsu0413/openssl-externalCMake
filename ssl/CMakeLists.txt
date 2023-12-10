@@ -6,7 +6,6 @@ set(LIBSSL_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/ssl/statem/statem_clnt.c
     ${CMAKE_SOURCE_DIR}/openssl/ssl/s3_lib.c
     ${CMAKE_SOURCE_DIR}/openssl/ssl/s3_enc.c
-    ${CMAKE_SOURCE_DIR}/openssl/ssl/record/rec_layer_s3.c
     ${CMAKE_SOURCE_DIR}/openssl/ssl/statem/statem_lib.c
     ${CMAKE_SOURCE_DIR}/openssl/ssl/statem/extensions.c
     ${CMAKE_SOURCE_DIR}/openssl/ssl/statem/extensions_srvr.c
@@ -18,7 +17,6 @@ set(LIBSSL_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/ssl/t1_enc.c
     ${CMAKE_SOURCE_DIR}/openssl/ssl/tls13_enc.c
     ${CMAKE_SOURCE_DIR}/openssl/ssl/d1_lib.c
-    ${CMAKE_SOURCE_DIR}/openssl/ssl/record/rec_layer_d1.c
     ${CMAKE_SOURCE_DIR}/openssl/ssl/d1_msg.c
     ${CMAKE_SOURCE_DIR}/openssl/ssl/statem/statem_dtls.c
     ${CMAKE_SOURCE_DIR}/openssl/ssl/d1_srtp.c
@@ -39,20 +37,15 @@ set(LIBSSL_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/ssl/tls_srp.c
     ${CMAKE_SOURCE_DIR}/openssl/ssl/t1_trce.c
     ${CMAKE_SOURCE_DIR}/openssl/ssl/ssl_utst.c
-    ${CMAKE_SOURCE_DIR}/openssl/ssl/record/ssl3_buffer.c
-    ${CMAKE_SOURCE_DIR}/openssl/ssl/record/ssl3_record.c
-    ${CMAKE_SOURCE_DIR}/openssl/ssl/record/dtls1_bitmap.c
     ${CMAKE_SOURCE_DIR}/openssl/ssl/statem/statem.c
-    ${CMAKE_SOURCE_DIR}/openssl/ssl/record/ssl3_record_tls13.c
+    ${CMAKE_SOURCE_DIR}/openssl/ssl/ssl_cert_comp.c
     ${CMAKE_SOURCE_DIR}/openssl/ssl/tls_depr.c
-    ${CMAKE_SOURCE_DIR}/openssl/ssl/record/tls_pad.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/packet.c
-    ${CMAKE_SOURCE_DIR}/openssl/ssl/record/record.h
-    ${CMAKE_SOURCE_DIR}/openssl/ssl/record/record_local.h
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/quic_vlint.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/time.c
     ${CMAKE_SOURCE_DIR}/openssl/ssl/sslerr.h
     ${CMAKE_SOURCE_DIR}/openssl/ssl/ssl_cert_table.h
     ${CMAKE_SOURCE_DIR}/openssl/ssl/ssl_local.h
-    ${CMAKE_SOURCE_DIR}/openssl/ssl/statem/statem.h
     ${CMAKE_SOURCE_DIR}/openssl/ssl/statem/statem_local.h
     ${CMAKE_SOURCE_DIR}/openssl/include/internal/bio.h
     ${CMAKE_SOURCE_DIR}/openssl/include/internal/constant_time.h
@@ -67,21 +60,25 @@ set(LIBSSL_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/include/internal/sslconf.h
     ${CMAKE_SOURCE_DIR}/openssl/include/internal/thread_once.h
     ${CMAKE_SOURCE_DIR}/openssl/include/internal/tlsgroups.h
+    ${CMAKE_SOURCE_DIR}/openssl/include/internal/statem.h
 )
-
-if (OPENSSL_KTLS)
-    set(LIBSSL_SOURCES
-        ${LIBSSL_SOURCES}
-        ${CMAKE_SOURCE_DIR}/openssl/ssl/ktls.c
-    )
-endif()
 
 if (OPENSSL_DEPRECATED_3_0)
     set(LIBSSL_SOURCES
         ${LIBSSL_SOURCES}
-        ${CMAKE_SOURCE_DIR}/openssl/ssl/s3_cbc.c
         ${CMAKE_SOURCE_DIR}/openssl/ssl/ssl_rsa_legacy.c
     )
+endif()
+
+include(record.cmake)
+
+if (OPENSSL_QUIC)
+    set(LIBSSL_SOURCES
+        ${LIBSSL_SOURCES}
+        ${CMAKE_SOURCE_DIR}/openssl/ssl/priority_queue.c
+        ${CMAKE_SOURCE_DIR}/openssl/ssl/event_queue.c
+    )
+    include(quic.cmake)
 endif()
 
 if (WIN32)

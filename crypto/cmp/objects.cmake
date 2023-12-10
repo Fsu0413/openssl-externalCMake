@@ -12,9 +12,16 @@ set(LIBCRYPTO_CURRENTDIR_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/crypto/cmp/cmp_vfy.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/cmp/cmp_server.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/cmp/cmp_client.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/cmp/cmp_http.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/cmp/cmp_local.h
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/cmp/cmp_genm.c
 )
+
+if (OPENSSL_HTTP)
+    set(LIBCRYPTO_CURRENTDIR_SOURCES
+        ${LIBCRYPTO_CURRENTDIR_SOURCES}
+        ${CMAKE_SOURCE_DIR}/openssl/crypto/cmp/cmp_http.c
+    )
+endif()
 
 set(LIBCRYPTO_SOURCES ${LIBCRYPTO_SOURCES} ${LIBCRYPTO_CURRENTDIR_SOURCES})
 

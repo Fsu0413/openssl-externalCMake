@@ -2,6 +2,7 @@
 
 perlasm_generate_src(sm4-armv8.S ${CMAKE_SOURCE_DIR}/openssl/crypto/sm4/asm/sm4-armv8.pl)
 perlasm_generate_src(vpsm4-armv8.S ${CMAKE_SOURCE_DIR}/openssl/crypto/sm4/asm/vpsm4-armv8.pl)
+perlasm_generate_src(vpsm4_ex-armv8.S ${CMAKE_SOURCE_DIR}/openssl/crypto/sm4/asm/vpsm4_ex-armv8.pl)
 
 set(LIBCRYPTO_CURRENTDIR_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/crypto/sm4/sm4.c
@@ -21,6 +22,7 @@ if (OPENSSL_ASM)
         set(LIBCRYPTO_CURRENTDIR_ASM_SOURCES
             sm4-armv8.S
             vpsm4-armv8.S
+            vpsm4_ex-armv8.S
         )
     endif()
 endif()

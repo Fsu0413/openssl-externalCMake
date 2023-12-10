@@ -77,6 +77,8 @@ set(LIBDEFAULT_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/kdfs/scrypt.c
     ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/kdfs/sshkdf.c
     ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/kdfs/x942kdf.c
+    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/kdfs/hmacdrbg_kdf.c
+    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/kdfs/argon2.c
     ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/kem/rsa_kem.c
     ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/keymgmt/rsa_kmgmt.c
     ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/keymgmt/kdf_legacy_kmgmt.c
@@ -99,7 +101,7 @@ set(LIBDEFAULT_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/storemgmt/file_store.c
     ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/storemgmt/file_store_any2obj.c
 
-    ${CMAKE_SOURCE_DIR}/openssl/ssl/s3_cbc.c
+    ${CMAKE_SOURCE_DIR}/openssl/ssl/record/methods/ssl3_cbc.c
 
     ${CMAKE_SOURCE_DIR}/openssl/providers/common/include/prov/bio.h
     ${CMAKE_SOURCE_DIR}/openssl/providers/common/include/prov/provider_ctx.h
@@ -182,6 +184,9 @@ if (OPENSSL_SIV)
         ${LIBDEFAULT_SOURCES}
         ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/cipher_aes_siv.c
         ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/cipher_aes_siv_hw.c
+        ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/cipher_aes_gcm_siv.c
+        ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/cipher_aes_gcm_siv_hw.c
+        ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/cipher_aes_gcm_siv_polyval.c
     )
 endif()
 
@@ -214,6 +219,8 @@ if (OPENSSL_SM4)
         ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/cipher_sm4_gcm_hw.c
         ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/cipher_sm4_ccm.c
         ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/cipher_sm4_ccm_hw.c
+        ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/cipher_sm4_xts.c
+        ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/cipher_sm4_xts_hw.c
     )
 endif()
 
@@ -279,13 +286,21 @@ if (OPENSSL_EC)
     set(LIBDEFAULT_SOURCES
         ${LIBDEFAULT_SOURCES}
         ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/encode_decode/encode_key2blob.c
-        ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/exchange/ecx_exch.c
         ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/exchange/ecdh_exch.c
         ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/keymgmt/ec_kmgmt.c
-        ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/keymgmt/ecx_kmgmt.c
-        ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/signature/eddsa_sig.c
         ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/signature/ecdsa_sig.c
+        ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/kem/kem_util.c
+        ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/kem/ec_kem.c
     )
+    if (OPENSSL_ECX)
+        set(LIBDEFAULT_SOURCES
+            ${LIBDEFAULT_SOURCES}
+            ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/keymgmt/ecx_kmgmt.c
+            ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/exchange/ecx_exch.c
+            ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/kem/ecx_kem.c
+            ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/signature/eddsa_sig.c
+        )
+    endif()
 endif()
 
 if (OPENSSL_DH)
@@ -332,11 +347,18 @@ endif()
 #    )
 #endif()
 
+if (OPENSSL_WINSTORE)
+    set(LIBDEFAULT_SOURCES
+        ${LIBDEFAULT_SOURCES}
+        ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/storemgmt/winstore_store.c
+    )
+endif()
+
 add_library(libdefault OBJECT
     ${LIBDEFAULT_SOURCES}
 )
 
-add_dependencies(libdefault generate_stackhash generate_der)
+add_dependencies(libdefault generate_crypto_src generate_der)
 
 target_include_directories(libdefault
     PRIVATE ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/include

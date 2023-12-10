@@ -44,7 +44,7 @@ set(LIBCOMMON_SOURCES
     ${CMAKE_BINARY_DIR}/providers/common/include/prov/der_digests.h
     ${CMAKE_BINARY_DIR}/providers/common/include/prov/der_wrap.h
 
-    ${CMAKE_SOURCE_DIR}/openssl/ssl/record/tls_pad.c
+    ${CMAKE_SOURCE_DIR}/openssl/ssl/record/methods/tls_pad.c
 
     ${CMAKE_SOURCE_DIR}/openssl/providers/common/include/prov/bio.h
     ${CMAKE_SOURCE_DIR}/openssl/providers/common/include/prov/proverr.h
@@ -62,12 +62,17 @@ if (OPENSSL_EC)
         ${LIBCOMMON_SOURCES}
         ${CMAKE_SOURCE_DIR}/openssl/providers/common/der/der_ec_key.c
         ${CMAKE_SOURCE_DIR}/openssl/providers/common/der/der_ec_sig.c
-        ${CMAKE_SOURCE_DIR}/openssl/providers/common/der/der_ecx_key.c
         ${CMAKE_BINARY_DIR}/providers/common/der/der_ec_gen.c
-        ${CMAKE_BINARY_DIR}/providers/common/der/der_ecx_gen.c
         ${CMAKE_BINARY_DIR}/providers/common/include/prov/der_ec.h
-        ${CMAKE_BINARY_DIR}/providers/common/include/prov/der_ecx.h
     )
+    if (OPENSSL_ECX)
+        set(LIBCOMMON_SOURCES
+            ${LIBCOMMON_SOURCES}
+            ${CMAKE_SOURCE_DIR}/openssl/providers/common/der/der_ecx_key.c
+            ${CMAKE_BINARY_DIR}/providers/common/der/der_ecx_gen.c
+            ${CMAKE_BINARY_DIR}/providers/common/include/prov/der_ecx.h
+        )
+    endif()
 endif()
 
 if (OPENSSL_DSA)
@@ -84,7 +89,7 @@ add_library(libcommon OBJECT
     ${LIBCOMMON_SOURCES}
 )
 
-add_dependencies(libcommon generate_stackhash generate_der)
+add_dependencies(libcommon generate_crypto_src generate_der)
 
 target_include_directories(libcommon
     PRIVATE ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/include
