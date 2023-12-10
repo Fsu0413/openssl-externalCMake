@@ -114,7 +114,6 @@ Sort by priority
 
 ### All branches:
 
-1. 3.2 series support (when released as alpha)
 1. uplink / applink for Windows. Currently it is commented out (I don't even know what it does!)
 1. Support for BSDs
 1. Support for loongson64, riscv64 and arm (32/64) Linux (mips has lots of variant so temporarily ignore it)
