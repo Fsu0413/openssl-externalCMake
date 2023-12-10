@@ -49,7 +49,7 @@ set(OPENSSL_OPENSSLDIR "ssl" CACHE STRING "OpenSSL SSL install directory, relati
 get_filename_component(OPENSSL_OPENSSLDIR_ABSOLUTE ${OPENSSL_OPENSSLDIR} ABSOLUTE BASE_DIR ${CMAKE_INSTALL_PREFIX})
 
 # [no-]threads
-option(OPENSSL_THREADS "Build with threads supported" ON)
+cmake_dependent_option(OPENSSL_THREADS "Build with threads supported" ON "NOT MSVC" ON)
 
 # [no-]shared
 # iOS supports only static libraries
@@ -317,6 +317,9 @@ endif()
 
 if (OPENSSL_THREADS)
     find_package(Threads REQUIRED)
+    set(OPENSSL_NO_THREADS OFF CACHE BOOL "Build without threads supported (automatically set, use OPENSSL_THREADS if this is to be modified)" FORCE)
+else()
+    set(OPENSSL_NO_THREADS ON CACHE BOOL "Build without threads supported (automatically set, use OPENSSL_THREADS if this is to be modified)" FORCE)
 endif()
 
 if (OPENSSL_DSO)
