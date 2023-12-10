@@ -53,7 +53,7 @@ set(OPENSSL_OPENSSLDIR "ssl" CACHE STRING "OpenSSL SSL install directory, relati
 get_filename_component(OPENSSL_OPENSSLDIR_ABSOLUTE ${OPENSSL_OPENSSLDIR} ABSOLUTE BASE_DIR ${CMAKE_INSTALL_PREFIX})
 
 # [no-]threads
-option(OPENSSL_THREADS "Build with threads supported" ON)
+cmake_dependent_option(OPENSSL_THREADS "Build with threads supported" ON "NOT MSVC" ON)
 
 # [no-]shared
 # iOS supports only static libraries
@@ -260,8 +260,7 @@ foreach (_CIPHER IN ITEMS ssl2 buf-freelists crypto-mdebug-backtrace hw-padlock 
 endforeach()
 
 foreach (_CIPHER IN ITEMS
-    bulk ssl des ec sock dgram dtls tls engine stdio tests sm3 unit-test msan cmac legacy cmp comp brotli-dynamic zstd-dynamic zlib-dynamic threads
-    thread-pool blake2 # dependent
+    bulk ssl des ec sock dgram dtls tls engine stdio tests sm3 unit-test msan cmac legacy cmp comp brotli-dynamic zstd-dynamic zlib-dynamic thread-pool blake2 # dependent
     dtls1_2-method dtls1-method tls1_2-method tls1_1-method tls1-method ssl3-method # method
     aes asn1 bio bn buffer conf crmf encode_decode ess evp ffc hmac hpke http kdf lhash md5 modes objects pem pkcs7 pkcs12 property rand rsa sha stack store thread txt_db
     x509 # directories
@@ -491,6 +490,9 @@ endif()
 
 if (OPENSSL_THREADS)
     find_package(Threads REQUIRED)
+    set(OPENSSL_NO_THREADS OFF CACHE BOOL "Build without threads supported (automatically set, use OPENSSL_THREADS if this is to be modified)" FORCE)
+else()
+    set(OPENSSL_NO_THREADS ON CACHE BOOL "Build without threads supported (automatically set, use OPENSSL_THREADS if this is to be modified)" FORCE)
 endif()
 
 if (OPENSSL_DSO)
