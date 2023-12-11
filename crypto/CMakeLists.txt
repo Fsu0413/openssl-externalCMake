@@ -797,6 +797,10 @@ target_compile_definitions(crypto
             "-DMODULESDIR=\"${OPENSSL_MODULESDIR_ABSOLUTE}\""
 )
 
+if (OPENSSL_ASM AND ( OPENSSL_TARGET_ARCH STREQUAL "arm32" ) AND NOT MSVC)
+    target_link_options(crypto PUBLIC "-Wl,-Bsymbolic")
+endif()
+
 if (WIN32)
     target_link_libraries(crypto
         PUBLIC ws2_32 crypt32
