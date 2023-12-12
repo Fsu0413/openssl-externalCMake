@@ -53,7 +53,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        runner: [ "11", "12", "13" ]
+        runner: [ "12", "13" ]
         asm: [ "YES", "NO" ]
         zlib: [ "YES", "NO" ]
         threads: [ "YES", "NO" ]
@@ -94,7 +94,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        runner: [ "11", "12", "13" ]
+        runner: [ "12", "13" ]
         asm: [ "NO" ] # macOS on ARM is not officially supported as of 1.0.2. ASM can't be build due to no available perlasm scheme.
         zlib: [ "YES", "NO" ]
         threads: [ "YES", "NO" ]
@@ -132,7 +132,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        runner: [ "11", "12", "13" ]
+        runner: [ "12", "13" ]
         # can't build ASM on unified. Also macOS on ARM is not officially supported as of 1.0.2
         zlib: [ "YES", "NO" ]
         threads: [ "YES", "NO" ]
