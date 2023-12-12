@@ -2,10 +2,21 @@ name: CMake
 
 on: [push]
 
-env:
-  FS_OPENSSL_VERSION_STR: "3.0.12"
-
 jobs:
+  get-version:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: true
+          path: openssl-externalCMake
+      - name: Get the version of OpenSSL
+        id: getversion
+        run: |
+          "${{ github.workspace }}/openssl-externalCMake/.github/Scripts-For-Actions/get-version.sh" >> "$GITHUB_OUTPUT"
+    outputs:
+      openssl_version: ${{ steps.getversion.outputs.OPENSSL_VERSION }}
+
   build-ubuntu:
     strategy:
       fail-fast: false
@@ -17,8 +28,10 @@ jobs:
     continue-on-error: true
     runs-on: ubuntu-${{ matrix.runner }}
     name: "build-ubuntu-${{ matrix.runner }} (ASM: ${{ matrix.asm }}, Zlib: ${{ matrix.zlib }}), Threads: ${{ matrix.threads }}"
+    needs: get-version
     env:
       FS_OPENSSL_PACKAGE_STR: Ubuntu${{ matrix.runner }}-x86_64-ASM${{ matrix.asm }}-Zlib${{ matrix.zlib }}-Threads${{ matrix.threads }}
+      FS_OPENSSL_VERSION_STR: ${{ needs.get-version.outputs.openssl_version }}
     steps:
       - uses: actions/checkout@v3
         with:
@@ -60,8 +73,10 @@ jobs:
     continue-on-error: true
     runs-on: macos-${{ matrix.runner }}
     name: "build-macOS${{ matrix.runner }}-x86_64 (ASM: ${{ matrix.asm }}, Zlib: ${{ matrix.zlib }}, Threads: ${{ matrix.threads }}"
+    needs: get-version
     env:
       FS_OPENSSL_PACKAGE_STR: macOS${{ matrix.runner }}-x86_64-ASM${{ matrix.asm }}-Zlib${{ matrix.zlib }}-Threads${{ matrix.threads }}
+      FS_OPENSSL_VERSION_STR: ${{ needs.get-version.outputs.openssl_version }}
     steps:
       - uses: actions/checkout@v3
         with:
@@ -101,8 +116,10 @@ jobs:
     continue-on-error: true
     runs-on: macos-${{ matrix.runner }}
     name: "build-macOS${{ matrix.runner }}-aarch64 (ASM: ${{ matrix.asm }}, Zlib: ${{ matrix.zlib }}, Threads: ${{ matrix.threads }}"
+    needs: get-version
     env:
       FS_OPENSSL_PACKAGE_STR: macOS${{ matrix.runner }}-aarch64-ASM${{ matrix.asm }}-Zlib${{ matrix.zlib }}-Threads${{ matrix.threads }}
+      FS_OPENSSL_VERSION_STR: ${{ needs.get-version.outputs.openssl_version }}
     steps:
       - uses: actions/checkout@v3
         with:
@@ -139,8 +156,10 @@ jobs:
     continue-on-error: true
     runs-on: macos-${{ matrix.runner }}
     name: "build-macOS${{ matrix.runner }}-unified (Zlib: ${{ matrix.zlib }}, Threads: ${{ matrix.threads }}"
+    needs: get-version
     env:
       FS_OPENSSL_PACKAGE_STR: macOS${{ matrix.runner }}-unified-Zlib${{ matrix.zlib }}-Threads${{ matrix.threads }}
+      FS_OPENSSL_VERSION_STR: ${{ needs.get-version.outputs.openssl_version }}
     steps:
       - uses: actions/checkout@v3
         with:
@@ -188,8 +207,10 @@ jobs:
     continue-on-error: true
     runs-on: windows-latest
     name: "build-MinGW-GCC${{ matrix.toolchain.version }}-${{ matrix.toolchain.bit }}bit (ASM: ${{ matrix.asm }}, Threads: ${{ matrix.threads }}"
+    needs: get-version
     env:
       FS_OPENSSL_PACKAGE_STR: MinGWGCC${{ matrix.toolchain.version }}-${{ matrix.toolchain.arch }}-ASM${{ matrix.asm }}-Threads${{ matrix.threads }}
+      FS_OPENSSL_VERSION_STR: ${{ needs.get-version.outputs.openssl_version }}
     steps:
       - uses: actions/checkout@v3
         with:
@@ -253,8 +274,10 @@ jobs:
     continue-on-error: true
     runs-on: windows-${{ matrix.toolchain.runson }}
     name: "build-MSVC${{ matrix.toolchain.version }}-${{ matrix.toolchain.bit }}bit (ASM: ${{ matrix.asm }})"
+    needs: get-version
     env:
       FS_OPENSSL_PACKAGE_STR: MSVC${{ matrix.toolchain.version }}-${{ matrix.toolchain.arch }}-ASM${{ matrix.asm }}
+      FS_OPENSSL_VERSION_STR: ${{ needs.get-version.outputs.openssl_version }}
     steps:
       - uses: actions/checkout@v3
         with:
@@ -318,8 +341,10 @@ jobs:
     continue-on-error: true
     runs-on: ubuntu-latest
     name: "build-AndroidAPI${{ matrix.toolchain.platform }}-${{ matrix.toolchain.arch }} (ASM: ${{ matrix.asm }}, Zlib: ${{ matrix.zlib }}), Threads: ${{ matrix.threads }}"
+    needs: get-version
     env:
       FS_OPENSSL_PACKAGE_STR: AndroidAPI${{ matrix.toolchain.platform }}-${{ matrix.toolchain.arch }}}-ASM${{ matrix.asm }}Zlib${{ matrix.zlib }}-Threads${{ matrix.threads }}
+      FS_OPENSSL_VERSION_STR: ${{ needs.get-version.outputs.openssl_version }}
     steps:
       - uses: actions/checkout@v3
         with:
