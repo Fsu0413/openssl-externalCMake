@@ -706,11 +706,6 @@ install(DIRECTORY ${CMAKE_BINARY_DIR}/include/openssl
     TYPE INCLUDE
 )
 
-# issue: can't specify zlib path, especially for the condition that zlib is found by CMake but can't be found by pkgconfig
-configure_file(libcrypto.pc.cmake.in libcrypto.pc @ONLY)
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libcrypto.pc
-    DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig
-)
 
 #if (BUILD_TESTING)
 #    foreach (_DIRECTORY IN LISTS LIBCRYPTO_DIRECTORIES)

@@ -102,11 +102,6 @@ install(FILES ${CMAKE_SOURCE_DIR}/openssl/apps/openssl.cnf
     DESTINATION ${OPENSSL_OPENSSLDIR}
 )
 
-configure_file(openssl.pc.cmake.in openssl.pc @ONLY)
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/openssl.pc
-    DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig
-)
-
 if (NOT WIN32)
     configure_file(${CMAKE_SOURCE_DIR}/openssl/apps/CA.sh CA.sh COPYONLY)
 endif()

@@ -111,11 +111,6 @@ install(TARGETS ssl
     ARCHIVE
 )
 
-configure_file(libssl.pc.cmake.in libssl.pc @ONLY)
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libssl.pc
-    DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig
-)
-
 #if (BUILD_TESTING)
 #    if (WIN32 AND BUILD_SHARED_LIBS)
 #        add_custom_command(OUTPUT "${CMAKE_BINARY_DIR}/ssl/libeay32.dll"
