@@ -117,7 +117,6 @@ Sort by priority
 1. uplink / applink for Windows. Currently it is commented out (I don't even know what it does!)
 1. Support for BSDs
 1. Support for loongson64, riscv64 and arm (32/64) Linux (mips has lots of variant so temporarily ignore it)
-1. `OpenSSLConfig.cmake` generation (Done by CMake team. We'd copy the generated files and modify logic for CMake. https://github.com/openssl/openssl/commit/c768ccebc718ea0ed6afc5147fe4079fff632cd6 )
 1. Check how to test on cross built platforms
 1. 1.0.1 series support
 1. 1.0.0 series support
