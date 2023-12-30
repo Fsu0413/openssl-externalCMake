@@ -110,5 +110,4 @@ Sort by priority
 
 ### On 3.2 branch:
 
-1. replace the generated files from 3.2 branch
 1. `make check` support
