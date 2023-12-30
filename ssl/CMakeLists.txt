@@ -141,8 +141,3 @@ install(TARGETS ssl
     LIBRARY
     ARCHIVE
 )
-
-configure_file(libssl.pc.cmake.in libssl.pc @ONLY)
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libssl.pc
-    DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig
-)

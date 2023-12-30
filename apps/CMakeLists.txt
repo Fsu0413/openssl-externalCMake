@@ -350,11 +350,6 @@ install(FILES ${CMAKE_SOURCE_DIR}/openssl/apps/ct_log_list.cnf
     RENAME ct_log_list.cnf.dist
 )
 
-configure_file(openssl.pc.cmake.in openssl.pc @ONLY)
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/openssl.pc
-    DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig
-)
-
 #if (BUILD_TESTING)
 #    if ( ( WIN32 OR CYGWIN ) AND BUILD_SHARED_LIBS )
 #        get_target_property(CRYPTO_RUNTIME_OUTPUT_NAME crypto RUNTIME_OUTPUT_NAME)
