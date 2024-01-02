@@ -148,6 +148,12 @@ if (WIN32)
     )
 endif()
 
+if (OPENSSL_UPLINK)
+    list(APPEND OPENSSL_OPTIONAL_SOURCES
+        ${CMAKE_SOURCE_DIR}/openssl/ms/applink.c
+    )
+endif()
+
 if (WIN32)
     configure_file(apps.rc.cmake.in apps.rc @ONLY)
     set(OPENSSL_SOURCES ${OPENSSL_SOURCES} apps.rc)

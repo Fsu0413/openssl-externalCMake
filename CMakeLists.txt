@@ -9,6 +9,8 @@ project(OpenSSL
     LANGUAGES C CXX
 )
 
+get_filename_component(OPENSSL_C_COMPILER "${CMAKE_C_COMPILER}" NAME_WLE)
+
 if (PROJECT_VERSION_MAJOR LESS 3)
     set(OPENSSL_VERSION_PRE3_SUFFICES
         ";a;b;c;d;e;f;g;h;i;j;k;l;m;n;o;p;q;r;s;t;u;v;w;x;y;za;zb;zc;zd;ze;zf;zg;zh"
@@ -101,20 +103,6 @@ foreach (_OPTION IN ITEMS hw hw-padlock asm err nasm)
     unset(_OPTION_UPPER)
 endforeach()
 
-if (OPENSSL_ASM)
-    if (OPENSSL_NASM)
-        enable_language(ASM_NASM)
-        set(OPENSSL_ASM_PREPROCESSED ".nasm")
-    elseif (MSVC)
-        message(AUTHOR_WARNING "OpenSSL doesn't support MASM officially. See Comments in Configurations/50-masm.conf.")
-        enable_language(ASM_MASM)
-        set(OPENSSL_ASM_PREPROCESSED ".asm")
-    else()
-        enable_language(ASM)
-        set(OPENSSL_ASM_PREPROCESSED ".s")
-    endif()
-endif()
-
 # --with-rand-seed
 # TODO: multiple random seed support
 set(OPENSSL_RAND_SEED "os" CACHE STRING "OpenSSL Random seed")
@@ -143,6 +131,30 @@ unset(OPENSSL_KNOWN_RAND_SEED)
 # no-<cipher>
 set(OPENSSL_DEFAULT_DISABLED_CIPHERS asan crypto-mdebug crypto-mdebug-backtrace devcryptoeng ec_nistp_64_gcc_128 egd external-tests fuzz-libfuzzer fuzz-afl heartbeats md2 msan rc5
                                      sctp ssl-trace ssl3 ssl3-method ubsan unit-test weak-ssl-ciphers)
+
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
+
+include(OpenSslExternalCMakeCheckArchitecture)
+
+# undocumented!
+if ( NOT OPENSSL_TARGET_ARCH )
+    openssl_external_cmake_detect_target_arch(OPENSSL_TARGET_ARCH)
+endif()
+
+# 386 and SSE2
+if (OPENSSL_TARGET_ARCH STREQUAL "x64")
+    set(OPENSSL_386 OFF CACHE BOOL "generate 80386 code in assembly modules" FORCE)
+    set(OPENSSL_SSE2 ON CACHE BOOL "Enable SSE2 instructions in assembly" FORCE)
+elseif (OPENSSL_TARGET_ARCH STREQUAL "x86")
+    option(OPENSSL_386 "generate 80386 code in assembly modules" OFF)
+    cmake_dependent_option(OPENSSL_SSE2 "Enable SSE2 instructions in assembly" ON "NOT OPENSSL_386" OFF)
+else()
+    set(OPENSSL_386 OFF CACHE BOOL "generate 80386 code in assembly modules" FORCE)
+    set(OPENSSL_SSE2 OFF CACHE BOOL "Enable SSE2 instructions in assembly" FORCE)
+endif()
+if (OPENSSL_386)
+    set(OPENSSL_USE_386 "386" CACHE STRING "" FORCE)
+endif()
 
 macro (get_current_cipher_name_instead_of_deprecated)
     set(CIPHERNAME ${ARGV0})
@@ -186,7 +198,7 @@ foreach (_CIPHER IN ITEMS
         dtls1_2 dtls1 tls1_3 tls1_2 tls1_1 tls1 ssl3  # TLS protocol
         aria asan async autoalginit autoerrinit autoload-config bf blake2 camellia capieng cast chacha cmac cms crypto-mdebug-backtrace ct deprecated devcryptoeng dh dsa ec2m ecdh
         ecdsa ec_nistp_64_gcc_128 egd err filenames fuzz-libfuzzer fuzz-afl gost heartbeats idea makedepend md2 md4 mdc2 multiblock nextprotoneg pinshared ocb ocsp poly1305
-        posix-io psk rc2 rc4 rc5 rdrand rfc3779 rmd160 scrypt sctp seed siphash sm2 sm4 srp srtp ssl-trace ts ubsan ui-console whirlpool weak-ssl-ciphers
+        posix-io psk rc2 rc4 rc5 rdrand rfc3779 rmd160 scrypt sctp seed siphash sm2 sm4 srp srtp ssl-trace ts ubsan ui-console whirlpool weak-ssl-ciphers uplink
 )
     list(FIND OPENSSL_DEFAULT_DISABLED_CIPHERS ${_CIPHER} _CIPHER_IS_DEFAULT_DISABLED)
     set(_CIPHER_DEFAULT ON)
@@ -254,6 +266,8 @@ foreach (_CIPHER IN ITEMS
         cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "OPENSSL_SM3;OPENSSL_EC" OFF)
     elseif (_CIPHER STREQUAL "heartbeats")
         cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "OPENSSL_NO_UNITTEST" OFF)
+    elseif (_CIPHER STREQUAL "uplink")
+        cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "MSVC;NOT OPENSSL_386" OFF)
     else()
         option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}")
     endif()
@@ -273,6 +287,25 @@ foreach (_CIPHER IN ITEMS
     unset(_CIPHER_IS_EXPERIMENTAL)
     unset(_CIPHER_IS_DEFAULT_DISABLED)
 endforeach()
+
+if (OPENSSL_ASM OR OPENSSL_UPLINK)
+    if (OPENSSL_ASM AND OPENSSL_NASM)
+        enable_language(ASM_NASM)
+        set(OPENSSL_ASM_PREPROCESSED ".nasm")
+        get_filename_component(OPENSSL_ASM_COMPILER "${CMAKE_ASM_NASM_COMPILER}" NAME_WLE)
+    elseif (MSVC)
+        if (OPENSSL_ASM)
+            message(AUTHOR_WARNING "OpenSSL doesn't support MASM officially. See Comments in Configurations/50-masm.conf.")
+        endif()
+        enable_language(ASM_MASM)
+        set(OPENSSL_ASM_PREPROCESSED ".asm")
+        get_filename_component(OPENSSL_ASM_COMPILER "${CMAKE_ASM_NASM_COMPILER}" NAME_WLE)
+    else()
+        enable_language(ASM)
+        set(OPENSSL_ASM_PREPROCESSED ".s")
+        get_filename_component(OPENSSL_ASM_COMPILER "${CMAKE_ASM_NASM_COMPILER}" NAME_WLE)
+    endif()
+endif()
 
 # HACK
 set (OPENSSL_HW_CAPI ${OPENSSL_CAPIENG} CACHE BOOL "(automatically set, use OPENSSL_CAPIENG if this is to be modified)" FORCE)
@@ -364,30 +397,6 @@ endif()
 # TODO: uplink platforms (if not 386)
 # cflags = -DOPENSSL_USE_APPLINK
 # cpuid_obj += uplink.o uplink-x86.o
-
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
-
-include(OpenSslExternalCMakeCheckArchitecture)
-
-# undocumented!
-if ( NOT OPENSSL_TARGET_ARCH )
-    openssl_external_cmake_detect_target_arch(OPENSSL_TARGET_ARCH)
-endif()
-
-# 386 and SSE2
-if (OPENSSL_TARGET_ARCH STREQUAL "x64")
-    set(OPENSSL_386 OFF CACHE BOOL "generate 80386 code in assembly modules" FORCE)
-    set(OPENSSL_SSE2 ON CACHE BOOL "Enable SSE2 instructions in assembly" FORCE)
-elseif (OPENSSL_TARGET_ARCH STREQUAL "x86")
-    option(OPENSSL_386 "generate 80386 code in assembly modules" OFF)
-    cmake_dependent_option(OPENSSL_SSE2 "Enable SSE2 instructions in assembly" ON "NOT OPENSSL_386" OFF)
-else()
-    set(OPENSSL_386 OFF CACHE BOOL "generate 80386 code in assembly modules" FORCE)
-    set(OPENSSL_SSE2 OFF CACHE BOOL "Enable SSE2 instructions in assembly" FORCE)
-endif()
-if (OPENSSL_386)
-    set(OPENSSL_USE_386 "386" CACHE STRING "" FORCE)
-endif()
 
 # list the original platform descriptions - How can this be so complicated?
 # currently only supported platforms are listed - other platforms will be added when finished
