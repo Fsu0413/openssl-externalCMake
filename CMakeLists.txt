@@ -28,6 +28,8 @@ project(OpenSSL
     LANGUAGES C CXX
 )
 
+get_filename_component(OPENSSL_C_COMPILER "${CMAKE_C_COMPILER}" NAME_WLE)
+
 # for generating opensslv.h
 set(OPENSSL_RELEASE_DATE "${OPENSSL_VERSION_DAT_RELEASE_DATE_STR}")
 
@@ -131,20 +133,6 @@ foreach (_OPTION IN ITEMS hw asm err nasm deprecated)
     unset(_OPTION_UPPER)
 endforeach()
 
-if (OPENSSL_ASM)
-    if (OPENSSL_NASM)
-        enable_language(ASM_NASM)
-        set(OPENSSL_ASM_PREPROCESSED ".nasm")
-    elseif (MSVC)
-        message(AUTHOR_WARNING "OpenSSL doesn't support MASM officially. See Comments in Configurations/50-masm.conf.")
-        enable_language(ASM_MASM)
-        set(OPENSSL_ASM_PREPROCESSED ".asm")
-    else()
-        enable_language(ASM)
-        set(OPENSSL_ASM_PREPROCESSED ".s")
-    endif()
-endif()
-
 # --with-rand-seed
 # TODO: multiple random seed support
 set(OPENSSL_RAND_SEED "os" CACHE STRING "OpenSSL Random seed")
@@ -243,6 +231,30 @@ foreach (_DEPRECATED_VARIABLE IN ITEMS DEPRECATED_0_9_8 DEPRECATED_1_0_0 DEPRECA
         set(OPENSSL_NO_${_DEPRECATED_VARIABLE} ON CACHE BOOL "" FORCE)
     endif()
 endforeach()
+
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
+
+include(OpenSslExternalCMakeCheckArchitecture)
+
+# undocumented!
+if ( NOT OPENSSL_TARGET_ARCH )
+    openssl_external_cmake_detect_target_arch(OPENSSL_TARGET_ARCH)
+endif()
+
+# 386 and SSE2
+if (OPENSSL_TARGET_ARCH STREQUAL "x64")
+    set(OPENSSL_386 OFF CACHE BOOL "generate 80386 code in assembly modules" FORCE)
+    set(OPENSSL_SSE2 ON CACHE BOOL "Enable SSE2 instructions in assembly" FORCE)
+elseif (OPENSSL_TARGET_ARCH STREQUAL "x86")
+    option(OPENSSL_386 "generate 80386 code in assembly modules" OFF)
+    cmake_dependent_option(OPENSSL_SSE2 "Enable SSE2 instructions in assembly" ON "NOT OPENSSL_386" OFF)
+else()
+    set(OPENSSL_386 OFF CACHE BOOL "generate 80386 code in assembly modules" FORCE)
+    set(OPENSSL_SSE2 OFF CACHE BOOL "Enable SSE2 instructions in assembly" FORCE)
+endif()
+if (OPENSSL_386)
+    set(OPENSSL_USE_386 "386" CACHE STRING "" FORCE)
+endif()
 
 macro (get_current_cipher_name_instead_of_deprecated)
     set(CIPHERNAME ${ARGV0})
@@ -394,6 +406,8 @@ foreach (_CIPHER IN ITEMS
         cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "OPENSSL_FIPS" OFF)
     elseif (_CIPHER STREQUAL "srp")
         cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "OPENSSL_DEPRECATED_3_0" OFF)
+    elseif (_CIPHER STREQUAL "uplink")
+        cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "MSVC;NOT OPENSSL_386" OFF)
     else()
         option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}")
     endif()
@@ -413,6 +427,25 @@ foreach (_CIPHER IN ITEMS
     unset(_CIPHER_IS_EXPERIMENTAL)
     unset(_CIPHER_IS_DEFAULT_DISABLED)
 endforeach()
+
+if (OPENSSL_ASM OR OPENSSL_UPLINK)
+    if (OPENSSL_ASM AND OPENSSL_NASM)
+        enable_language(ASM_NASM)
+        set(OPENSSL_ASM_PREPROCESSED ".nasm")
+        get_filename_component(OPENSSL_ASM_COMPILER "${CMAKE_ASM_NASM_COMPILER}" NAME_WLE)
+    elseif (MSVC)
+        if (OPENSSL_ASM)
+            message(AUTHOR_WARNING "OpenSSL doesn't support MASM officially. See Comments in Configurations/50-masm.conf.")
+        endif()
+        enable_language(ASM_MASM)
+        set(OPENSSL_ASM_PREPROCESSED ".asm")
+        get_filename_component(OPENSSL_ASM_COMPILER "${CMAKE_ASM_NASM_COMPILER}" NAME_WLE)
+    else()
+        enable_language(ASM)
+        set(OPENSSL_ASM_PREPROCESSED ".s")
+        get_filename_component(OPENSSL_ASM_COMPILER "${CMAKE_ASM_NASM_COMPILER}" NAME_WLE)
+    endif()
+endif()
 
 # some TWEAKS
 if (OPENSSL_NO_SSL3 AND OPENSSL_NO_SSL3_METHOD)
@@ -477,30 +510,6 @@ endif()
 # TODO: uplink platforms (if not 386)
 # cflags = -DOPENSSL_USE_APPLINK
 # cpuid_obj += uplink.o uplink-x86.o
-
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
-
-include(OpenSslExternalCMakeCheckArchitecture)
-
-# undocumented!
-if ( NOT OPENSSL_TARGET_ARCH )
-    openssl_external_cmake_detect_target_arch(OPENSSL_TARGET_ARCH)
-endif()
-
-# 386 and SSE2
-if (OPENSSL_TARGET_ARCH STREQUAL "x64")
-    set(OPENSSL_386 OFF CACHE BOOL "generate 80386 code in assembly modules" FORCE)
-    set(OPENSSL_SSE2 ON CACHE BOOL "Enable SSE2 instructions in assembly" FORCE)
-elseif (OPENSSL_TARGET_ARCH STREQUAL "x86")
-    option(OPENSSL_386 "generate 80386 code in assembly modules" OFF)
-    cmake_dependent_option(OPENSSL_SSE2 "Enable SSE2 instructions in assembly" ON "NOT OPENSSL_386" OFF)
-else()
-    set(OPENSSL_386 OFF CACHE BOOL "generate 80386 code in assembly modules" FORCE)
-    set(OPENSSL_SSE2 OFF CACHE BOOL "Enable SSE2 instructions in assembly" FORCE)
-endif()
-if (OPENSSL_386)
-    set(OPENSSL_USE_386 "386" CACHE STRING "" FORCE)
-endif()
 
 # list the original platform descriptions - How can this be so complicated?
 # currently only supported platforms are listed - other platforms will be added when finished
