@@ -145,7 +145,7 @@ unset(I386_ONLY)
 unset(EXTERNALCMAKE_HAS_SYSDEFINE)
 unset(OPENSSL_SYS_DEFINE)
 
-if (OPENSSL_ASM)
+if (OPENSSL_ASM OR OPENSSL_UPLINK)
     set(OPENSSL_PERLASM_SCHEME)
     if ( OPENSSL_TARGET_ARCH STREQUAL "x86" )
         if ( OPENSSL_NASM )
@@ -231,7 +231,7 @@ macro (perlasm_generate_src OUT_ASMFILE SRC_PERLFILE)
     endif()
     add_custom_command(
         OUTPUT ${OUT_ASMFILE}
-        COMMAND ${CMAKE_COMMAND} -E env "CC=\"${CMAKE_C_COMPILER}\"" ${PERL_EXECUTABLE} ${SRC_PERLFILE} ${FLAGS} ${OUT_ASMFILE}
+        COMMAND ${CMAKE_COMMAND} -E env "CC=\"${OPENSSL_C_COMPILER}\"" "ASM=\"${OPENSSL_ASM_COMPILER}\"" ${PERL_EXECUTABLE} ${SRC_PERLFILE} ${FLAGS} ${OUT_ASMFILE}
         MAIN_DEPENDENCY ${SRC_PERLFILE}
         DEPENDS ${DEPENDENCIES}
         USES_TERMINAL
@@ -305,7 +305,7 @@ endif()
 
 foreach (_DIRECTORY IN ITEMS
         aes aria asn1 bf bio bn buffer camellia cast chacha cmac cmp cms comp conf crmf ct des dh dsa ec encode_decode engine ess evp ffc hmac hpke http idea kdf lhash md2 md4 md5
-        mdc2 modes objects ocsp pem pkcs7 pkcs12 poly1305 property rand rc2 rc4 rc5 ripemd rsa seed sha siphash sm2 sm3 sm4 srp stack store thread ts txt_db ui whrlpool x509
+        mdc2 modes objects ocsp pem pkcs7 pkcs12 poly1305 property rand rc2 rc4 rc5 ripemd rsa seed sha siphash sm2 sm3 sm4 srp stack store thread ts txt_db ui whrlpool x509 uplink
     )
     set(_CIPHER ${_DIRECTORY})
     if (_CIPHER STREQUAL "whrlpool")
