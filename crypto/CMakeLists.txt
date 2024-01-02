@@ -126,7 +126,7 @@ unset(I386_ONLY)
 unset(EXTERNALCMAKE_HAS_SYSDEFINE)
 unset(OPENSSL_SYS_DEFINE)
 
-if (OPENSSL_ASM)
+if (OPENSSL_ASM OR OPENSSL_UPLINK)
     set(OPENSSL_PERLASM_SCHEME)
     if ( OPENSSL_TARGET_ARCH STREQUAL "x86" )
         if ( OPENSSL_NASM )
@@ -283,7 +283,7 @@ endif()
 
 foreach (_DIRECTORY IN ITEMS
         aes asn1 bf bio blake2 bn buffer camellia cast chacha cmac cms comp conf ct des dh dsa ec engine evp hmac idea kdf lhash md2 md4 md5 mdc2 modes objects ocsp pem pkcs7
-        pkcs12 poly1305 rand rc2 rc4 rc5 ripemd rsa seed sha srp stack ts txt_db ui whrlpool x509 x509v3
+        pkcs12 poly1305 rand rc2 rc4 rc5 ripemd rsa seed sha srp stack ts txt_db ui whrlpool x509 x509v3 uplink
     )
     set(_CIPHER ${_DIRECTORY})
     if (_CIPHER STREQUAL "whrlpool")
