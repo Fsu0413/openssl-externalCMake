@@ -41,7 +41,7 @@ foreach (_CIPHER IN ITEMS
         aes asn1 bf bio bn buf-freelists buffer camellia capieng cast chain-verify cmac cms comp conf deprecated descbcm dgram dso dtls dtls1 ec-nistp-64-gcc-128 ec2m ecdh ecdsa
         engine evp fp-api gmp hash-comp heartbeats hmac idea jpake lhash libunbound locking md2 md4 mdc2 modes multibyte nextprotoneg object objects ocsp pem pkcs7 pkcs12 posix-io
         pqueue psk rand rc2 rc4 rc5 rdrand rfc3779 ripemd ripemd160 rmd160 sctp seed setvbuf-ionbf sha0 sha1 sha256 sha512 sock speed srp srtp ssl-intern ssl-trace ssl2 ssl2-method
-        ssl3 stack stdio store tls1 ts txt-db ui unit-test weak-ssl-ciphers whirlpool x509 x509-verify
+        ssl3 stack stdio store tls1 ts txt-db ui unit-test weak-ssl-ciphers whirlpool x509 x509-verify uplink
     )
     string(TOUPPER ${_CIPHER} _CIPHER_UPPER)
     string(REPLACE "-" "_" _CIPHER_SYMBOL ${_CIPHER_UPPER})
@@ -328,7 +328,7 @@ foreach (_CIPHER IN ITEMS
         aes asn1 bf bio bn buf-freelists buffer camellia capieng cast chain-verify cmac cms comp conf deprecated descbcm dgram dso dtls dtls1 ec-nistp-64-gcc-128 ec2m ecdh ecdsa
         engine evp fp-api gmp hash-comp heartbeats hmac idea jpake lhash libunbound locking md2 md4 mdc2 modes multibyte nextprotoneg object objects ocsp pem pkcs7 pkcs12 posix-io
         pqueue psk rand rc2 rc4 rc5 rdrand rfc3779 ripemd ripemd160 rmd160 sctp seed setvbuf-ionbf sha0 sha1 sha256 sha512 sock speed srp srtp ssl-intern ssl-trace ssl2 ssl2-method
-        ssl3 stack stdio store tls1 ts txt-db ui unit-test weak-ssl-ciphers whirlpool x509 x509-verify x509v3
+        ssl3 stack stdio store tls1 ts txt-db ui unit-test weak-ssl-ciphers whirlpool x509 x509-verify x509v3 uplink
     )
     string(TOUPPER ${_CIPHER} _CIPHER_UPPER)
     string(REPLACE "-" "_" _CIPHER_SYMBOL ${_CIPHER_UPPER})
@@ -339,7 +339,7 @@ endforeach()
 unset(EXTERNALCMAKE_HAS_SYSDEFINE)
 unset(OPENSSL_SYS_DEFINE)
 
-if (OPENSSL_ASM)
+if (OPENSSL_ASM OR OPENSSL_UPLINK)
     set(OPENSSL_PERLASM_SCHEME)
     if ( APPLE AND NOT IOS )
         set(OPENSSL_PERLASM_SCHEME "macosx")
@@ -530,7 +530,7 @@ endif()
 
 foreach (_DIRECTORY IN ITEMS
         aes asn1 bf bio bn buffer camellia cast cmac cms comp conf des dh dsa dso ec ecdh ecdsa engine err evp hmac idea jpake krb5 lhash md2 md4 md5 mdc2 modes objects ocsp pem
-        pkcs12 pkcs7 pqueue rand rc2 rc4 rc5 ripemd rsa seed sha srp stack store ts txt_db ui whrlpool x509 x509v3
+        pkcs12 pkcs7 pqueue rand rc2 rc4 rc5 ripemd rsa seed sha srp stack store ts txt_db ui whrlpool x509 x509v3 uplink
     )
     set(_CIPHER ${_DIRECTORY})
     if (_CIPHER STREQUAL "whrlpool")

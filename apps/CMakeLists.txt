@@ -58,6 +58,12 @@ set(OPENSSL_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/apps/testrsa.h
     ${CMAKE_SOURCE_DIR}/openssl/apps/openssl.c
 )
+if (OPENSSL_UPLINK)
+    list(APPEND OPENSSL_SOURCES
+        ${CMAKE_SOURCE_DIR}/openssl/ms/applink.c
+    )
+endif()
+
 
 add_executable(openssl
     ${OPENSSL_SOURCES}

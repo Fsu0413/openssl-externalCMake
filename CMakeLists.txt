@@ -9,6 +9,8 @@ project(OpenSSL
     LANGUAGES C
 )
 
+get_filename_component(OPENSSL_C_COMPILER "${CMAKE_C_COMPILER}" NAME_WLE)
+
 if (PROJECT_VERSION_MAJOR LESS 3)
     set(OPENSSL_VERSION_PRE3_SUFFICES
         ";a;b;c;d;e;f;g;h;i;j;k;l;m;n;o;p;q;r;s;t;u;v;w;x;y;za;zb;zc;zd;ze;zf;zg;zh"
@@ -118,22 +120,33 @@ foreach (_OPTION IN ITEMS hw hw-4758-cca hw-aep hw-atalla hw-chil hw-cswift hw-i
     unset(_OPTION_UPPER)
 endforeach()
 
-if (OPENSSL_ASM)
-    if (OPENSSL_NASM)
-        enable_language(ASM_NASM)
-        set(OPENSSL_ASM_PREPROCESSED ".nasm")
-    elseif (MSVC)
-        enable_language(ASM_MASM)
-        set(OPENSSL_ASM_PREPROCESSED ".asm")
-    else()
-        enable_language(ASM)
-        set(OPENSSL_ASM_PREPROCESSED ".s")
-    endif()
-endif()
-
 # no-<cipher>
 set(OPENSSL_DEFAULT_DISABLED_CIPHERS ec-nistp-64-gcc-128 gmp md2 rc5 rfc3779 sctp ssl-trace ssl2 unit-test weak-ssl-ciphers jpake libunbound store)
 set(OPENSSL_EXPERIMENTAL_CIPHERS jpake libunbound store)
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
+
+include(OpenSslExternalCMakeCheckArchitecture)
+
+# undocumented!
+if ( NOT OPENSSL_TARGET_ARCH )
+    openssl_external_cmake_detect_target_arch(OPENSSL_TARGET_ARCH)
+endif()
+
+# 386 and SSE2
+if (OPENSSL_TARGET_ARCH STREQUAL "x64")
+    set(OPENSSL_386 OFF CACHE BOOL "generate 80386 code in assembly modules" FORCE)
+    set(OPENSSL_SSE2 ON CACHE BOOL "Enable SSE2 instructions in assembly" FORCE)
+elseif (OPENSSL_TARGET_ARCH STREQUAL "x86")
+    option(OPENSSL_386 "generate 80386 code in assembly modules" OFF)
+    cmake_dependent_option(OPENSSL_SSE2 "Enable SSE2 instructions in assembly" ON "NOT OPENSSL_386" OFF)
+else()
+    set(OPENSSL_386 OFF CACHE BOOL "generate 80386 code in assembly modules" FORCE)
+    set(OPENSSL_SSE2 OFF CACHE BOOL "Enable SSE2 instructions in assembly" FORCE)
+endif()
+if (OPENSSL_386)
+    set(OPENSSL_USE_386 "386" CACHE STRING "" FORCE)
+endif()
+
 
 foreach (_CIPHER IN ITEMS
         ssl tls ssl3-method # meta-cipher
@@ -141,7 +154,7 @@ foreach (_CIPHER IN ITEMS
         aes asn1 bf bio bn buf-freelists buffer camellia capieng cast chain-verify cmac cms comp conf deprecated descbcm dgram dso dtls dtls1 ec-nistp-64-gcc-128 ec2m ecdh ecdsa
         engine evp fp-api gmp gost hash-comp heartbeats hmac idea jpake lhash libunbound locking md2 md4 mdc2 modes multibyte nextprotoneg object objects ocsp pem pkcs7 pkcs12
         posix-io pqueue psk rand rc2 rc4 rc5 rdrand rfc3779 ripemd ripemd160 rmd160 sctp seed setvbuf-ionbf sha0 sha1 sha256 sha512 sock speed srp srtp ssl-intern ssl-trace ssl2
-        ssl2-method ssl3 stack stdio store tls1 ts txt-db ui unit-test weak-ssl-ciphers whirlpool x509 x509-verify x509v3
+        ssl2-method ssl3 stack stdio store tls1 ts txt-db ui unit-test weak-ssl-ciphers whirlpool x509 x509-verify x509v3 uplink
 )
     list(FIND OPENSSL_DEFAULT_DISABLED_CIPHERS ${_CIPHER} _CIPHER_IS_DEFAULT_DISABLED)
     set(_CIPHER_DEFAULT ON)
@@ -173,6 +186,8 @@ foreach (_CIPHER IN ITEMS
         cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "OPENSSL_TLSEXT" OFF)
     elseif (_CIPHER STREQUAL "heartbeats")
         cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "OPENSSL_TLSEXT" OFF)
+    elseif (_CIPHER STREQUAL "uplink")
+        cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "MSVC;NOT OPENSSL_386" OFF)
     else()
         option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}")
     endif()
@@ -201,6 +216,22 @@ foreach (_CIPHER IN ITEMS
     unset(_CIPHER_IS_EXPERIMENTAL)
     unset(_CIPHER_IS_DEFAULT_DISABLED)
 endforeach()
+
+if (OPENSSL_ASM OR OPENSSL_UPLINK)
+    if (OPENSSL_ASM AND OPENSSL_NASM)
+        enable_language(ASM_NASM)
+        set(OPENSSL_ASM_PREPROCESSED ".nasm")
+        get_filename_component(OPENSSL_ASM_COMPILER "${CMAKE_ASM_NASM_COMPILER}" NAME_WLE)
+    elseif (MSVC)
+        enable_language(ASM_MASM)
+        set(OPENSSL_ASM_PREPROCESSED ".asm")
+        get_filename_component(OPENSSL_ASM_COMPILER "${CMAKE_ASM_NASM_COMPILER}" NAME_WLE)
+    else()
+        enable_language(ASM)
+        set(OPENSSL_ASM_PREPROCESSED ".s")
+        get_filename_component(OPENSSL_ASM_COMPILER "${CMAKE_ASM_NASM_COMPILER}" NAME_WLE)
+    endif()
+endif()
 
 # HACK
 set (OPENSSL_HW_CAPI ${OPENSSL_CAPIENG} CACHE BOOL "(automatically set, use OPENSSL_CAPIENG if this is to be modified)" FORCE)
@@ -262,29 +293,6 @@ endif()
 
 configure_file(${CMAKE_SOURCE_DIR}/openssl/e_os2.h ${CMAKE_BINARY_DIR}/include/openssl/e_os2.h COPYONLY)
 
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
-
-include(OpenSslExternalCMakeCheckArchitecture)
-
-# undocumented!
-if ( NOT OPENSSL_TARGET_ARCH )
-    openssl_external_cmake_detect_target_arch(OPENSSL_TARGET_ARCH)
-endif()
-
-# 386 and SSE2
-if (OPENSSL_TARGET_ARCH STREQUAL "x64")
-    set(OPENSSL_386 OFF CACHE BOOL "generate 80386 code in assembly modules" FORCE)
-    set(OPENSSL_SSE2 ON CACHE BOOL "Enable SSE2 instructions in assembly" FORCE)
-elseif (OPENSSL_TARGET_ARCH STREQUAL "x86")
-    option(OPENSSL_386 "generate 80386 code in assembly modules" OFF)
-    cmake_dependent_option(OPENSSL_SSE2 "Enable SSE2 instructions in assembly" ON "NOT OPENSSL_386" OFF)
-else()
-    set(OPENSSL_386 OFF CACHE BOOL "generate 80386 code in assembly modules" FORCE)
-    set(OPENSSL_SSE2 OFF CACHE BOOL "Enable SSE2 instructions in assembly" FORCE)
-endif()
-if (OPENSSL_386)
-    set(OPENSSL_USE_386 "386" CACHE STRING "" FORCE)
-endif()
 
 # list the original platform descriptions - How can this be so complicated?
 # currently only supported platforms are listed - other platforms will be added when finished
