@@ -46,8 +46,13 @@ elseif ( OPENSSL_TARGET_ARCH STREQUAL "x86" )
         set(LIBCRYPTO_CURRENTDIR_ASM_SOURCES
             ${CMAKE_SOURCE_DIR}/openssl/ms/uplink.c
             ${CMAKE_SOURCE_DIR}/openssl/ms/uplink.h
-            # uplink-x86.S${OPENSSL_ASM_PREPROCESSED_X86} # ACTUALLY unused!
         )
+        if (NOT MSVC)
+            set(LIBCRYPTO_CURRENTDIR_ASM_SOURCES
+                ${LIBCRYPTO_CURRENTDIR_ASM_SOURCES}
+                uplink-x86.S${OPENSSL_ASM_PREPROCESSED_X86}
+            )
+        endif()
     endif()
 elseif ( OPENSSL_TARGET_ARCH STREQUAL "arm32" )
     # no-asm
