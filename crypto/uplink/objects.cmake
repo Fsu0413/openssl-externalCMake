@@ -1,7 +1,8 @@
 # SPDX-License-Identifier: Unlicense
 
-perlasm_generate_src(uplink-x86.S ${CMAKE_SOURCE_DIR}/openssl/ms/uplink-x86.pl
+perlasm_generate_src(uplink-x86${OPENSSL_ASM_PREPROCESSED} ${CMAKE_SOURCE_DIR}/openssl/ms/uplink-x86.pl
     DEPENDENCIES ${CMAKE_SOURCE_DIR}/openssl/crypto/perlasm/x86asm.pl
+    FLAGS ${OPENSSL_PERLASM_SCHEME}
 )
 add_custom_command(
     OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/uplink/uplink-x86_64-fix.pl"
@@ -47,8 +48,13 @@ elseif ( OPENSSL_TARGET_ARCH STREQUAL "x86" )
         set(LIBCRYPTO_CURRENTDIR_ASM_SOURCES
             ${CMAKE_SOURCE_DIR}/openssl/ms/uplink.c
             ${CMAKE_SOURCE_DIR}/openssl/ms/uplink.h
-            # uplink-x86.S${OPENSSL_ASM_PREPROCESSED_X86} # ACTUALLY unused!
         )
+        if (NOT MSVC)
+            set(LIBCRYPTO_CURRENTDIR_ASM_SOURCES
+                ${LIBCRYPTO_CURRENTDIR_ASM_SOURCES}
+                uplink-x86${OPENSSL_ASM_PREPROCESSED}
+            )
+        endif()
     endif()
 elseif ( OPENSSL_TARGET_ARCH STREQUAL "arm32" )
     # no-asm
