@@ -202,7 +202,7 @@ foreach (_CIPHER IN ITEMS
             message(FATAL_ERROR "You are enabling experimental cipher " ${_CIPHER} ". Please use -D" "${_CIPHER_FORCE_STR}" "=1 to proceed with experimental setting.")
         endif()
     endif()
-    set("${_CIPHER_NO_STR}" ON CACHE BOOL "${_CIPHER_NO_HELP}")
+    set("${_CIPHER_NO_STR}" ON CACHE BOOL "${_CIPHER_NO_HELP}" FORCE)
     if (${_CIPHER_STR})
         set("${_CIPHER_NO_STR}" OFF CACHE BOOL "${_CIPHER_NO_HELP}" FORCE)
     endif()
