@@ -617,7 +617,7 @@ foreach (_DIRECTORY IN LISTS LIBCRYPTO_DIRECTORIES)
     include(${_DIRECTORY}/objects.cmake)
 endforeach()
 
-if (OPENSSL_HW AND ( NOT ( BUILD_SHARED_LIBS AND OPENSSL_DYNAMIC_ENGINE ) ) )
+if (OPENSSL_HW AND OPENSSL_ENGINE AND ( NOT ( BUILD_SHARED_LIBS AND OPENSSL_DYNAMIC_ENGINE ) ) )
     foreach (_OPTION IN ITEMS 4758-cca aep atalla cswift gmp chil nuron sureware ubsec padlock capi ccgost)
         set(_ENGINE ${_OPTION})
         if (_OPTION STREQUAL "4758-cca")
