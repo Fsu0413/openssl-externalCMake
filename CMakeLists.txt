@@ -434,7 +434,7 @@ foreach (_CIPHER IN ITEMS
     endif()
     string(CONCAT _CIPHER_NO_STR "OPENSSL_NO_" ${_CIPHER_SYMBOL})
     string(CONCAT _CIPHER_NO_HELP "disable OpenSSL cipher " ${_CIPHER} " (automatically set, use ${_CIPHER_STR} if this is to be modified)")
-    set("${_CIPHER_NO_STR}" ON CACHE BOOL "${_CIPHER_NO_HELP}")
+    set("${_CIPHER_NO_STR}" ON CACHE BOOL "${_CIPHER_NO_HELP}" FORCE)
     if (${_CIPHER_STR})
         set("${_CIPHER_NO_STR}" OFF CACHE BOOL "${_CIPHER_NO_HELP}" FORCE)
     endif()
