@@ -392,7 +392,7 @@ endforeach()
 
 configure_file(opensslv.h.cmake.in ${CMAKE_BINARY_DIR}/include/openssl/opensslv.h @ONLY)
 
-if (OPENSSL_HW AND ( NOT ( BUILD_SHARED_LIBS AND OPENSSL_DYNAMIC_ENGINE ) ) )
+if (OPENSSL_HW AND OPENSSL_ENGINE AND ( NOT ( BUILD_SHARED_LIBS AND OPENSSL_DYNAMIC_ENGINE ) ) )
     foreach (_OPTION IN ITEMS padlock capi afalg devcrypto)
         set(_ENGINE ${_OPTION})
         string(TOUPPER ${_OPTION} _OPTION_UPPER)
