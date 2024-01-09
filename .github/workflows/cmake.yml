@@ -6,7 +6,7 @@ jobs:
   get-version:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           submodules: true
           path: openssl-externalCMake
@@ -33,7 +33,7 @@ jobs:
       FS_OPENSSL_PACKAGE_STR: Ubuntu${{ matrix.runner }}-x86_64-ASM${{ matrix.asm }}-Zlib${{ matrix.zlib }}-Threads${{ matrix.threads }}
       FS_OPENSSL_VERSION_STR: ${{ needs.get-version.outputs.openssl_version }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           submodules: true
           path: openssl-externalCMake
@@ -78,7 +78,7 @@ jobs:
       FS_OPENSSL_PACKAGE_STR: macOS${{ matrix.runner }}-x86_64-ASM${{ matrix.asm }}-Zlib${{ matrix.zlib }}-Threads${{ matrix.threads }}
       FS_OPENSSL_VERSION_STR: ${{ needs.get-version.outputs.openssl_version }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           submodules: true
           path: openssl-externalCMake
@@ -121,7 +121,7 @@ jobs:
       FS_OPENSSL_PACKAGE_STR: macOS${{ matrix.runner }}-aarch64-ASM${{ matrix.asm }}-Zlib${{ matrix.zlib }}-Threads${{ matrix.threads }}
       FS_OPENSSL_VERSION_STR: ${{ needs.get-version.outputs.openssl_version }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           submodules: true
           path: openssl-externalCMake
@@ -161,7 +161,7 @@ jobs:
       FS_OPENSSL_PACKAGE_STR: macOS${{ matrix.runner }}-unified-Zlib${{ matrix.zlib }}-Threads${{ matrix.threads }}
       FS_OPENSSL_VERSION_STR: ${{ needs.get-version.outputs.openssl_version }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           submodules: true
           path: openssl-externalCMake
@@ -212,7 +212,7 @@ jobs:
       FS_OPENSSL_PACKAGE_STR: MinGWGCC${{ matrix.toolchain.version }}-${{ matrix.toolchain.arch }}-ASM${{ matrix.asm }}-Threads${{ matrix.threads }}
       FS_OPENSSL_VERSION_STR: ${{ needs.get-version.outputs.openssl_version }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           submodules: true
           path: openssl-externalCMake
@@ -285,7 +285,7 @@ jobs:
       FS_OPENSSL_PACKAGE_STR: MSVC${{ matrix.toolchain.version }}-${{ matrix.toolchain.arch }}-ASM${{ matrix.asm.value }}-NASM${{ matrix.asm.nasm }}
       FS_OPENSSL_VERSION_STR: ${{ needs.get-version.outputs.openssl_version }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           submodules: true
           path: openssl-externalCMake
@@ -354,7 +354,7 @@ jobs:
       FS_OPENSSL_PACKAGE_STR: AndroidAPI${{ matrix.toolchain.platform }}-${{ matrix.toolchain.arch }}}-ASM${{ matrix.asm }}Zlib${{ matrix.zlib }}-Threads${{ matrix.threads }}
       FS_OPENSSL_VERSION_STR: ${{ needs.get-version.outputs.openssl_version }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           submodules: true
           path: openssl-externalCMake
