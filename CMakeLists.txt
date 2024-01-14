@@ -399,3 +399,45 @@ add_subdirectory(exporters)
 if (OPENSSL_BUILD_DOCS)
     add_subdirectory(doc)
 endif()
+
+# CPack configuration items
+if (DEFINED OPENSSL_BUILD_PLATFORM)
+    set(CPACK_SYSTEM_NAME "${OPENSSL_BUILD_PLATFORM}")
+elseif (APPLE AND NOT IOS AND ( OPENSSL_OSX_ARCHITECTURES_LENGTH GREATER 1 ) )
+    set(CPACK_SYSTEM_NAME "darwin64-unified64")
+endif()
+set(CPACK_PACKAGE_VENDOR "Fsu0413/openssl-externalCMake")
+set(CPACK_THREADS 0)
+set(CPACK_PACKAGE_VERSION "${OPENSSL_VERSION_REAL}")
+if (WIN32)
+    set(CPACK_GENERATOR 7Z ZIP)
+else()
+    set(CPACK_GENERATOR TGZ TXZ)
+endif()
+if (CMAKE_HOST_WIN32)
+    set(CPACK_SOURCE_GENERATOR 7Z ZIP)
+else()
+    set(CPACK_SOURCE_GENERATOR TGZ TXZ)
+endif()
+set(CPACK_SOURCE_IGNORE_FILES
+    # Git / GitHub files
+    [[/\\.git]]
+
+    # Local configuration file - used in development environment for Fsu0413
+    [[\\.FsEnv\\.cmake$]]
+
+    # Temporary files
+    [[~]]
+    [[\\.orig$]]
+    [[/\\.DS_Store/]]
+    [[CMakeLists\\.txt\\.user.*$]]
+    [[\\.autosave$]]
+
+    # OpenSSL Travis CI files
+    [[/openssl/\\.travis]]
+
+    # OpenSSL Files not for release
+    [[/openssl/crypto/des/t/]]
+    [[/openssl/TABLE$]]
+)
+include(CPack)
