@@ -17,6 +17,64 @@ jobs:
     outputs:
       openssl_version: ${{ steps.getversion.outputs.OPENSSL_VERSION }}
 
+  package-source-unix:
+    runs-on: ubuntu-latest
+    needs: get-version
+    env:
+      FS_OPENSSL_VERSION_STR: ${{ needs.get-version.outputs.openssl_version }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+          path: openssl-externalCMake
+      - name: add CMake repository and needed softwares
+        run: |
+          wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null | gpg --dearmor - | sudo tee /usr/share/keyrings/kitware-archive-keyring.gpg >/dev/null
+          echo 'deb [signed-by=/usr/share/keyrings/kitware-archive-keyring.gpg] https://apt.kitware.com/ubuntu/ '"$(. /etc/os-release; echo ${VERSION_CODENAME})"' main' | sudo tee /etc/apt/sources.list.d/kitware.list >/dev/null
+          sudo apt-get update
+          sudo apt-get install cmake ninja-build perl build-essential zlib1g-dev
+      - name: run CMake + Ninja
+        run: |
+          mkdir -p "build"
+          cd "build"
+          cmake -GNinja -DCMAKE_BUILD_TYPE=Release "${{ github.workspace }}/openssl-externalCMake"
+          cmake --build . --parallel -t package_source
+      - uses: actions/upload-artifact@v4
+        with:
+          name: openssl${{ env.FS_OPENSSL_VERSION_STR }}-Source-LF
+          path: build/OpenSSL-${{ env.FS_OPENSSL_VERSION_STR }}-Source.tar.xz
+
+  package-source-windows:
+    runs-on: windows-latest
+    needs: get-version
+    env:
+      FS_OPENSSL_VERSION_STR: ${{ needs.get-version.outputs.openssl_version }}
+    steps:
+      - name: configure
+        shell: cmd
+        run: git config --global core.autocrlf true
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+          path: openssl-externalCMake
+      - name: add CMake repository and needed softwares
+        shell: cmd
+        run: |
+          choco install cmake
+          choco install ninja
+      - name: run CMake + Ninja
+        shell: cmd
+        run: |
+          del /s /q C:\Strawberry\perl\bin\pkg-config.bat
+          mkdir -p "build"
+          cd "build"
+          cmake -GNinja -DCMAKE_BUILD_TYPE=Release "${{ github.workspace }}/openssl-externalCMake"
+          cmake --build . --parallel -t package_source
+      - uses: actions/upload-artifact@v4
+        with:
+          name: openssl${{ env.FS_OPENSSL_VERSION_STR }}-Source-CRLF
+          path: build/OpenSSL-${{ env.FS_OPENSSL_VERSION_STR }}-Source.7z
+
   build-ubuntu:
     strategy:
       fail-fast: false
@@ -48,19 +106,12 @@ jobs:
           mkdir -p "build"
           cd "build"
           cmake -GNinja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}/openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}" -DOPENSSL_ASM=${{ matrix.asm }} -DOPENSSL_ZLIB=${{ matrix.zlib }} -DOPENSSL_THREADS=${{ matrix.threads }} "${{ github.workspace }}/openssl-externalCMake"
-          ninja
-          cmake --install . --strip
-#      - name: run test
-#        run: |
-#          cd "build"
-#          ninja check
-      - name: package
-        run: |
-          tar -cJf "openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}.tar.xz" "openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}"
+          cmake --build . --parallel
+          cmake --build . --parallel -t package
       - uses: actions/upload-artifact@v4
         with:
           name: openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}
-          path: openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}.tar.xz
+          path: build/OpenSSL-${{ env.FS_OPENSSL_VERSION_STR }}-linux-x86_64.tar.xz
 
   build-macOS:
     strategy:
@@ -91,19 +142,12 @@ jobs:
           mkdir -p "build"
           cd "build"
           cmake -GNinja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}/openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}" -DCMAKE_OSX_ARCHITECTURES="x86_64" -DOPENSSL_ASM=${{ matrix.asm }} -DOPENSSL_ZLIB=${{ matrix.zlib }} -DOPENSSL_THREADS=${{ matrix.threads }} "${{ github.workspace }}/openssl-externalCMake"
-          ninja
-          cmake --install . --strip
-#      - name: run test
-#        run: |
-#          cd "build"
-#          ninja check
-      - name: package
-        run: |
-          tar -cJf "openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}.tar.xz" "openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}"
+          cmake --build . --parallel
+          cmake --build . --parallel -t package
       - uses: actions/upload-artifact@v4
         with:
           name: openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}
-          path: openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}.tar.xz
+          path: build/OpenSSL-${{ env.FS_OPENSSL_VERSION_STR }}-darwin64-x86_64-cc.tar.xz
 
   build-macOS-aarch64:
     strategy:
@@ -134,16 +178,12 @@ jobs:
           mkdir -p "build"
           cd "build"
           cmake -GNinja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}/openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}" -DCMAKE_OSX_ARCHITECTURES="arm64" -DOPENSSL_ASM=${{ matrix.asm }} -DOPENSSL_ZLIB=${{ matrix.zlib }} -DOPENSSL_THREADS=${{ matrix.threads }} "${{ github.workspace }}/openssl-externalCMake"
-          ninja
-          cmake --install . --strip
-      # Tests can not run. GitHub actions runs on x86_64 and there is no Rosetta2 available.
-      - name: package
-        run: |
-          tar -cJf "openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}.tar.xz" "openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}"
+          cmake --build . --parallel
+          cmake --build . --parallel -t package
       - uses: actions/upload-artifact@v4
         with:
           name: openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}
-          path: openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}.tar.xz
+          path: build/OpenSSL-${{ env.FS_OPENSSL_VERSION_STR }}-darwin64-arm64-cc.tar.xz
 
   build-macOS-unified:
     strategy:
@@ -174,16 +214,12 @@ jobs:
           mkdir -p "build"
           cd "build"
           cmake -GNinja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}/openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}" -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64" -DOPENSSL_ASM=NO -DOPENSSL_ZLIB=${{ matrix.zlib }} -DOPENSSL_THREADS=${{ matrix.threads }} "${{ github.workspace }}/openssl-externalCMake"
-          ninja
-          cmake --install . --strip
-      # Tests need not run. Same as no-asm x86_64 since GitHub actions runs on x86_64 and there is no Rosetta2 available
-      - name: package
-        run: |
-          tar -cJf "openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}.tar.xz" "openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}"
+          cmake --build . --parallel
+          cmake --build . --parallel -t package
       - uses: actions/upload-artifact@v4
         with:
           name: openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}
-          path: openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}.tar.xz
+          path: build/OpenSSL-${{ env.FS_OPENSSL_VERSION_STR }}-darwin64-unified64.tar.xz
 
   build-MinGW:
     strategy:
@@ -194,14 +230,17 @@ jobs:
             bit: "64"
             arch: "x86_64"
             url: "https://github.com/niXman/mingw-builds-binaries/releases/download/12.2.0-rt_v10-rev2/x86_64-12.2.0-release-posix-seh-msvcrt-rt_v10-rev2.7z"
+            OPENSSL_BUILD_PLATFORM: mingw64
           - version: "12.2.0"
             bit: "32"
             arch: "i686"
             url: "https://github.com/niXman/mingw-builds-binaries/releases/download/12.2.0-rt_v10-rev2/i686-12.2.0-release-posix-dwarf-msvcrt-rt_v10-rev2.7z"
+            OPENSSL_BUILD_PLATFORM: mingw
           - version: "13.1.0"
             bit: "64"
             arch: "x86_64"
             url: "https://github.com/niXman/mingw-builds-binaries/releases/download/13.1.0-rt_v11-rev1/x86_64-13.1.0-release-posix-seh-msvcrt-rt_v11-rev1.7z"
+            OPENSSL_BUILD_PLATFORM: mingw64
         asm: [ "YES", "NO" ]
         threads: [ "YES", "NO" ]
     continue-on-error: true
@@ -233,21 +272,12 @@ jobs:
           mkdir -p "build"
           cd "build"
           cmake -GNinja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}/openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}" -DOPENSSL_ASM=${{ matrix.asm }} -DOPENSSL_THREADS=${{ matrix.threads }} -DPOD2MAN="C:\Strawberry\perl\bin\pod2man.bat" "${{ github.workspace }}/openssl-externalCMake"
-          ninja
-          cmake --install . --strip
-#      - name: run test
-#        shell: cmd
-#        run: |
-#          set path=${{ github.workspace }}\mingw\mingw${{ matrix.toolchain.bit }}\\bin;%path%
-#          cd "build"
-#          ninja check
-      - name: package
-        run: |
-          7z a "openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}.7z" "openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}"
+          cmake --build . --parallel
+          cmake --build . --parallel -t package
       - uses: actions/upload-artifact@v4
         with:
           name: openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}
-          path: openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}.7z
+          path: build/OpenSSL-${{ env.FS_OPENSSL_VERSION_STR }}-${{ matrix.toolchain.OPENSSL_BUILD_PLATFORM }}.7z
 
   build-msvc:
     strategy:
@@ -259,16 +289,19 @@ jobs:
             call: C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat
             bit: "64"
             arch: "x86_64"
+            OPENSSL_BUILD_PLATFORM: VC-WIN64A
           - version: "2019"
             runson: "2019"
             call: C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat
             bit: "64"
             arch: "x86_64"
+            OPENSSL_BUILD_PLATFORM: VC-WIN64A
           - version: "2019"
             runson: "2019"
             call: C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvarsamd64_x86.bat
             bit: "32"
             arch: "i686"
+            OPENSSL_BUILD_PLATFORM: VC-WIN32
         asm: [ "YES", "NO" ]
         # msvc builds doesn't support no-thread
     continue-on-error: true
@@ -296,21 +329,12 @@ jobs:
           mkdir -p "build"
           cd "build"
           cmake -GNinja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}/openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}" -DOPENSSL_ASM=${{ matrix.asm }} -DOPENSSL_NASM=${{ matrix.asm }} -DPOD2MAN="C:\Strawberry\perl\bin\pod2man.bat" "${{ github.workspace }}/openssl-externalCMake"
-          ninja
-          cmake --install . --strip
-#      - name: run test
-#        shell: cmd
-#        run: |
-#          call "${{ matrix.toolchain.call }}"
-#          cd "build"
-#          ninja check
-      - name: package
-        run: |
-          7z a "openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}.7z" "openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}"
+          cmake --build . --parallel
+          cmake --build . --parallel -t package
       - uses: actions/upload-artifact@v4
         with:
           name: openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}
-          path: openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}.7z
+          path: build/OpenSSL-${{ env.FS_OPENSSL_VERSION_STR }}-${{ matrix.toolchain.OPENSSL_BUILD_PLATFORM }}.7z
 
   # The first NDK version which supports CMake is r13, but since then GCC is no longer supported and is broken (https://github.com/android/ndk/issues/67 is closed as won't fix)
   # clang on NDK doesn't support the "-mandroid" flag OpenSSL sets. We'd use sed to remove them from command line when using perl-based Configure
@@ -324,20 +348,28 @@ jobs:
         toolchain:
           - arch: "armeabi-v7a"
             platform: "16"
+            OPENSSL_BUILD_PLATFORM: android-armeabi
           - arch: "x86"
             platform: "16"
+            OPENSSL_BUILD_PLATFORM: android-x86
           - arch: "armeabi-v7a"
             platform: "21"
+            OPENSSL_BUILD_PLATFORM: android-armeabi
           - arch: "arm64-v8a"
             platform: "21"
+            OPENSSL_BUILD_PLATFORM: android64-aarch64
           - arch: "x86"
             platform: "21"
+            OPENSSL_BUILD_PLATFORM: android-x86
           - arch: "armeabi-v7a"
             platform: "24"
+            OPENSSL_BUILD_PLATFORM: android-armeabi
           - arch: "arm64-v8a"
             platform: "24"
+            OPENSSL_BUILD_PLATFORM: android64-aarch64
           - arch: "x86"
             platform: "24"
+            OPENSSL_BUILD_PLATFORM: android-x86
         asm: [ "YES", "NO" ]
         threads: [ "YES", "NO" ]
         zlib: [ "YES", "NO" ]
@@ -370,13 +402,9 @@ jobs:
           mkdir -p "build"
           cd "build"
           cmake -GNinja -DCMAKE_TOOLCHAIN_FILE="${{ github.workspace }}/android-ndk-r17c/build/cmake/android.toolchain.cmake" -DANDROID_ABI=${{ matrix.toolchain.arch }} -DANDROID_PLATFORM=android-${{ matrix.toolchain.platform }} -DANDROID_TOOLCHAIN=gcc -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}/openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}" -DOPENSSL_ASM=${{ matrix.asm }} -DOPENSSL_ZLIB=${{ matrix.zlib }} -DOPENSSL_THREADS=${{ matrix.threads }} "${{ github.workspace }}/openssl-externalCMake"
-          ninja
-          cmake --install . --strip
-      # test can't be run due to the syntax is not compatible with Android. TODO: android emulator
-      - name: package
-        run: |
-          tar -cJf "openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}.tar.xz" "openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}"
+          cmake --build . --parallel
+          cmake --build . --parallel -t package
       - uses: actions/upload-artifact@v4
         with:
           name: openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}
-          path: openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}.tar.xz
+          path: build/OpenSSL-${{ env.FS_OPENSSL_VERSION_STR }}-${{ matrix.toolchain.OPENSSL_BUILD_PLATFORM }}.tar.xz
