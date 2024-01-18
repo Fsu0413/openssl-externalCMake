@@ -1,6 +1,10 @@
 # SPDX-License-Identifier: Unlicense
 
-find_program(POD2MAN "pod2man")
+get_filename_component(PERL_PATH "${PERL_EXECUTABLE}" DIRECTORY)
+find_program(POD2MAN
+    NAMES "pod2man" "pod2man.bat"
+    HINTS "${PERL_PATH}"
+)
 
 if (NOT POD2MAN)
     set(POD2MAN "${PERL_EXECUTABLE} ${CMAKE_SOURCE_DIR}/openssl/util/pod2man.pl" CACHE STRING "" FORCE)
