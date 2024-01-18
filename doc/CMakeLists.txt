@@ -1,6 +1,11 @@
 # SPDX-License-Identifier: Unlicense
 
-find_program(POD2MAN "pod2man" REQUIRED)
+get_filename_component(PERL_PATH "${PERL_EXECUTABLE}" DIRECTORY)
+find_program(POD2MAN
+    NAMES "pod2man" "pod2man.bat"
+    HINTS "${PERL_PATH}"
+    REQUIRED
+)
 
 set(OPENSSL_DOCS_LIST)
 set(OPENSSL_DOCS_FULLLIST)
