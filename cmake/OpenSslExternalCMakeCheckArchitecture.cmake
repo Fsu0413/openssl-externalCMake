@@ -8,6 +8,8 @@ function(openssl_external_cmake_detect_target_arch arch)
     # Known conversions: Apple can define CMAKE_OSX_ARCHITECTURES, which will result in a multi-architecture build
     if (APPLE AND CMAKE_OSX_ARCHITECTURES)
         list(LENGTH CMAKE_OSX_ARCHITECTURES OPENSSL_OSX_ARCHITECTURES_LENGTH)
+        set(OPENSSL_OSX_ARCHITECTURES_LENGTH "${OPENSSL_OSX_ARCHITECTURES_LENGTH}" PARENT_SCOPE)
+
         if (OPENSSL_OSX_ARCHITECTURES_LENGTH GREATER 1)
             if (OPENSSL_ASM)
                 # TODO: complete this when CMake supports building different sets of file for different architectures
