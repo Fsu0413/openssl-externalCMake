@@ -394,10 +394,6 @@ else()
     set(OPENSSL_NO_DSO ON CACHE BOOL "build without DSO (automatically set, use OPENSSL_DSO if this is to be modified)" FORCE)
 endif()
 
-# TODO: uplink platforms (if not 386)
-# cflags = -DOPENSSL_USE_APPLINK
-# cpuid_obj += uplink.o uplink-x86.o
-
 # list the original platform descriptions - How can this be so complicated?
 # currently only supported platforms are listed - other platforms will be added when finished
 if (WIN32)
@@ -490,6 +486,22 @@ elseif (CMAKE_SYSTEM_NAME MATCHES "BSD")
             set(OPENSSL_BUILD_PLATFORM "BSD-generic64")
         else()
             set(OPENSSL_BUILD_PLATFORM "BSD-generic32")
+        endif()
+    endif()
+elseif (CMAKE_SYSTEM_NAME MATCHES "SunOS")
+    if (OPENSSL_TARGET_ARCH STREQUAL "x64")
+        if (CMAKE_C_COMPILER_ID MATCHES "GNU")
+            set(OPENSSL_BUILD_PLATFORM "solaris64-x86_64-gcc")
+        elseif (CMAKE_C_COMPILER_ID MATCHES "SunPro")
+            set(OPENSSL_BUILD_PLATFORM "solaris64-x86_64-cc")
+        endif()
+    elseif (OPENSSL_TARGET_ARCH STREQUAL "x86")
+        if (CMAKE_C_COMPILER_ID MATCHES "GNU")
+            set(OPENSSL_BUILD_PLATFORM "solaris-x86-gcc")
+        elseif (CMAKE_C_COMPILER_ID MATCHES "SunPro")
+            # set(OPENSSL_BUILD_PLATFORM "solaris-x86-cc")
+            message(FATAL_ERROR "OpenSSL no longer supports solaris-x86-cc target. "
+                "Search \"solaris-x86-cc\" in openssl/Configurations/10-main.conf to see what happens to OpenSSL.")
         endif()
     endif()
 endif()
