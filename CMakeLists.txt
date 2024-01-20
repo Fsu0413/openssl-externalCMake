@@ -28,6 +28,16 @@ project(OpenSSL
     LANGUAGES C CXX
 )
 
+if (CMAKE_VERSION VERSION_LESS 3.25)
+    # set variable LINUX and BSD (which wasn't introduced until CMake 3.25)
+    # Note: We don't actually judge the variant of Linux or BSD so just make it "if"-compatible
+    if (CMAKE_SYSTEM_NAME MATCHES "[Ll]inux")
+        set(LINUX true)
+    elseif (CMAKE_SYSTEM_NAME MATCHES "BSD" OR CMAKE_SYSTEM_NAME STREQUAL "DragonFly")
+        set(BSD "${CMAKE_SYSTEM_NAME}")
+    endif()
+endif()
+
 get_filename_component(OPENSSL_C_COMPILER "${CMAKE_C_COMPILER}" NAME_WLE)
 
 # for generating opensslv.h
@@ -315,7 +325,7 @@ foreach (_CIPHER IN ITEMS
     if (_CIPHER STREQUAL "bulk")
         cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "BUILD_SHARED_LIBS;OPENSSL_DSO" ON)
     elseif (_CIPHER STREQUAL "afalgeng")
-        cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "CMAKE_SYSTEM_NAME MATCHES \"[Ll]inux\";OPENSSL_ENGINE" OFF)
+        cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "LINUX;OPENSSL_ENGINE" OFF)
     elseif (_CIPHER STREQUAL "mdc2")
         cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "OPENSSL_DES" OFF)
     elseif (_CIPHER STREQUAL "ed2m")
@@ -612,7 +622,7 @@ elseif (ANDROID)
     else()
         set(OPENSSL_BUILD_PLATFORM "android")
     endif()
-elseif (CMAKE_SYSTEM_NAME MATCHES "[Ll]inux")
+elseif (LINUX)
     if (OPENSSL_TARGET_ARCH STREQUAL "x64")
         if (CMAKE_C_COMPILER_ID MATCHES "[Cc]lang")
             set(OPENSSL_BUILD_PLATFORM "linux-x86_64-clang")
@@ -636,7 +646,7 @@ elseif (CMAKE_SYSTEM_NAME MATCHES "[Ll]inux")
             set(OPENSSL_BUILD_PLATFORM "linux-generic32")
         endif()
     endif()
-elseif (CMAKE_SYSTEM_NAME MATCHES "BSD")
+elseif (BSD)
     if (OPENSSL_TARGET_ARCH STREQUAL "x64")
         set(OPENSSL_BUILD_PLATFORM "BSD-x86_64")
     elseif (OPENSSL_TARGET_ARCH STREQUAL "x86")
