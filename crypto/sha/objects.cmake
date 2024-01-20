@@ -163,13 +163,7 @@ set(LIBCRYPTO_CURRENTDIR_ASM_SOURCES
     # empty by default
 )
 if (OPENSSL_ASM)
-    if ( ( OPENSSL_TARGET_ARCH STREQUAL "x64" ) AND (
-               ( CMAKE_SYSTEM_NAME MATCHES "BSD" )
-            OR CYGWIN
-            OR WIN32
-            OR ( APPLE AND NOT IOS )
-            OR ( CMAKE_SYSTEM_NAME MATCHES "[Ll]inux" )
-    ) )
+    if ( OPENSSL_TARGET_ARCH STREQUAL "x64" )
         set(LIBCRYPTO_CURRENTDIR_ASM_SOURCES
             sha1-x86_64${OPENSSL_ASM_PREPROCESSED}
             sha1-mb-x86_64${OPENSSL_ASM_PREPROCESSED}
@@ -177,31 +171,22 @@ if (OPENSSL_ASM)
             sha256-mb-x86_64${OPENSSL_ASM_PREPROCESSED}
             sha512-x86_64${OPENSSL_ASM_PREPROCESSED}
         )
-    elseif ( ( OPENSSL_TARGET_ARCH STREQUAL "x86" ) AND (
-               ( CMAKE_SYSTEM_NAME MATCHES "BSD" )
-            OR CYGWIN
-            OR ( WIN32 AND ( ( MSVC AND OPENSSL_NASM ) ) OR NOT MSVC )
-            OR ANDROID
-            OR ( CMAKE_SYSTEM_NAME MATCHES "[Ll]inux" )
-    ) )
-        set(LIBCRYPTO_CURRENTDIR_ASM_SOURCES
-            sha1-586${OPENSSL_ASM_PREPROCESSED}
-            sha256-586${OPENSSL_ASM_PREPROCESSED}
-            sha512-586${OPENSSL_ASM_PREPROCESSED}
-        )
-    elseif ( ( OPENSSL_TARGET_ARCH STREQUAL "arm32" ) AND (
-               ANDROID
-            OR ( CMAKE_SYSTEM_NAME MATCHES "[Ll]inux")
-    ) )
+    elseif ( OPENSSL_TARGET_ARCH STREQUAL "x86" )
+        # sha1 asm do not compile using MSVC
+        if ( ( MSVC AND OPENSSL_NASM ) OR ( NOT MSVC ) )
+            set(LIBCRYPTO_CURRENTDIR_ASM_SOURCES
+                sha1-586${OPENSSL_ASM_PREPROCESSED}
+                sha256-586${OPENSSL_ASM_PREPROCESSED}
+                sha512-586${OPENSSL_ASM_PREPROCESSED}
+            )
+        endif()
+    elseif ( OPENSSL_TARGET_ARCH STREQUAL "arm32" )
         set(LIBCRYPTO_CURRENTDIR_ASM_SOURCES
             sha1-armv4-large.S
             sha256-armv4.S
             sha512-armv4.S
         )
-    elseif ( ( OPENSSL_TARGET_ARCH STREQUAL "arm64" ) AND (
-               ANDROID
-            OR ( CMAKE_SYSTEM_NAME MATCHES "[Ll]inux" )
-    ) )
+    elseif ( OPENSSL_TARGET_ARCH STREQUAL "arm64" )
         set(LIBCRYPTO_CURRENTDIR_ASM_SOURCES
             sha1-armv8.S
             sha256-armv8.S

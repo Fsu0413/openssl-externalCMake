@@ -57,49 +57,20 @@ set(LIBCRYPTO_CURRENTDIR_ASM_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/crypto/mem_clr.c
 )
 if (OPENSSL_ASM)
-    if ( ( OPENSSL_TARGET_ARCH STREQUAL "x64" ) AND (
-               ( CMAKE_SYSTEM_NAME MATCHES "BSD" )
-            OR CYGWIN
-            OR WIN32
-            OR ( APPLE AND NOT IOS )
-            OR ( CMAKE_SYSTEM_NAME MATCHES "[Ll]inux" )
-    ) )
+    if ( OPENSSL_TARGET_ARCH STREQUAL "x64" )
         set(LIBCRYPTO_CURRENTDIR_ASM_SOURCES
             x86_64cpuid${OPENSSL_ASM_PREPROCESSED}
         )
-    elseif ( ( OPENSSL_TARGET_ARCH STREQUAL "x86" ) AND ( NOT OPENSSL_386 ) AND (
-               ( CMAKE_SYSTEM_NAME MATCHES "BSD" )
-            OR CYGWIN
-            OR WIN32
-            OR ANDROID
-            OR ( CMAKE_SYSTEM_NAME MATCHES "[Ll]inux" )
-    ) )
-        # TODO: properly set up applink and uplink
+    elseif ( ( OPENSSL_TARGET_ARCH STREQUAL "x86" ) AND ( NOT OPENSSL_386 ) )
         set(LIBCRYPTO_CURRENTDIR_ASM_SOURCES
             x86cpuid${OPENSSL_ASM_PREPROCESSED}
         )
-        if (false)
-            if ( WIN32 )
-                set(LIBCRYPTO_CURRENTDIR_ASM_SOURCES
-                    ${LIBCRYPTO_CRYPTODIR_ASM_SOURCES}
-                    ${CMAKE_SOURCE_DIR}/ms/applink.c
-                    ${CMAKE_SOURCE_DIR}/ms/uplink.c
-                    uplink-x86${OPENSSL_ASM_PREPROCESSED}
-                )
-            endif()
-        endif()
-    elseif ( ( OPENSSL_TARGET_ARCH STREQUAL "arm32" ) AND (
-               ANDROID
-            OR ( CMAKE_SYSTEM_NAME MATCHES "[Ll]inux")
-    ) )
+    elseif ( OPENSSL_TARGET_ARCH STREQUAL "arm32" )
         set(LIBCRYPTO_CURRENTDIR_ASM_SOURCES
             ${CMAKE_SOURCE_DIR}/openssl/crypto/armv4cpuid.S
             ${CMAKE_SOURCE_DIR}/openssl/crypto/armcap.c
         )
-    elseif ( ( OPENSSL_TARGET_ARCH STREQUAL "arm64" ) AND (
-               ANDROID
-            OR ( CMAKE_SYSTEM_NAME MATCHES "[Ll]inux" )
-    ) )
+    elseif ( OPENSSL_TARGET_ARCH STREQUAL "arm64" )
         set(LIBCRYPTO_CURRENTDIR_ASM_SOURCES
             ${CMAKE_SOURCE_DIR}/openssl/crypto/arm64cpuid.S
             ${CMAKE_SOURCE_DIR}/openssl/crypto/armcap.c

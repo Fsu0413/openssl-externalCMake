@@ -92,13 +92,7 @@ set(LIBCRYPTO_CURRENTDIR_ASM_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/crypto/aes/aes_cbc.c
 )
 if (OPENSSL_ASM)
-    if ( ( OPENSSL_TARGET_ARCH STREQUAL "x64" ) AND (
-               ( CMAKE_SYSTEM_NAME MATCHES "BSD" )
-            OR CYGWIN
-            OR WIN32
-            OR ( APPLE AND NOT IOS )
-            OR ( CMAKE_SYSTEM_NAME MATCHES "[Ll]inux" )
-    ) )
+    if ( OPENSSL_TARGET_ARCH STREQUAL "x64" )
         set(LIBCRYPTO_CURRENTDIR_ASM_SOURCES
             aes-x86_64${OPENSSL_ASM_PREPROCESSED}
             vpaes-x86_64${OPENSSL_ASM_PREPROCESSED}
@@ -108,13 +102,7 @@ if (OPENSSL_ASM)
             aesni-sha256-x86_64${OPENSSL_ASM_PREPROCESSED}
             aesni-mb-x86_64${OPENSSL_ASM_PREPROCESSED}
         )
-    elseif ( ( OPENSSL_TARGET_ARCH STREQUAL "x86" ) AND (
-               ( CMAKE_SYSTEM_NAME MATCHES "BSD" )
-            OR CYGWIN
-            OR WIN32
-            OR ANDROID
-            OR ( CMAKE_SYSTEM_NAME MATCHES "[Ll]inux" )
-    ) )
+    elseif ( OPENSSL_TARGET_ARCH STREQUAL "x86" )
         set(LIBCRYPTO_CURRENTDIR_ASM_SOURCES
             aes-586${OPENSSL_ASM_PREPROCESSED}
         )
@@ -125,20 +113,14 @@ if (OPENSSL_ASM)
                 aesni-x86${OPENSSL_ASM_PREPROCESSED}
             )
         endif()
-    elseif ( ( OPENSSL_TARGET_ARCH STREQUAL "arm32" ) AND (
-               ANDROID
-            OR ( CMAKE_SYSTEM_NAME MATCHES "[Ll]inux")
-    ) )
+    elseif ( OPENSSL_TARGET_ARCH STREQUAL "arm32" )
         set(LIBCRYPTO_CURRENTDIR_ASM_SOURCES
             ${CMAKE_SOURCE_DIR}/openssl/crypto/aes/aes_cbc.c
             aes-armv4.S
             bsaes-armv7.S
             aesv8-armx.S
         )
-    elseif ( ( OPENSSL_TARGET_ARCH STREQUAL "arm64" ) AND (
-               ANDROID
-            OR ( CMAKE_SYSTEM_NAME MATCHES "[Ll]inux" )
-    ) )
+    elseif ( OPENSSL_TARGET_ARCH STREQUAL "arm64" )
         set(LIBCRYPTO_CURRENTDIR_ASM_SOURCES
             ${CMAKE_SOURCE_DIR}/openssl/crypto/aes/aes_core.c
             ${CMAKE_SOURCE_DIR}/openssl/crypto/aes/aes_cbc.c
