@@ -72,20 +72,19 @@ set(OPENSSL_IDEA_INT "int")
 set(OPENSSL_MD2_INT "int")
 
 #define RC2_INT unsigned @OPENSSL_RC2_INT@
-if (BSD AND ( OPENSSL_TARGET_ARCH STREQUAL "x86") )
-    set(OPENSSL_RC2_INT "char")
-else()
-    set(OPENSSL_RC2_INT "int")
-endif()
+set(OPENSSL_RC2_INT "int")
 
 #define RC4_INT unsigned @OPENSSL_RC4_INT@
-if(        ( ANDROID AND NOT ( OPENSSL_TARGET_ARCH STREQUAL "x86" ) )
-        OR ( CMAKE_SYSTEM_NAME MATCHES "[Ll]inux" AND NOT ( OPENSSL_TARGET_ARCH STREQUAL "x86" ) AND NOT ( OPENSSL_TARGET_ARCH STREQUAL "x64" ) )
-        OR IOS
+if (       WIN32
+        OR ( ANDROID AND ( OPENSSL_TARGET_ARCH STREQUAL "x86" ) )
+        OR ( ( CMAKE_SYSTEM_NAME MATCHES "[Ll]inux" ) AND ( ( OPENSSL_TARGET_ARCH STREQUAL "x86" ) OR ( OPENSSL_TARGET_ARCH STREQUAL "x64" ) ) )
+        OR ( APPLE AND NOT IOS )
+        OR ( CMAKE_SYSTEM_NAME MATCHES "BSD" )
+        OR ( ( CMAKE_SYSTEM_NAME MATCHES "SunOS" ) AND ( NOT ( ( OPENSSL_TARGET_ARCH STREQUAL "x86" ) AND ( CMAKE_C_COMPILER_ID MATCHES "SunPro" ) ) ) ) # TODO: Solaris on sparcv7 and sparcv9-64 have RC4_CHAR
     )
-    set(OPENSSL_RC4_INT "char")
-else()
     set(OPENSSL_RC4_INT "int")
+else()
+    set(OPENSSL_RC4_INT "char")
 endif()
 
 #define EXTERNALCMAKE_RC4_CHUNK_TYPE @OPENSSL_RC4_CHUNK_TYPE@
@@ -93,7 +92,8 @@ if (       ( ( CMAKE_SYSTEM_NAME MATCHES "BSD" ) AND ( OPENSSL_TARGET_ARCH STREQ
         OR ( CYGWIN AND ( OPENSSL_TARGET_ARCH STREQUAL "x64" ) )
         OR ( ANDROID AND NOT ( OPENSSL_TARGET_ARCH STREQUAL "x86" ) )
         OR APPLE
-        OR ( CMAKE_SYSTEM_NAME MATCHES "[Ll]inux" )
+        OR ( ( CMAKE_SYSTEM_NAME MATCHES "[Ll]inux" ) AND NOT ( OPENSSL_TARGET_ARCH STREQUAL "x86" ) )
+        OR ( ( CMAKE_SYSTEM_NAME MATCHES "SunOS" ) AND ( NOT ( ( OPENSSL_TARGET_ARCH STREQUAL "x86" ) AND ( CMAKE_C_COMPILER_ID MATCHES "GNU" ) ) ) )
     )
     set(OPENSSL_RC4_CHUNK_TYPE 1)
 elseif ( WIN32 AND ( OPENSSL_TARGET_ARCH STREQUAL "x64" ) )
@@ -103,12 +103,13 @@ else()
 endif()
 
 #define DES_LONG unsigned @OPENSSL_DES_INT@
-if(        ( CMAKE_SYSTEM_NAME MATCHES "BSD" )
+if(        ( CMAKE_SYSTEM_NAME MATCHES "BSD" AND NOT ( OPENSSL_TARGET_ARCH STREQUAL "x86" ) )
         OR ( CYGWIN AND ( OPENSSL_TARGET_ARCH STREQUAL "x64" ) )
         OR ( WIN32 AND ( OPENSSL_TARGET_ARCH STREQUAL "x64" ) )
         OR ( ANDROID AND NOT ( OPENSSL_TARGET_ARCH STREQUAL "x86" ) )
         OR ( APPLE AND NOT IOS )
-        OR ( CMAKE_SYSTEM_NAME MATCHES "[Ll]inux" )
+        OR ( CMAKE_SYSTEM_NAME MATCHES "[Ll]inux" AND NOT ( OPENSSL_TARGET_ARCH STREQUAL "x86" ) )
+        OR ( ( CMAKE_SYSTEM_NAME MATCHES "SunOS" ) AND ( OPENSSL_TARGET_ARCH STREQUAL "x64" ) )
     )
     set(OPENSSL_DES_INT "int")
 else()
@@ -121,7 +122,8 @@ if (       ( ( CMAKE_SYSTEM_NAME MATCHES "BSD" ) AND ( OPENSSL_TARGET_ARCH STREQ
         OR ( WIN32 AND ( OPENSSL_TARGET_ARCH STREQUAL "x86" ) )
         OR ( ANDROID AND ( ( OPENSSL_TARGET_ARCH STREQUAL "x86" ) OR ( OPENSSL_TARGET_ARCH STREQUAL "arm32" ) ) )
         OR IOS
-        OR ( CMAKE_SYSTEM_NAME MATCHES "[Ll]inux" AND ( OPENSSL_TARGET_ARCH STREQUAL "x86" ) )
+        OR ( CMAKE_SYSTEM_NAME MATCHES "[Ll]inux" AND ( ( OPENSSL_TARGET_ARCH STREQUAL "x86" ) OR ( OPENSSL_TARGET_ARCH STREQUAL "arm32" ) ) )
+        OR ( CMAKE_SYSTEM_NAME MATCHES "SunOS" AND ( OPENSSL_TARGET_ARCH STREQUAL "x86" ) ) # # TODO: Solaris on sparcv7 and sparcv9-64 have BN_LLONG
     )
     set(BN_LLONG YES)
 else()
@@ -174,6 +176,7 @@ if (       ( ( CMAKE_SYSTEM_NAME MATCHES "BSD" ) AND ( OPENSSL_TARGET_ARCH STREQ
         OR ( WIN32 AND ( OPENSSL_TARGET_ARCH STREQUAL "x86" ) )
         OR ( ANDROID AND ( OPENSSL_TARGET_ARCH STREQUAL "x86" ) )
         OR ( CMAKE_SYSTEM_NAME MATCHES "[Ll]inux" AND ( OPENSSL_TARGET_ARCH STREQUAL "x86" ) )
+        OR ( CMAKE_SYSTEM_NAME MATCHES "SunOS" AND ( OPENSSL_TARGET_ARCH STREQUAL "x86" ) AND ( CMAKE_C_COMPILER_ID MATCHES "GNU" ) )
     )
     set(RC4_INDEX YES)
 else()
@@ -183,7 +186,8 @@ endif()
 #define EXTERNALCMAKE_BF_PTR @OPENSSL_BF_PTR@
 if (       ( ANDROID AND NOT ( OPENSSL_TARGET_ARCH STREQUAL "x86" ) )
         OR IOS
-        OR ( CMAKE_SYSTEM_NAME MATCHES "[Ll]inux" )
+        OR ( CMAKE_SYSTEM_NAME MATCHES "[Ll]inux" AND ( OPENSSL_TARGET_ARCH MATCHES "arm"))
+        OR ( CMAKE_SYSTEM_NAME MATCHES "SunOS" AND ( OPENSSL_TARGET_ARCH STREQUAL "x86" ) AND ( CMAKE_C_COMPILER_ID MATCHES "SunPro" ) )
     )
     set(OPENSSL_BF_PTR 1)
 else()
@@ -195,6 +199,8 @@ if (       ( ( CMAKE_SYSTEM_NAME MATCHES "BSD" ) AND ( OPENSSL_TARGET_ARCH STREQ
         OR ( CYGWIN AND ( OPENSSL_TARGET_ARCH STREQUAL "x86" ))
         OR ( ANDROID AND ( OPENSSL_TARGET_ARCH STREQUAL "x86" ) )
         OR ( WIN32 AND NOT MSVC AND ( OPENSSL_TARGET_ARCH STREQUAL "x86" ) )
+        OR ( CMAKE_SYSTEM_NAME MATCHES "[Ll]inux" AND ( OPENSSL_TARGET_ARCH STREQUAL "x86") )
+        OR ( CMAKE_SYSTEM_NAME MATCHES "SunOS" AND ( OPENSSL_TARGET_ARCH STREQUAL "x86" ) )
     )
     set(DES_PTR YES)
 else()
@@ -206,6 +212,8 @@ if (       ( ( CMAKE_SYSTEM_NAME MATCHES "BSD" ) AND ( OPENSSL_TARGET_ARCH STREQ
         OR ( CYGWIN AND ( OPENSSL_TARGET_ARCH STREQUAL "x86" ) )
         OR ( ANDROID AND ( OPENSSL_TARGET_ARCH STREQUAL "x86" ) )
         OR ( WIN32 AND NOT MSVC AND ( OPENSSL_TARGET_ARCH STREQUAL "x86" ) )
+        OR ( CMAKE_SYSTEM_NAME MATCHES "[Ll]inux" AND ( OPENSSL_TARGET_ARCH STREQUAL "x86") )
+        OR ( CMAKE_SYSTEM_NAME MATCHES "SunOS" AND ( OPENSSL_TARGET_ARCH STREQUAL "x86" ) AND ( CMAKE_C_COMPILER_ID MATCHES "GNU" ) )
     )
     set(DES_RISC1 YES)
 else()
@@ -222,6 +230,7 @@ if (       ( CMAKE_SYSTEM_NAME MATCHES "BSD" )
         OR APPLE
         OR ( CMAKE_SYSTEM_NAME MATCHES "[Ll]inux" )
         OR ( WIN32 AND NOT MSVC AND ( OPENSSL_TARGET_ARCH STREQUAL "x86" ) )
+        OR ( CMAKE_SYSTEM_NAME MATCHES "SunOS" )
     )
     set(DES_UNROLL YES)
 else()
@@ -361,7 +370,10 @@ if (OPENSSL_ASM OR OPENSSL_UPLINK)
                 set(OPENSSL_PERLASM_SCHEME "win32")
             elseif (ANDROID)
                 set(OPENSSL_PERLASM_SCHEME "android")
-            elseif( CMAKE_SYSTEM_NAME MATCHES "BSD" )
+            elseif( CMAKE_SYSTEM_NAME MATCHES "BSD" OR ( CMAKE_SYSTEM_NAME MATCHES "[Ll]inux" ) OR ( CMAKE_SYSTEM_NAME MATCHES "SunOS" ) )
+                if (CMAKE_C_COMPILER_ID MATCHES "SunPro")
+                    message(FATAL_ERROR "OpenSSL 1.0.2 does not support ASM on this platform - Please set OPENSSL_ASM to OFF and reconfigure")
+                endif()
                 set(OPENSSL_PERLASM_SCHEME "elf")
             endif()
         elseif ( OPENSSL_TARGET_ARCH STREQUAL "x64" )
@@ -371,7 +383,7 @@ if (OPENSSL_ASM OR OPENSSL_UPLINK)
                 set(OPENSSL_PERLASM_SCHEME "mingw64")
             elseif (MSVC)
                 set(OPENSSL_PERLASM_SCHEME "masm")
-            elseif ( ( CMAKE_SYSTEM_NAME MATCHES "BSD" ) OR ( CMAKE_SYSTEM_NAME MATCHES "[Ll]inux" ) )
+            elseif ( ( CMAKE_SYSTEM_NAME MATCHES "BSD" ) OR ( CMAKE_SYSTEM_NAME MATCHES "[Ll]inux" ) OR ( CMAKE_SYSTEM_NAME MATCHES "SunOS" ) )
                 set(OPENSSL_PERLASM_SCHEME "elf")
             endif()
         elseif ( OPENSSL_TARGET_ARCH STREQUAL "arm32" )
@@ -433,10 +445,14 @@ macro (perlasm_generate_src OUT_ASMFILE SRC_PERLFILE)
             set(${_CURRENTPARSING} ${${_CURRENTPARSING}} ${_ITEM})
         endif()
     endforeach()
-    if ( BUILD_SHARED_LIBS AND NOT ( WIN32 OR CYGWIN ) AND OPENSSL_TARGET_ARCH STREQUAL "x86" )
+    if (BUILD_SHARED_LIBS)
         # PIC needs to be specified manually...???
-        # Only recoginzed when target is x86
-        set(FLAGS ${FLAGS} -fPIC)
+        if (CMAKE_SYSTEM_NAME MATCHES "SunOS" AND CMAKE_C_COMPILER_ID MATCHES "SunPro" )
+            set(FLAGS ${FLAGS} -KPIC)
+        elseif ( NOT ( WIN32 OR CYGWIN ) AND OPENSSL_TARGET_ARCH STREQUAL "x86" )
+            # Only recoginzed when target is x86
+            set(FLAGS ${FLAGS} -fPIC)
+        endif()
     endif()
     if (STDOUT)
         set(FLAGS ${FLAGS} ">" ${OUT_ASMFILE})
@@ -687,6 +703,12 @@ target_compile_definitions(crypto
 if (WIN32)
     target_link_libraries(crypto
         PUBLIC ws2_32 crypt32
+    )
+endif()
+
+if (CMAKE_SYSTEM_NAME MATCHES "SunOS")
+    target_link_libraries(crypto
+        PUBLIC socket nsl
     )
 endif()
 

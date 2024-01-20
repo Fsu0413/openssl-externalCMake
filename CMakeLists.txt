@@ -287,10 +287,6 @@ else()
     set(OPENSSL_NO_THREADS ON CACHE BOOL "Build without threads supported (automatically set, use OPENSSL_THREADS if this is to be modified)" FORCE)
 endif()
 
-# TODO: uplink platforms (if not 386)
-# cflags = -DOPENSSL_USE_APPLINK
-# cpuid_obj += uplink.o uplink-x86.o
-
 configure_file(${CMAKE_SOURCE_DIR}/openssl/e_os2.h ${CMAKE_BINARY_DIR}/include/openssl/e_os2.h COPYONLY)
 
 
@@ -369,6 +365,20 @@ elseif (CMAKE_SYSTEM_NAME MATCHES "BSD")
             set(OPENSSL_BUILD_PLATFORM "BSD-generic64")
         else()
             set(OPENSSL_BUILD_PLATFORM "BSD-generic32")
+        endif()
+    endif()
+elseif (CMAKE_SYSTEM_NAME MATCHES "SunOS")
+    if (OPENSSL_TARGET_ARCH STREQUAL "x64")
+        if (CMAKE_C_COMPILER_ID MATCHES "GNU")
+            set(OPENSSL_BUILD_PLATFORM "solaris64-x86_64-gcc")
+        elseif (CMAKE_C_COMPILER_ID MATCHES "SunPro")
+            set(OPENSSL_BUILD_PLATFORM "solaris64-x86_64-cc")
+        endif()
+    elseif (OPENSSL_TARGET_ARCH STREQUAL "x86")
+        if (CMAKE_C_COMPILER_ID MATCHES "GNU")
+            set(OPENSSL_BUILD_PLATFORM "solaris-x86-gcc")
+        elseif (CMAKE_C_COMPILER_ID MATCHES "SunPro")
+            set(OPENSSL_BUILD_PLATFORM "solaris-x86-cc")
         endif()
     endif()
 endif()
