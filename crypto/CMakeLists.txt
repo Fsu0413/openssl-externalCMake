@@ -52,7 +52,12 @@ else()
 endif()
 
 #define RC4_INT unsigned @OPENSSL_RC4_INT@
-if ( WIN32 OR ( ANDROID AND ( ( OPENSSL_TARGET_ARCH STREQUAL "x86" ) OR ( OPENSSL_TARGET_ARCH STREQUAL "x64" ) ) ) OR APPLE )
+if (       WIN32
+        OR ( ANDROID AND ( ( OPENSSL_TARGET_ARCH STREQUAL "x86" ) OR ( OPENSSL_TARGET_ARCH STREQUAL "x64" ) ) )
+        OR APPLE
+        OR ( CMAKE_SYSTEM_NAME MATCHES "BSD" )
+        OR ( CMAKE_SYSTEM_NAME MATCHES "SunOS" ) # TODO: Solaris on sparcv7 and sparcv9-64 have RC4_CHAR
+    )
     set(OPENSSL_RC4_INT "int")
 else()
     set(OPENSSL_RC4_INT "char")
@@ -64,6 +69,7 @@ if (       ( ( CMAKE_SYSTEM_NAME MATCHES "BSD" ) AND ( OPENSSL_TARGET_ARCH STREQ
         OR ( WIN32 AND ( OPENSSL_TARGET_ARCH STREQUAL "x86" ) )
         OR ( ANDROID AND ( ( OPENSSL_TARGET_ARCH STREQUAL "x86" ) OR ( OPENSSL_TARGET_ARCH STREQUAL "arm32" ) ) )
         OR ( CMAKE_SYSTEM_NAME MATCHES "[Ll]inux" AND ( ( OPENSSL_TARGET_ARCH STREQUAL "x86" ) OR ( OPENSSL_TARGET_ARCH STREQUAL "arm32" ) ) )
+        OR ( CMAKE_SYSTEM_NAME MATCHES "SunOS" AND ( OPENSSL_TARGET_ARCH STREQUAL "x86" ) ) # # TODO: Solaris on sparcv7 and sparcv9-64 have BN_LLONG
     )
     set(BN_LLONG YES)
 else()
@@ -115,6 +121,7 @@ if (OPENSSL_DSO)
             OR ANDROID
             OR APPLE
             OR ( CMAKE_SYSTEM_NAME MATCHES "[Ll]inux" )
+            OR ( CMAKE_SYSTEM_NAME MATCHES "SunOS" )
     )
         set(DSO_WIN32 OFF)
         set(DSO_DLFCN ON)
@@ -156,7 +163,7 @@ if (OPENSSL_ASM OR OPENSSL_UPLINK)
             set(OPENSSL_PERLASM_SCHEME "win32")
         elseif (ANDROID)
             set(OPENSSL_PERLASM_SCHEME "android")
-        elseif( CMAKE_SYSTEM_NAME MATCHES "BSD" OR ( CMAKE_SYSTEM_NAME MATCHES "[Ll]inux" ) )
+        elseif( CMAKE_SYSTEM_NAME MATCHES "BSD" OR ( CMAKE_SYSTEM_NAME MATCHES "[Ll]inux" ) OR ( CMAKE_SYSTEM_NAME MATCHES "SunOS" ) )
             set(OPENSSL_PERLASM_SCHEME "elf")
         endif()
     elseif ( OPENSSL_TARGET_ARCH STREQUAL "x64" )
@@ -166,7 +173,7 @@ if (OPENSSL_ASM OR OPENSSL_UPLINK)
             set(OPENSSL_PERLASM_SCHEME "mingw64")
         elseif (MSVC)
             set(OPENSSL_PERLASM_SCHEME "masm")
-        elseif ( ANDROID OR ( CMAKE_SYSTEM_NAME MATCHES "BSD" ) OR ( CMAKE_SYSTEM_NAME MATCHES "[Ll]inux" ) )
+        elseif ( ANDROID OR ( CMAKE_SYSTEM_NAME MATCHES "BSD" ) OR ( CMAKE_SYSTEM_NAME MATCHES "[Ll]inux" ) OR ( CMAKE_SYSTEM_NAME MATCHES "SunOS" ) )
             set(OPENSSL_PERLASM_SCHEME "elf")
         elseif ( APPLE AND NOT IOS )
             set(OPENSSL_PERLASM_SCHEME "macosx")
@@ -224,10 +231,14 @@ macro (perlasm_generate_src OUT_ASMFILE SRC_PERLFILE)
             set(${_CURRENTPARSING} ${${_CURRENTPARSING}} ${_ITEM})
         endif()
     endforeach()
-    if ( CMAKE_POSITION_INDEPENDENT_CODE AND NOT ( WIN32 OR CYGWIN ) AND OPENSSL_TARGET_ARCH STREQUAL "x86" )
+    if (CMAKE_POSITION_INDEPENDENT_CODE)
         # PIC needs to be specified manually...???
-        # Only recoginzed when target is x86
-        set(FLAGS ${FLAGS} -fPIC)
+        if (CMAKE_SYSTEM_NAME MATCHES "SunOS" AND CMAKE_C_COMPILER_ID MATCHES "SunPro" )
+            set(FLAGS ${FLAGS} -KPIC)
+        elseif ( NOT ( WIN32 OR CYGWIN ) AND OPENSSL_TARGET_ARCH STREQUAL "x86" )
+            # Only recoginzed when target is x86
+            set(FLAGS ${FLAGS} -fPIC)
+        endif()
     endif()
     add_custom_command(
         OUTPUT ${OUT_ASMFILE}
@@ -262,6 +273,9 @@ set(LIBCRYPTO_DIRECTORIES _cryptoDir async err dso)
 set(LIBCRYPTO_CFLAGS)
 if (WIN32)
     set(LIBCRYPTO_CFLAGS ${LIBCRYPTO_CFLAGS} "-DOPENSSL_SYS_WIN32" "-DWIN32_LEAN_AND_MEAN" "-D_WINSOCK_DEPRECATED_NO_WARNINGS" "-DUNICODE" "-D_UNICODE")
+endif()
+if (CMAKE_SYSTEM_NAME MATCHES "SunOS")
+    set(LIBCRYPTO_CFLAGS ${LIBCRYPTO_CFLAGS} "-DFILIO_H")
 endif()
 if (OPENSSL_SSE2)
     set(LIBCRYPTO_CFLAGS ${LIBCRYPTO_CFLAGS} "-DOPENSSL_IA32_SSE2")
@@ -799,6 +813,12 @@ target_compile_definitions(crypto
 if (WIN32)
     target_link_libraries(crypto
         PUBLIC ws2_32 crypt32
+    )
+endif()
+
+if (CMAKE_SYSTEM_NAME MATCHES "SunOS")
+    target_link_libraries(crypto
+        PUBLIC socket nsl
     )
 endif()
 
