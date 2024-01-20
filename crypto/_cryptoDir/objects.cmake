@@ -67,20 +67,9 @@ if (OPENSSL_ASM)
             x86_64cpuid${OPENSSL_ASM_PREPROCESSED}
         )
     elseif ( ( OPENSSL_TARGET_ARCH STREQUAL "x86" ) AND ( NOT OPENSSL_386 ) )
-        # TODO: properly set up applink and uplink
         set(LIBCRYPTO_CURRENTDIR_ASM_SOURCES
             x86cpuid${OPENSSL_ASM_PREPROCESSED}
         )
-        if (false)
-            if ( WIN32 )
-                set(LIBCRYPTO_CURRENTDIR_ASM_SOURCES
-                    ${LIBCRYPTO_CRYPTODIR_ASM_SOURCES}
-                    ${CMAKE_SOURCE_DIR}/ms/applink.c
-                    ${CMAKE_SOURCE_DIR}/ms/uplink.c
-                    uplink-x86${OPENSSL_ASM_PREPROCESSED}
-                )
-            endif()
-        endif()
     elseif ( OPENSSL_TARGET_ARCH STREQUAL "arm32" )
         set(LIBCRYPTO_CURRENTDIR_ASM_SOURCES
             armv4cpuid.S
