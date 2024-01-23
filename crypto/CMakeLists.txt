@@ -486,7 +486,7 @@ endmacro()
 # original OpenSSL building progress made archive of static libraries, and link the static libraries to the final shared / dynamic loaded libraries
 # we create a variable for recording the C / S files...
 set(LIBCRYPTO_SOURCES)
-set(LIBCRYPTO_DIRECTORIES _cryptoDir)
+set(LIBCRYPTO_DIRECTORIES _cryptoDir krb5)
 set(LIBCRYPTO_CFLAGS)
 if (WIN32)
     set(LIBCRYPTO_CFLAGS ${LIBCRYPTO_CFLAGS} "-DOPENSSL_SYSNAME_WIN32" "-DWIN32_LEAN_AND_MEAN" "-D_WINSOCK_DEPRECATED_NO_WARNINGS")
@@ -546,7 +546,7 @@ else()
 endif()
 
 foreach (_DIRECTORY IN ITEMS
-        aes asn1 bf bio bn buffer camellia cast cmac cms comp conf des dh dsa dso ec ecdh ecdsa engine err evp hmac idea jpake krb5 lhash md2 md4 md5 mdc2 modes objects ocsp pem
+        aes asn1 bf bio bn buffer camellia cast cmac cms comp conf des dh dsa dso ec ecdh ecdsa engine err evp hmac idea jpake lhash md2 md4 md5 mdc2 modes objects ocsp pem
         pkcs12 pkcs7 pqueue rand rc2 rc4 rc5 ripemd rsa seed sha srp stack store ts txt_db ui whrlpool x509 x509v3 uplink
     )
     set(_CIPHER ${_DIRECTORY})
