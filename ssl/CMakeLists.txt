@@ -86,20 +86,27 @@ set(LIBSSL_SOURCES
 if (WIN32)
     configure_file(ssl.rc.cmake.in ssl.rc @ONLY)
     set(LIBSSL_SOURCES ${LIBSSL_SOURCES} ssl.rc)
+    if (OPENSSL_TARGET_ARCH STREQUAL x64)
+        set(LIBSSL_RUNTIME_OUTPUT_NAME libssl-1_1-x64)
+    else()
+        set(LIBSSL_RUNTIME_OUTPUT_NAME libssl-1_1)
+    endif()
+
+    add_custom_command(
+        OUTPUT ssl.def
+        COMMAND "${CMAKE_COMMAND}" -DNUMFILE="${CMAKE_SOURCE_DIR}/openssl/util/libssl.num" -DLIBRARY_FILE="${LIBSSL_RUNTIME_OUTPUT_NAME}" -DBINARY_DIR="${CMAKE_BINARY_DIR}" -DOUTPUT_FILE="${CMAKE_CURRENT_BINARY_DIR}/ssl.def" -DPLATFORM=_WIN32 -P "${CMAKE_CURRENT_SOURCE_DIR}/../crypto/mkdef.cmake"
+        MAIN_DEPENDENCY "${CMAKE_SOURCE_DIR}/openssl/util/libssl.num"
+        DEPENDS ../crypto/mkdef.cmake
+    )
+    set(LIBSSL_SOURCES ${LIBSSL_SOURCES} ssl.def)
 endif()
 add_library(ssl
     ${LIBSSL_SOURCES}
 )
 if (WIN32)
-    if (OPENSSL_TARGET_ARCH STREQUAL x64)
-        set_target_properties(ssl PROPERTIES
-            RUNTIME_OUTPUT_NAME libssl-1_1-x64
-        )
-    else()
-        set_target_properties(ssl PROPERTIES
-            RUNTIME_OUTPUT_NAME libssl-1_1
-        )
-    endif()
+    set_target_properties(ssl PROPERTIES
+        RUNTIME_OUTPUT_NAME "${LIBSSL_RUNTIME_OUTPUT_NAME}"
+    )
     if (MSVC)
         set_target_properties(ssl PROPERTIES
             ARCHIVE_OUTPUT_NAME libssl
