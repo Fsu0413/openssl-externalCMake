@@ -36,7 +36,6 @@ endif()
 if (WIN32)
     set(CMAKE_SHARED_LIBRARY_PREFIX "")
     set(CMAKE_SHARED_MODULE_PREFIX "")
-    set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS YES)
 elseif (APPLE AND NOT IOS)
     set(CMAKE_SHARED_MODULE_SUFFIX ".dylib")
 endif()
@@ -95,7 +94,7 @@ option(OPENSSL_ZLIB "build with ZLIB" OFF)
 cmake_dependent_option(OPENSSL_ZLIB_DYNAMIC "build ZLIB as dynamic loaded object" OFF "OPENSSL_ZLIB" OFF)
 
 # --with-krb5-*
-OPTION(OPENSSL_KRB5 "build OpenSSL with Kerberos 5" OFF)
+option(OPENSSL_KRB5 "build OpenSSL with Kerberos 5" OFF)
 
 # static_engine
 cmake_dependent_option(OPENSSL_STATIC_ENGINE "generate static engine library" OFF "BUILD_SHARED_LIBS" ON)
@@ -156,7 +155,6 @@ endif()
 if (OPENSSL_386)
     set(OPENSSL_USE_386 "386" CACHE STRING "" FORCE)
 endif()
-
 
 foreach (_CIPHER IN ITEMS
         ssl tls ssl3-method # meta-cipher
@@ -298,7 +296,6 @@ else()
 endif()
 
 configure_file(${CMAKE_SOURCE_DIR}/openssl/e_os2.h ${CMAKE_BINARY_DIR}/include/openssl/e_os2.h COPYONLY)
-
 
 # list the original platform descriptions - How can this be so complicated?
 # currently only supported platforms are listed - other platforms will be added when finished
