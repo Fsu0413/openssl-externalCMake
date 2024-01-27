@@ -491,6 +491,20 @@ endif()
 if (WIN32)
     configure_file(crypto.rc.cmake.in crypto.rc @ONLY)
     set(LIBCRYPTO_SOURCES ${LIBCRYPTO_SOURCES} crypto.rc)
+    set(LIBCRYPTO_RUNTIME_OUTPUT_NAME )
+    if (OPENSSL_TARGET_ARCH STREQUAL x64)
+        set(LIBCRYPTO_RUNTIME_OUTPUT_NAME libcrypto-3-x64)
+    else()
+        set(LIBCRYPTO_RUNTIME_OUTPUT_NAME libcrypto-3)
+    endif()
+
+    add_custom_command(
+        OUTPUT crypto.def
+        COMMAND "${CMAKE_COMMAND}" -DNUMFILE="${CMAKE_SOURCE_DIR}/openssl/util/libcrypto.num" -DLIBRARY_FILE="${LIBCRYPTO_RUNTIME_OUTPUT_NAME}" -DBINARY_DIR="${CMAKE_BINARY_DIR}" -DOUTPUT_FILE="${CMAKE_CURRENT_BINARY_DIR}/crypto.def" -DPLATFORM=_WIN32 -P "${CMAKE_CURRENT_SOURCE_DIR}/mkdef.cmake"
+        MAIN_DEPENDENCY "${CMAKE_SOURCE_DIR}/openssl/util/libcrypto.num"
+        DEPENDS mkdef.cmake
+    )
+    set(LIBCRYPTO_SOURCES ${LIBCRYPTO_SOURCES} crypto.def)
 endif()
 
 add_library(crypto
@@ -776,15 +790,9 @@ if (OPENSSL_ZLIB AND ( NOT OPENSSL_ZLIB_DYNAMIC ) )
     target_link_libraries(crypto PUBLIC ZLIB::ZLIB)
 endif()
 if (WIN32)
-    if (OPENSSL_TARGET_ARCH STREQUAL x64)
-        set_target_properties(crypto PROPERTIES
-            RUNTIME_OUTPUT_NAME libcrypto-3-x64
-        )
-    else()
-        set_target_properties(crypto PROPERTIES
-            RUNTIME_OUTPUT_NAME libcrypto-3
-        )
-    endif()
+    set_target_properties(crypto PROPERTIES
+        RUNTIME_OUTPUT_NAME "${LIBCRYPTO_RUNTIME_OUTPUT_NAME}"
+    )
     if (MSVC)
         set_target_properties(crypto PROPERTIES
             ARCHIVE_OUTPUT_NAME libcrypto
