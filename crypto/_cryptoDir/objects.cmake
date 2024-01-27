@@ -53,25 +53,25 @@ set(LIBCRYPTO_CURRENTDIR_SOURCES
     buildinf.h
 )
 
-set(LIBCRYPTO_CURRENTDIR_ASM_SOURCES
+set(OPENSSL_CPUID_SRCS
     ${CMAKE_SOURCE_DIR}/openssl/crypto/mem_clr.c
 )
 if (OPENSSL_ASM)
     if ( OPENSSL_TARGET_ARCH STREQUAL "x64" )
-        set(LIBCRYPTO_CURRENTDIR_ASM_SOURCES
+        set(OPENSSL_CPUID_SRCS
             x86_64cpuid${OPENSSL_ASM_PREPROCESSED}
         )
     elseif ( ( OPENSSL_TARGET_ARCH STREQUAL "x86" ) AND ( NOT OPENSSL_386 ) )
-        set(LIBCRYPTO_CURRENTDIR_ASM_SOURCES
+        set(OPENSSL_CPUID_SRCS
             x86cpuid${OPENSSL_ASM_PREPROCESSED}
         )
     elseif ( OPENSSL_TARGET_ARCH STREQUAL "arm32" )
-        set(LIBCRYPTO_CURRENTDIR_ASM_SOURCES
+        set(OPENSSL_CPUID_SRCS
             ${CMAKE_SOURCE_DIR}/openssl/crypto/armv4cpuid.S
             ${CMAKE_SOURCE_DIR}/openssl/crypto/armcap.c
         )
     elseif ( OPENSSL_TARGET_ARCH STREQUAL "arm64" )
-        set(LIBCRYPTO_CURRENTDIR_ASM_SOURCES
+        set(OPENSSL_CPUID_SRCS
             ${CMAKE_SOURCE_DIR}/openssl/crypto/arm64cpuid.S
             ${CMAKE_SOURCE_DIR}/openssl/crypto/armcap.c
             ${CMAKE_SOURCE_DIR}/openssl/crypto/mem_clr.c
@@ -81,10 +81,5 @@ endif()
 
 set(LIBCRYPTO_CURRENTDIR_SOURCES
     ${LIBCRYPTO_CURRENTDIR_SOURCES}
-    ${LIBCRYPTO_CURRENTDIR_ASM_SOURCES}
+    ${OPENSSL_CPUID_SRCS}
 )
-
-set(LIBCRYPTO_SOURCES ${LIBCRYPTO_SOURCES} ${LIBCRYPTO_CURRENTDIR_SOURCES})
-
-unset(LIBCRYPTO_CURRENTDIR_SOURCES)
-unset(LIBCRYPTO_CURRENTDIR_ASM_SOURCES)
