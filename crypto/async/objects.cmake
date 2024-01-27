@@ -12,7 +12,3 @@ set(LIBCRYPTO_CURRENTDIR_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/crypto/async/arch/async_win.h
     ${CMAKE_SOURCE_DIR}/openssl/crypto/async/async_local.h
 )
-
-set(LIBCRYPTO_SOURCES ${LIBCRYPTO_SOURCES} ${LIBCRYPTO_CURRENTDIR_SOURCES})
-
-unset(LIBCRYPTO_CURRENTDIR_SOURCES)

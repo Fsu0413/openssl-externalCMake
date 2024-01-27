@@ -85,7 +85,7 @@ if (OPENSSL_DSA)
     )
 endif()
 
-add_library(libcommon OBJECT
+add_library(libcommon STATIC
     ${LIBCOMMON_SOURCES}
 )
 

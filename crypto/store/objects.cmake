@@ -16,7 +16,3 @@ if ( OPENSSL_DEPRECATED_3_0 )
         ${CMAKE_SOURCE_DIR}/openssl/crypto/store/store_register.c
     )
 endif()
-
-set(LIBCRYPTO_SOURCES ${LIBCRYPTO_SOURCES} ${LIBCRYPTO_CURRENTDIR_SOURCES})
-
-unset(LIBCRYPTO_CURRENTDIR_SOURCES)

@@ -166,8 +166,78 @@ if (OPENSSL_RMD160)
     )
 endif()
 
+if (OPENSSL_MODULE AND BUILD_SHARED_LIBS)
+    set(LIBCRYPTO_CURRENTDIR_SOURCES)
+    include("../../crypto/_cryptoDir/objects.cmake")
+    set(LIBLEGACY_SOURCES_MODULE ${LIBLEGACY_SOURCES_MODULE} ${OPENSSL_CPUID_SRCS})
+
+    set(LIBCRYPTO_CURRENTDIR_SOURCES)
+    include("../../crypto/des/objects.cmake")
+    set(LIBLEGACY_SOURCES ${LIBLEGACY_SOURCES} ${OPENSSL_DES_ASM_SRCS})
+
+    set(LIBCRYPTO_CURRENTDIR_SOURCES)
+    include("../../crypto/md5/objects.cmake")
+    set(LIBLEGACY_SOURCES ${LIBLEGACY_SOURCES} ${LIBCRYPTO_CURRENTDIR_SOURCES})
+
+    set(LIBCRYPTO_CURRENTDIR_SOURCES)
+    include("../../crypto/rc4/objects.cmake")
+    set(LIBLEGACY_SOURCES ${LIBLEGACY_SOURCES} ${LIBCRYPTO_CURRENTDIR_SOURCES})
+
+    if (NOT OPENSSL_DEPRECATED_3_0)
+        set(LIBCRYPTO_CURRENTDIR_SOURCES)
+        include("../../crypto/bf/objects.cmake")
+        set(LIBLEGACY_SOURCES ${LIBLEGACY_SOURCES} ${LIBCRYPTO_CURRENTDIR_SOURCES})
+
+        set(LIBCRYPTO_CURRENTDIR_SOURCES)
+        include("../../crypto/cast/objects.cmake")
+        set(LIBLEGACY_SOURCES ${LIBLEGACY_SOURCES} ${LIBCRYPTO_CURRENTDIR_SOURCES})
+
+        set(LIBCRYPTO_CURRENTDIR_SOURCES)
+        include("../../crypto/idea/objects.cmake")
+        set(LIBLEGACY_SOURCES ${LIBLEGACY_SOURCES} ${LIBCRYPTO_CURRENTDIR_SOURCES})
+
+        set(LIBCRYPTO_CURRENTDIR_SOURCES)
+        include("../../crypto/md2/objects.cmake")
+        set(LIBLEGACY_SOURCES ${LIBLEGACY_SOURCES} ${LIBCRYPTO_CURRENTDIR_SOURCES})
+
+        set(LIBCRYPTO_CURRENTDIR_SOURCES)
+        include("../../crypto/md4/objects.cmake")
+        set(LIBLEGACY_SOURCES ${LIBLEGACY_SOURCES} ${LIBCRYPTO_CURRENTDIR_SOURCES})
+
+        set(LIBCRYPTO_CURRENTDIR_SOURCES)
+        include("../../crypto/mdc2/objects.cmake")
+        set(LIBLEGACY_SOURCES ${LIBLEGACY_SOURCES} ${LIBCRYPTO_CURRENTDIR_SOURCES})
+
+        set(LIBCRYPTO_CURRENTDIR_SOURCES)
+        include("../../crypto/rc2/objects.cmake")
+        set(LIBLEGACY_SOURCES ${LIBLEGACY_SOURCES} ${LIBCRYPTO_CURRENTDIR_SOURCES})
+
+        set(LIBCRYPTO_CURRENTDIR_SOURCES)
+        include("../../crypto/rc5/objects.cmake")
+        set(LIBLEGACY_SOURCES ${LIBLEGACY_SOURCES} ${LIBCRYPTO_CURRENTDIR_SOURCES})
+
+        set(LIBCRYPTO_CURRENTDIR_SOURCES)
+        include("../../crypto/ripemd/objects.cmake")
+        set(LIBLEGACY_SOURCES ${LIBLEGACY_SOURCES} ${LIBCRYPTO_CURRENTDIR_SOURCES})
+
+        set(LIBCRYPTO_CURRENTDIR_SOURCES)
+        include("../../crypto/seed/objects.cmake")
+        set(LIBLEGACY_SOURCES ${LIBLEGACY_SOURCES} ${LIBCRYPTO_CURRENTDIR_SOURCES})
+
+        set(LIBCRYPTO_CURRENTDIR_SOURCES)
+        include("../../crypto/whrlpool/objects.cmake")
+        set(LIBLEGACY_SOURCES ${LIBLEGACY_SOURCES} ${LIBCRYPTO_CURRENTDIR_SOURCES})
+    endif()
+endif()
+
+if (NOT OPENSSL_DEPRECATED_3_0 AND OPENSSL_DES)
+    set(LIBCRYPTO_CURRENTDIR_SOURCES)
+    include("../../crypto/des/objects.cmake")
+    set(LIBLEGACY_SOURCES ${LIBLEGACY_SOURCES} ${LIBCRYPTO_CURRENTDIR_SOURCES})
+endif()
+
 if (NOT OPENSSL_MODULE)
-    set(LIBLEGACY_LIBRARY_TYPE OBJECT)
+    set(LIBLEGACY_LIBRARY_TYPE STATIC)
 else()
     set(LIBLEGACY_LIBRARY_TYPE MODULE)
     set(LIBLEGACY_SOURCES ${LIBLEGACY_SOURCES} ${LIBLEGACY_SOURCES_MODULE})
@@ -175,6 +245,10 @@ endif()
 
 add_library(legacy "${LIBLEGACY_LIBRARY_TYPE}"
     ${LIBLEGACY_SOURCES}
+)
+
+target_link_libraries(legacy
+    PRIVATE libcommon
 )
 
 set_target_properties(legacy PROPERTIES
@@ -194,10 +268,10 @@ target_include_directories(legacy
 
 # workaround!
 set(LIBLEGACY_CFLAGS ${LIBCRYPTO_CFLAGS})
-list(REMOVE_ITEM LIBLEGACY_CLFAGS "RC4_ASM")
+list(REMOVE_ITEM LIBLEGACY_CFLAGS "RC4_ASM" "-DRC4_ASM")
 
 target_compile_definitions(legacy
-    PRIVATE ${LIBLEGACY_CLFAGS}
+    PRIVATE ${LIBLEGACY_CFLAGS}
             -DOPENSSL_BUILDING_OPENSSL
             "-DOPENSSLDIR=\"${OPENSSL_OPENSSLDIR_ABSOLUTE}\""
             "-DENGINESDIR=\"${OPENSSL_ENGINESDIR_ABSOLUTE}\""

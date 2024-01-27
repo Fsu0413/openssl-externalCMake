@@ -31,7 +31,3 @@ set(LIBCRYPTO_CURRENTDIR_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/crypto/bio/bio_local.h
     ${CMAKE_SOURCE_DIR}/openssl/crypto/bio/bss_dgram_pair.c
 )
-
-set(LIBCRYPTO_SOURCES ${LIBCRYPTO_SOURCES} ${LIBCRYPTO_CURRENTDIR_SOURCES})
-
-unset(LIBCRYPTO_CURRENTDIR_SOURCES)
