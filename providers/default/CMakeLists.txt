@@ -317,7 +317,7 @@ endif()
 #    )
 #endif()
 
-add_library(libdefault OBJECT
+add_library(libdefault STATIC
     ${LIBDEFAULT_SOURCES}
 )
 

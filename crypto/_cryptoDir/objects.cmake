@@ -12,8 +12,6 @@ perlasm_generate_src(armv4cpuid.S ${CMAKE_SOURCE_DIR}/openssl/crypto/armv4cpuid.
 perlasm_generate_src(s390xcpuid.S ${CMAKE_SOURCE_DIR}/openssl/crypto/s390xcpuid.pl)
 
 set(LIBCRYPTO_CURRENTDIR_SOURCES
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/cpuid.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/ctype.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/provider_core.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/provider_predefined.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/core_fetch.c
@@ -74,26 +72,26 @@ if (WIN32 OR CYGWIN)
     )
 endif()
 
-set(LIBCRYPTO_CURRENTDIR_ASM_SOURCES
+set(OPENSSL_CPUID_SRCS
     ${CMAKE_SOURCE_DIR}/openssl/crypto/mem_clr.c
 )
 if (OPENSSL_ASM)
     if ( OPENSSL_TARGET_ARCH STREQUAL "x64" )
-        set(LIBCRYPTO_CURRENTDIR_ASM_SOURCES
+        set(OPENSSL_CPUID_SRCS
             x86_64cpuid${OPENSSL_ASM_PREPROCESSED}
         )
     elseif ( ( OPENSSL_TARGET_ARCH STREQUAL "x86" ) AND ( NOT OPENSSL_386 ) )
-        set(LIBCRYPTO_CURRENTDIR_ASM_SOURCES
+        set(OPENSSL_CPUID_SRCS
             x86cpuid.S${OPENSSL_ASM_PREPROCESSED_X86}
         )
     elseif ( OPENSSL_TARGET_ARCH STREQUAL "arm32" )
-        set(LIBCRYPTO_CURRENTDIR_ASM_SOURCES
+        set(OPENSSL_CPUID_SRCS
             armv4cpuid.S
             ${CMAKE_SOURCE_DIR}/openssl/crypto/armcap.c
             ${CMAKE_SOURCE_DIR}/openssl/crypto/arm_arch.h
         )
     elseif ( OPENSSL_TARGET_ARCH STREQUAL "arm64" )
-        set(LIBCRYPTO_CURRENTDIR_ASM_SOURCES
+        set(OPENSSL_CPUID_SRCS
             arm64cpuid.S
             ${CMAKE_SOURCE_DIR}/openssl/crypto/armcap.c
             ${CMAKE_SOURCE_DIR}/openssl/crypto/arm_arch.h
@@ -101,12 +99,13 @@ if (OPENSSL_ASM)
     endif()
 endif()
 
-set(LIBCRYPTO_CURRENTDIR_SOURCES
-    ${LIBCRYPTO_CURRENTDIR_SOURCES}
-    ${LIBCRYPTO_CURRENTDIR_ASM_SOURCES}
+set(OPENSSL_CPUID_SRCS
+    ${OPENSSL_CPUID_SRCS}
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/cpuid.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/ctype.c
 )
 
-set(LIBCRYPTO_SOURCES ${LIBCRYPTO_SOURCES} ${LIBCRYPTO_CURRENTDIR_SOURCES})
-
-unset(LIBCRYPTO_CURRENTDIR_SOURCES)
-unset(LIBCRYPTO_CURRENTDIR_ASM_SOURCES)
+set(LIBCRYPTO_CURRENTDIR_SOURCES
+    ${LIBCRYPTO_CURRENTDIR_SOURCES}
+    ${OPENSSL_CPUID_SRCS}
+)
