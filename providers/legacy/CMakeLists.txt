@@ -241,6 +241,16 @@ if (NOT OPENSSL_MODULE)
 else()
     set(LIBLEGACY_LIBRARY_TYPE MODULE)
     set(LIBLEGACY_SOURCES ${LIBLEGACY_SOURCES} ${LIBLEGACY_SOURCES_MODULE})
+
+    if (WIN32)
+        add_custom_command(
+            OUTPUT legacy.def
+            COMMAND "${CMAKE_COMMAND}" -DNUMFILE="${CMAKE_SOURCE_DIR}/openssl/util/providers.num" -DLIBRARY_FILE="legacy" -DBINARY_DIR="${CMAKE_BINARY_DIR}" -DOUTPUT_FILE="${CMAKE_CURRENT_BINARY_DIR}/legacy.def" -DPLATFORM=_WIN32 -P "${CMAKE_CURRENT_SOURCE_DIR}/../../crypto/mkdef.cmake"
+            MAIN_DEPENDENCY "${CMAKE_SOURCE_DIR}/openssl/util/providers.num"
+            DEPENDS ../../crypto/mkdef.cmake
+        )
+        set(LIBLEGACY_SOURCES ${LIBLEGACY_SOURCES} legacy.def)
+    endif()
 endif()
 
 add_library(legacy "${LIBLEGACY_LIBRARY_TYPE}"
