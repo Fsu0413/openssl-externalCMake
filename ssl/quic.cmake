@@ -35,3 +35,14 @@ set(LIBSSL_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/ssl/quic/quic_local.h
     ${CMAKE_SOURCE_DIR}/openssl/ssl/quic/quic_record_shared.h
 )
+
+if (BUILD_SHARED_LIBS)
+    # WHY the hell is the libssl thread code in libcrypto?
+    set(LIBSSL_SOURCES
+        ${LIBSSL_SOURCES}
+        ${CMAKE_SOURCE_DIR}/openssl/crypto/thread/arch.c
+        ${CMAKE_SOURCE_DIR}/openssl/crypto/thread/arch/thread_none.c
+        ${CMAKE_SOURCE_DIR}/openssl/crypto/thread/arch/thread_posix.c
+        ${CMAKE_SOURCE_DIR}/openssl/crypto/thread/arch/thread_win.c
+    )
+endif()
