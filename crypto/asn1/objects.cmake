@@ -71,7 +71,3 @@ set(LIBCRYPTO_CURRENTDIR_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/crypto/asn1/standard_methods.h
     ${CMAKE_SOURCE_DIR}/openssl/crypto/asn1/tbl_standard.h
 )
-
-set(LIBCRYPTO_SOURCES ${LIBCRYPTO_SOURCES} ${LIBCRYPTO_CURRENTDIR_SOURCES})
-
-unset(LIBCRYPTO_CURRENTDIR_SOURCES)

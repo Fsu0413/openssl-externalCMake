@@ -38,7 +38,6 @@ set(LIBCRYPTO_CURRENTDIR_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/crypto/o_str.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/o_dir.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/o_fopen.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/ctype.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/threads_pthread.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/threads_win.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/threads_none.c
@@ -64,26 +63,26 @@ if (WIN32 OR CYGWIN)
     )
 endif()
 
-set(LIBCRYPTO_CURRENTDIR_ASM_SOURCES
+set(OPENSSL_CPUID_SRCS
     ${CMAKE_SOURCE_DIR}/openssl/crypto/mem_clr.c
 )
 if (OPENSSL_ASM)
     if ( OPENSSL_TARGET_ARCH STREQUAL "x64" )
-        set(LIBCRYPTO_CURRENTDIR_ASM_SOURCES
+        set(OPENSSL_CPUID_SRCS
             x86_64cpuid${OPENSSL_ASM_PREPROCESSED}
         )
     elseif ( ( OPENSSL_TARGET_ARCH STREQUAL "x86" ) AND ( NOT OPENSSL_386 ) )
-        set(LIBCRYPTO_CURRENTDIR_ASM_SOURCES
+        set(OPENSSL_CPUID_SRCS
             x86cpuid${OPENSSL_ASM_PREPROCESSED}
         )
     elseif ( OPENSSL_TARGET_ARCH STREQUAL "arm32" )
-        set(LIBCRYPTO_CURRENTDIR_ASM_SOURCES
+        set(OPENSSL_CPUID_SRCS
             armv4cpuid.S
             ${CMAKE_SOURCE_DIR}/openssl/crypto/armcap.c
             ${CMAKE_SOURCE_DIR}/openssl/crypto/arm_arch.h
         )
     elseif ( OPENSSL_TARGET_ARCH STREQUAL "arm64" )
-        set(LIBCRYPTO_CURRENTDIR_ASM_SOURCES
+        set(OPENSSL_CPUID_SRCS
             arm64cpuid.S
             ${CMAKE_SOURCE_DIR}/openssl/crypto/armcap.c
             ${CMAKE_SOURCE_DIR}/openssl/crypto/arm_arch.h
@@ -91,12 +90,12 @@ if (OPENSSL_ASM)
     endif()
 endif()
 
-set(LIBCRYPTO_CURRENTDIR_SOURCES
-    ${LIBCRYPTO_CURRENTDIR_SOURCES}
-    ${LIBCRYPTO_CURRENTDIR_ASM_SOURCES}
+set(OPENSSL_CPUID_SRCS
+    ${OPENSSL_CPUID_SRCS}
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/ctype.c
 )
 
-set(LIBCRYPTO_SOURCES ${LIBCRYPTO_SOURCES} ${LIBCRYPTO_CURRENTDIR_SOURCES})
-
-unset(LIBCRYPTO_CURRENTDIR_SOURCES)
-unset(LIBCRYPTO_CURRENTDIR_ASM_SOURCES)
+set(LIBCRYPTO_CURRENTDIR_SOURCES
+    ${LIBCRYPTO_CURRENTDIR_SOURCES}
+    ${OPENSSL_CPUID_SRCS}
+)
