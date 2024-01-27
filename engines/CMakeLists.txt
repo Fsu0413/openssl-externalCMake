@@ -12,6 +12,16 @@ if (OPENSSL_HW AND OPENSSL_ENGINE AND BUILD_SHARED_LIBS AND OPENSSL_DYNAMIC_ENGI
         if (OPENSSL_HW_${_OPTION_SYMBOL})
             set(ENGINE_SOURCES)
             include(${_OPTION}.cmake)
+            if (WIN32)
+                add_custom_command(
+                    OUTPUT ${_ENGINE}.def
+                    COMMAND "${CMAKE_COMMAND}" -DNUMFILE="${CMAKE_CURRENT_SOURCE_DIR}/engines.num" -DLIBRARY_FILE="${_ENGINE}" -DBINARY_DIR="${CMAKE_BINARY_DIR}" -DOUTPUT_FILE="${CMAKE_CURRENT_BINARY_DIR}/${_ENGINE}.def" -DPLATFORM=_WIN32 -P "${CMAKE_CURRENT_SOURCE_DIR}/../crypto/mkdef.cmake"
+                    MAIN_DEPENDENCY "${CMAKE_CURRENT_SOURCE_DIR}/engines.num"
+                    DEPENDS ../crypto/mkdef.cmake
+                )
+                set(ENGINE_SOURCES ${ENGINE_SOURCES} ${_ENGINE}.def)
+            endif()
+
             add_library(${_ENGINE} MODULE
                 ${ENGINE_SOURCES}
             )
