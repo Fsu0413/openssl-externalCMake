@@ -798,6 +798,16 @@ if (WIN32)
             ARCHIVE_OUTPUT_NAME libcrypto
         )
     endif()
+elseif ( ( CMAKE_C_COMPILER_ID MATCHES "GNU" OR CMAKE_C_COMPILER_ID MATCHES "[Cc]lang" ) AND NOT APPLE )
+    add_custom_command(
+        OUTPUT crypto.ld
+        COMMAND "${CMAKE_COMMAND}" -DNUMFILE="${CMAKE_SOURCE_DIR}/openssl/util/libcrypto.num" -DLIBRARY_FILE="${LIBCRYPTO_RUNTIME_OUTPUT_NAME}" -DBINARY_DIR="${CMAKE_BINARY_DIR}" -DOUTPUT_FILE="${CMAKE_CURRENT_BINARY_DIR}/crypto.ld" -DPLATFORM=ELF -P "${CMAKE_CURRENT_SOURCE_DIR}/mkdef.cmake"
+        MAIN_DEPENDENCY "${CMAKE_SOURCE_DIR}/openssl/util/libcrypto.num"
+        DEPENDS mkdef.cmake
+    )
+    add_custom_target(crypto_map SOURCES crypto.ld)
+    add_dependencies(crypto crypto_map)
+    target_link_options(crypto PRIVATE "LINKER:--version-script=${CMAKE_CURRENT_BINARY_DIR}/crypto.ld")
 endif()
 set_target_properties(crypto PROPERTIES
     SOVERSION 3
