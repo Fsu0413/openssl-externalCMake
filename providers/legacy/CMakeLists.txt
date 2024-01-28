@@ -265,6 +265,18 @@ set_target_properties(legacy PROPERTIES
     PREFIX ""
 )
 
+if ( OPENSSL_MODULE AND NOT WIN32 AND ( CMAKE_C_COMPILER_ID MATCHES "GNU" OR CMAKE_C_COMPILER_ID MATCHES "[Cc]lang" ) AND NOT APPLE )
+    add_custom_command(
+        OUTPUT legacy.ld
+        COMMAND "${CMAKE_COMMAND}" -DNUMFILE="${CMAKE_SOURCE_DIR}/openssl/util/providers.num" -DLIBRARY_FILE="legacy" -DBINARY_DIR="${CMAKE_BINARY_DIR}" -DOUTPUT_FILE="${CMAKE_CURRENT_BINARY_DIR}/legacy.ld" -DPLATFORM=ELF -P "${CMAKE_CURRENT_SOURCE_DIR}/../../crypto/mkdef.cmake"
+        MAIN_DEPENDENCY "${CMAKE_SOURCE_DIR}/openssl/util/providers.num"
+        DEPENDS ../../crypto/mkdef.cmake
+    )
+    add_custom_target(legacy_map SOURCES legacy.ld)
+    add_dependencies(legacy legacy_map)
+    target_link_options(legacy PRIVATE "LINKER:--version-script=${CMAKE_CURRENT_BINARY_DIR}/legacy.ld")
+endif()
+
 target_include_directories(legacy
     PRIVATE ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/include
             ${CMAKE_SOURCE_DIR}/openssl/providers/common/include
