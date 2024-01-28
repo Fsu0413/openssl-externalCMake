@@ -121,6 +121,16 @@ if (WIN32)
             ARCHIVE_OUTPUT_NAME libssl
         )
     endif()
+elseif ( ( CMAKE_C_COMPILER_ID MATCHES "GNU" OR CMAKE_C_COMPILER_ID MATCHES "[Cc]lang" ) AND NOT APPLE )
+    add_custom_command(
+        OUTPUT ssl.ld
+        COMMAND "${CMAKE_COMMAND}" -DNUMFILE="${CMAKE_SOURCE_DIR}/openssl/util/libssl.num" -DLIBRARY_FILE="${LIBCRYPTO_RUNTIME_OUTPUT_NAME}" -DBINARY_DIR="${CMAKE_BINARY_DIR}" -DOUTPUT_FILE="${CMAKE_CURRENT_BINARY_DIR}/ssl.ld" -DPLATFORM=ELF -P "${CMAKE_CURRENT_SOURCE_DIR}/../crypto/mkdef.cmake"
+        MAIN_DEPENDENCY "${CMAKE_SOURCE_DIR}/openssl/util/libssl.num"
+        DEPENDS ../crypto/mkdef.cmake
+    )
+    add_custom_target(ssl_map SOURCES ssl.ld)
+    add_dependencies(ssl ssl_map)
+    target_link_options(ssl PRIVATE "LINKER:--version-script=${CMAKE_CURRENT_BINARY_DIR}/ssl.ld")
 endif()
 set_target_properties(ssl PROPERTIES
     SOVERSION 3
