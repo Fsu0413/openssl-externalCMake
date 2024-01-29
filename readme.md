@@ -114,8 +114,8 @@ Sort by priority
 
 ### All branches:
 
-1. Support for BSDs
 1. Support for loongson64, riscv64 and arm (32/64) Linux (mips has lots of variant so temporarily ignore it)
+1. Support for BSDs (Other than x86_64)
 1. Check how to test on cross built platforms
 1. 1.0.1 series support
 1. 1.0.0 series support
