@@ -102,7 +102,7 @@ They are not even released to users. Maybe they are some kinds of internal test 
 
 ## How to use this project? Or how to use CMake to build OpenSSL?
 
-Just typical CMake procedure will work.
+Just typical CMake procedure will work. See [Mapping.md](Mapping.md) for argument mapping for OpenSSL original build parameters and CMake one.
 
 ## TODOs
 
