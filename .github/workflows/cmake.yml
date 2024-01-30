@@ -1,6 +1,7 @@
 name: CMake
 
-on: [workflow_dispatch]
+on:
+  push:
 
 jobs:
   get-version:
@@ -18,6 +19,8 @@ jobs:
       openssl_version: ${{ steps.getversion.outputs.OPENSSL_VERSION }}
 
   package-source-unix:
+    strategy:
+      fail-fast: false
     runs-on: ubuntu-latest
     needs: get-version
     env:
@@ -45,6 +48,8 @@ jobs:
           path: build/OpenSSL-${{ env.FS_OPENSSL_VERSION_STR }}-Source.tar.xz
 
   package-source-windows:
+    strategy:
+      fail-fast: false
     runs-on: windows-latest
     needs: get-version
     env:
@@ -78,17 +83,11 @@ jobs:
   build-ubuntu:
     strategy:
       fail-fast: false
-      matrix:
-        runner: [ "20.04", "22.04" ]
-        asm: [ "YES", "NO" ]
-        zlib: [ "YES", "NO" ]
-        threads: [ "YES", "NO" ]
     continue-on-error: true
-    runs-on: ubuntu-${{ matrix.runner }}
-    name: "build-ubuntu-${{ matrix.runner }} (ASM: ${{ matrix.asm }}, Zlib: ${{ matrix.zlib }}), Threads: ${{ matrix.threads }}"
+    runs-on: ubuntu-22.04
     needs: get-version
     env:
-      FS_OPENSSL_PACKAGE_STR: Ubuntu${{ matrix.runner }}-x86_64-ASM${{ matrix.asm }}-Zlib${{ matrix.zlib }}-Threads${{ matrix.threads }}
+      FS_OPENSSL_PACKAGE_STR: Ubuntu-x86_64
       FS_OPENSSL_VERSION_STR: ${{ needs.get-version.outputs.openssl_version }}
     steps:
       - uses: actions/checkout@v4
@@ -105,7 +104,7 @@ jobs:
         run: |
           mkdir -p "build"
           cd "build"
-          cmake -GNinja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}/openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}" -DOPENSSL_ASM=${{ matrix.asm }} -DOPENSSL_ZLIB=${{ matrix.zlib }} -DOPENSSL_THREADS=${{ matrix.threads }} "${{ github.workspace }}/openssl-externalCMake"
+          cmake -GNinja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}/openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}" -DOPENSSL_ASM=ON -DOPENSSL_ZLIB=ON -DOPENSSL_THREADS=ON "${{ github.workspace }}/openssl-externalCMake"
           cmake --build . --parallel
           cmake --build . --parallel -t package
       - uses: actions/upload-artifact@v4
@@ -113,20 +112,14 @@ jobs:
           name: openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}
           path: build/OpenSSL-${{ env.FS_OPENSSL_VERSION_STR }}-linux-x86_64.tar.xz
 
-  build-macOS:
+  build-macOS-x86_64:
     strategy:
       fail-fast: false
-      matrix:
-        runner: [ "12", "13" ]
-        asm: [ "YES", "NO" ]
-        zlib: [ "YES", "NO" ]
-        threads: [ "YES", "NO" ]
     continue-on-error: true
-    runs-on: macos-${{ matrix.runner }}
-    name: "build-macOS${{ matrix.runner }}-x86_64 (ASM: ${{ matrix.asm }}, Zlib: ${{ matrix.zlib }}, Threads: ${{ matrix.threads }}"
+    runs-on: macos-13
     needs: get-version
     env:
-      FS_OPENSSL_PACKAGE_STR: macOS${{ matrix.runner }}-x86_64-ASM${{ matrix.asm }}-Zlib${{ matrix.zlib }}-Threads${{ matrix.threads }}
+      FS_OPENSSL_PACKAGE_STR: macOS-x86_64
       FS_OPENSSL_VERSION_STR: ${{ needs.get-version.outputs.openssl_version }}
     steps:
       - uses: actions/checkout@v4
@@ -141,7 +134,7 @@ jobs:
         run: |
           mkdir -p "build"
           cd "build"
-          cmake -GNinja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}/openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}" -DCMAKE_OSX_ARCHITECTURES="x86_64" -DOPENSSL_ASM=${{ matrix.asm }} -DOPENSSL_ZLIB=${{ matrix.zlib }} -DOPENSSL_THREADS=${{ matrix.threads }} "${{ github.workspace }}/openssl-externalCMake"
+          cmake -GNinja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}/openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}" -DCMAKE_OSX_ARCHITECTURES="x86_64" -DOPENSSL_ASM=ON -DOPENSSL_ZLIB=ON -DOPENSSL_THREADS=ON "${{ github.workspace }}/openssl-externalCMake"
           cmake --build . --parallel
           cmake --build . --parallel -t package
       - uses: actions/upload-artifact@v4
@@ -149,20 +142,14 @@ jobs:
           name: openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}
           path: build/OpenSSL-${{ env.FS_OPENSSL_VERSION_STR }}-darwin64-x86_64.tar.xz
 
-  build-macOS-aarch64:
+  build-macOS-arm64:
     strategy:
       fail-fast: false
-      matrix:
-        runner: [ "12", "13" ]
-        asm: [ "YES", "NO" ]
-        zlib: [ "YES", "NO" ]
-        threads: [ "YES", "NO" ]
     continue-on-error: true
-    runs-on: macos-${{ matrix.runner }}
-    name: "build-macOS${{ matrix.runner }}-aarch64 (ASM: ${{ matrix.asm }}, Zlib: ${{ matrix.zlib }}, Threads: ${{ matrix.threads }}"
+    runs-on: macos-14
     needs: get-version
     env:
-      FS_OPENSSL_PACKAGE_STR: macOS${{ matrix.runner }}-aarch64-ASM${{ matrix.asm }}-Zlib${{ matrix.zlib }}-Threads${{ matrix.threads }}
+      FS_OPENSSL_PACKAGE_STR: macOS-arm64
       FS_OPENSSL_VERSION_STR: ${{ needs.get-version.outputs.openssl_version }}
     steps:
       - uses: actions/checkout@v4
@@ -177,7 +164,7 @@ jobs:
         run: |
           mkdir -p "build"
           cd "build"
-          cmake -GNinja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}/openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}" -DCMAKE_OSX_ARCHITECTURES="arm64" -DOPENSSL_ASM=${{ matrix.asm }} -DOPENSSL_ZLIB=${{ matrix.zlib }} -DOPENSSL_THREADS=${{ matrix.threads }} "${{ github.workspace }}/openssl-externalCMake"
+          cmake -GNinja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}/openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}" -DCMAKE_OSX_ARCHITECTURES="arm64" -DOPENSSL_ASM=ON -DOPENSSL_ZLIB=ON -DOPENSSL_THREADS=ON "${{ github.workspace }}/openssl-externalCMake"
           cmake --build . --parallel
           cmake --build . --parallel -t package
       - uses: actions/upload-artifact@v4
@@ -188,17 +175,11 @@ jobs:
   build-macOS-unified:
     strategy:
       fail-fast: false
-      matrix:
-        runner: [ "12", "13" ]
-        # can't build ASM on unified.
-        zlib: [ "YES", "NO" ]
-        threads: [ "YES", "NO" ]
     continue-on-error: true
-    runs-on: macos-${{ matrix.runner }}
-    name: "build-macOS${{ matrix.runner }}-unified (Zlib: ${{ matrix.zlib }}, Threads: ${{ matrix.threads }}"
+    runs-on: macos-14
     needs: get-version
     env:
-      FS_OPENSSL_PACKAGE_STR: macOS${{ matrix.runner }}-unified-Zlib${{ matrix.zlib }}-Threads${{ matrix.threads }}
+      FS_OPENSSL_PACKAGE_STR: macOS-unified
       FS_OPENSSL_VERSION_STR: ${{ needs.get-version.outputs.openssl_version }}
     steps:
       - uses: actions/checkout@v4
@@ -213,7 +194,7 @@ jobs:
         run: |
           mkdir -p "build"
           cd "build"
-          cmake -GNinja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}/openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}" -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64" -DOPENSSL_ASM=NO -DOPENSSL_ZLIB=${{ matrix.zlib }} -DOPENSSL_THREADS=${{ matrix.threads }} "${{ github.workspace }}/openssl-externalCMake"
+          cmake -GNinja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}/openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}" -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64" -DOPENSSL_ASM=NO -DOPENSSL_ZLIB=ON -DOPENSSL_THREADS=ON "${{ github.workspace }}/openssl-externalCMake"
           cmake --build . --parallel
           cmake --build . --parallel -t package
       - uses: actions/upload-artifact@v4
@@ -227,28 +208,21 @@ jobs:
       matrix:
         toolchain:
           - version: "12.2.0"
-            bit: "64"
-            arch: "x86_64"
-            url: "https://github.com/niXman/mingw-builds-binaries/releases/download/12.2.0-rt_v10-rev2/x86_64-12.2.0-release-posix-seh-msvcrt-rt_v10-rev2.7z"
-            OPENSSL_BUILD_PLATFORM: mingw64
-          - version: "12.2.0"
             bit: "32"
             arch: "i686"
             url: "https://github.com/niXman/mingw-builds-binaries/releases/download/12.2.0-rt_v10-rev2/i686-12.2.0-release-posix-dwarf-msvcrt-rt_v10-rev2.7z"
             OPENSSL_BUILD_PLATFORM: mingw
-          - version: "13.1.0"
+          - version: "13.2.0"
             bit: "64"
             arch: "x86_64"
-            url: "https://github.com/niXman/mingw-builds-binaries/releases/download/13.1.0-rt_v11-rev1/x86_64-13.1.0-release-posix-seh-msvcrt-rt_v11-rev1.7z"
+            url: "https://github.com/niXman/mingw-builds-binaries/releases/download/13.2.0-rt_v11-rev1/x86_64-13.2.0-release-posix-seh-msvcrt-rt_v11-rev1.7z"
             OPENSSL_BUILD_PLATFORM: mingw64
-        asm: [ "YES", "NO" ]
-        threads: [ "YES", "NO" ]
     continue-on-error: true
     runs-on: windows-latest
-    name: "build-MinGW-GCC${{ matrix.toolchain.version }}-${{ matrix.toolchain.bit }}bit (ASM: ${{ matrix.asm }}, Threads: ${{ matrix.threads }}"
+    name: "build-MinGW-GCC${{ matrix.toolchain.version }}-${{ matrix.toolchain.bit }}bit"
     needs: get-version
     env:
-      FS_OPENSSL_PACKAGE_STR: MinGWGCC${{ matrix.toolchain.version }}-${{ matrix.toolchain.arch }}-ASM${{ matrix.asm }}-Threads${{ matrix.threads }}
+      FS_OPENSSL_PACKAGE_STR: MinGW-GCC${{ matrix.toolchain.version }}-${{ matrix.toolchain.arch }}
       FS_OPENSSL_VERSION_STR: ${{ needs.get-version.outputs.openssl_version }}
     steps:
       - uses: actions/checkout@v4
@@ -271,7 +245,7 @@ jobs:
           set path=${{ github.workspace }}\mingw\mingw${{ matrix.toolchain.bit }}\\bin;%path%
           mkdir -p "build"
           cd "build"
-          cmake -GNinja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}/openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}" -DOPENSSL_ASM=${{ matrix.asm }} -DOPENSSL_THREADS=${{ matrix.threads }} "${{ github.workspace }}/openssl-externalCMake"
+          cmake -GNinja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}/openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}" -DOPENSSL_ASM=ON -DOPENSSL_THREADS=ON "${{ github.workspace }}/openssl-externalCMake"
           cmake --build . --parallel
           cmake --build . --parallel -t package
       - uses: actions/upload-artifact@v4
@@ -292,24 +266,16 @@ jobs:
             OPENSSL_BUILD_PLATFORM: VC-WIN64A
           - version: "2019"
             runson: "2019"
-            call: C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat
-            bit: "64"
-            arch: "x86_64"
-            OPENSSL_BUILD_PLATFORM: VC-WIN64A
-          - version: "2019"
-            runson: "2019"
             call: C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvarsamd64_x86.bat
             bit: "32"
             arch: "i686"
             OPENSSL_BUILD_PLATFORM: VC-WIN32
-        asm: [ "YES", "NO" ]
-        # msvc builds doesn't support no-thread
     continue-on-error: true
     runs-on: windows-${{ matrix.toolchain.runson }}
-    name: "build-MSVC${{ matrix.toolchain.version }}-${{ matrix.toolchain.bit }}bit (ASM: ${{ matrix.asm }})"
+    name: "build-MSVC${{ matrix.toolchain.version }}-${{ matrix.toolchain.bit }}bit"
     needs: get-version
     env:
-      FS_OPENSSL_PACKAGE_STR: MSVC${{ matrix.toolchain.version }}-${{ matrix.toolchain.arch }}-ASM${{ matrix.asm }}
+      FS_OPENSSL_PACKAGE_STR: MSVC${{ matrix.toolchain.version }}-${{ matrix.toolchain.arch }}
       FS_OPENSSL_VERSION_STR: ${{ needs.get-version.outputs.openssl_version }}
     steps:
       - uses: actions/checkout@v4
@@ -328,7 +294,7 @@ jobs:
           call "${{ matrix.toolchain.call }}"
           mkdir -p "build"
           cd "build"
-          cmake -GNinja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}/openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}" -DOPENSSL_ASM=${{ matrix.asm }} -DOPENSSL_NASM=${{ matrix.asm }} "${{ github.workspace }}/openssl-externalCMake"
+          cmake -GNinja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}/openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}" -DOPENSSL_ASM=ON -DOPENSSL_NASM=ON "${{ github.workspace }}/openssl-externalCMake"
           cmake --build . --parallel
           cmake --build . --parallel -t package
       - uses: actions/upload-artifact@v4
@@ -343,38 +309,19 @@ jobs:
       matrix:
         toolchain:
           - arch: "armeabi-v7a"
-            platform: "24"
             OPENSSL_BUILD_PLATFORM: android-arm
           - arch: "arm64-v8a"
-            platform: "24"
             OPENSSL_BUILD_PLATFORM: android-arm64
           - arch: "x86"
-            platform: "24"
             OPENSSL_BUILD_PLATFORM: android-x86
           - arch: "x86_64"
-            platform: "24"
             OPENSSL_BUILD_PLATFORM: android-x86_64
-          - arch: "armeabi-v7a"
-            platform: "27"
-            OPENSSL_BUILD_PLATFORM: android-arm
-          - arch: "arm64-v8a"
-            platform: "27"
-            OPENSSL_BUILD_PLATFORM: android-arm64
-          - arch: "x86"
-            platform: "27"
-            OPENSSL_BUILD_PLATFORM: android-x86
-          - arch: "x86_64"
-            platform: "27"
-            OPENSSL_BUILD_PLATFORM: android-x86_64
-        asm: [ "YES", "NO" ]
-        threads: [ "YES", "NO" ]
-        zlib: [ "YES", "NO" ]
     continue-on-error: true
     runs-on: ubuntu-latest
-    name: "build-AndroidAPI${{ matrix.toolchain.platform }}-${{ matrix.toolchain.arch }} (ASM: ${{ matrix.asm }}, Zlib: ${{ matrix.zlib }}), Threads: ${{ matrix.threads }}"
+    name: "build-Android-${{ matrix.toolchain.arch }}"
     needs: get-version
     env:
-      FS_OPENSSL_PACKAGE_STR: AndroidAPI${{ matrix.toolchain.platform }}-${{ matrix.toolchain.arch }}}-ASM${{ matrix.asm }}Zlib${{ matrix.zlib }}-Threads${{ matrix.threads }}
+      FS_OPENSSL_PACKAGE_STR: Android-${{ matrix.toolchain.arch }}
       FS_OPENSSL_VERSION_STR: ${{ needs.get-version.outputs.openssl_version }}
     steps:
       - uses: actions/checkout@v4
@@ -391,7 +338,7 @@ jobs:
         run: |
           mkdir -p "build"
           cd "build"
-          cmake -GNinja -DCMAKE_TOOLCHAIN_FILE="${ANDROID_NDK_HOME}/build/cmake/android.toolchain.cmake" -DANDROID_ABI=${{ matrix.toolchain.arch }} -DANDROID_PLATFORM=${{ matrix.toolchain.platform }} -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}/openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}" -DOPENSSL_ASM=${{ matrix.asm }} -DOPENSSL_ZLIB=${{ matrix.zlib }} -DOPENSSL_THREADS=${{ matrix.threads }} "${{ github.workspace }}/openssl-externalCMake"
+          cmake -GNinja -DCMAKE_TOOLCHAIN_FILE="${ANDROID_NDK_HOME}/build/cmake/android.toolchain.cmake" -DANDROID_ABI=${{ matrix.toolchain.arch }} -DANDROID_PLATFORM=24 -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}/openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}" -DOPENSSL_ASM=ON -DOPENSSL_ZLIB=ON -DOPENSSL_THREADS=ON "${{ github.workspace }}/openssl-externalCMake"
           cmake --build . --parallel
           cmake --build . --parallel -t package
       - uses: actions/upload-artifact@v4
