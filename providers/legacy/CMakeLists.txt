@@ -159,8 +159,8 @@ if (OPENSSL_WHIRLPOOL)
 endif()
 
 if (OPENSSL_RMD160)
-    set(LIBLEGACY_SOURCES_MODULE
-        ${LIBLEGACY_SOURCES_MODULE}
+    set(LIBLEGACY_SOURCES
+        ${LIBLEGACY_SOURCES}
         ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/digests/ripemd_prov.c
     )
 endif()
@@ -168,7 +168,7 @@ endif()
 if (OPENSSL_MODULE AND BUILD_SHARED_LIBS)
     set(LIBCRYPTO_CURRENTDIR_SOURCES)
     include("../../crypto/_cryptoDir/objects.cmake")
-    set(LIBLEGACY_SOURCES ${LIBLEGACY_SOURCES} ${OPENSSL_CPUID_SRCS})
+    set(LIBLEGACY_SOURCES_MODULE ${LIBLEGACY_SOURCES_MODULE} ${OPENSSL_CPUID_SRCS})
 
     set(LIBCRYPTO_CURRENTDIR_SOURCES)
     include("../../crypto/des/objects.cmake")
