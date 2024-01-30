@@ -315,15 +315,19 @@ jobs:
           - arch: "armeabi-v7a"
             platform: "16"
             OPENSSL_BUILD_PLATFORM: android-armeabi
+            CMAKE_25_LATER_WORKAROUND:
           - arch: "x86"
             platform: "16"
             OPENSSL_BUILD_PLATFORM: android-x86
+            CMAKE_25_LATER_WORKAROUND:
           - arch: "arm64-v8a"
             platform: "21"
             OPENSSL_BUILD_PLATFORM: android64-aarch64
+            CMAKE_25_LATER_WORKAROUND:
           - arch: "x86_64"
             platform: "21"
             OPENSSL_BUILD_PLATFORM: linux-x86_64
+            CMAKE_25_LATER_WORKAROUND: -DCMAKE_FIND_LIBRARY_CUSTOM_LIB_SUFFIX=64
     continue-on-error: true
     runs-on: ubuntu-latest
     name: "build-Android-${{ matrix.toolchain.arch }}"
@@ -352,7 +356,7 @@ jobs:
           unset ANDROID_HOME ANDROID_NDK ANDROID_NDK_HOME ANDROID_NDK_LATEST_HOME ANDROID_NDK_ROOT ANDROID_SDK_ROOT || :
           mkdir -p "build"
           cd "build"
-          cmake -GNinja -DCMAKE_TOOLCHAIN_FILE="${{ github.workspace }}/android-ndk-r17c/build/cmake/android.toolchain.cmake" -DANDROID_ABI=${{ matrix.toolchain.arch }} -DANDROID_PLATFORM=android-${{ matrix.toolchain.platform }} -DANDROID_TOOLCHAIN=gcc -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}/openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}" -DOPENSSL_ASM=ON -DOPENSSL_ZLIB=ON -DOPENSSL_THREADS=ON "${{ github.workspace }}/openssl-externalCMake"
+          cmake -GNinja -DCMAKE_TOOLCHAIN_FILE="${{ github.workspace }}/android-ndk-r17c/build/cmake/android.toolchain.cmake" ${{ matrix.toolchain.CMAKE_25_LATER_WORKAROUND }} -DANDROID_ABI=${{ matrix.toolchain.arch }} -DANDROID_PLATFORM=android-${{ matrix.toolchain.platform }} -DANDROID_TOOLCHAIN=gcc -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}/openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}" -DOPENSSL_ASM=ON -DOPENSSL_ZLIB=ON -DOPENSSL_THREADS=ON "${{ github.workspace }}/openssl-externalCMake"
           cmake --build . --parallel
           cmake --build . --parallel -t package
       - uses: actions/upload-artifact@v4
