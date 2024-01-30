@@ -55,7 +55,7 @@ endif()
 
 #define RC4_INT unsigned @OPENSSL_RC4_INT@
 if (       WIN32
-        OR ( ANDROID AND ( ( OPENSSL_TARGET_ARCH STREQUAL "x86" ) OR ( OPENSSL_TARGET_ARCH STREQUAL "x64" ) ) )
+        OR ( ANDROID AND ( OPENSSL_TARGET_ARCH STREQUAL "x86" ) )
         OR APPLE
         OR BSD
         OR ( CMAKE_SYSTEM_NAME MATCHES "SunOS" ) # TODO: Solaris on sparcv7 and sparcv9-64 have RC4_CHAR
