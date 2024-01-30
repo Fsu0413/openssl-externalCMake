@@ -159,8 +159,8 @@ if (OPENSSL_WHIRLPOOL)
 endif()
 
 if (OPENSSL_RMD160)
-    set(LIBLEGACY_SOURCES_MODULE
-        ${LIBLEGACY_SOURCES_MODULE}
+    set(LIBLEGACY_SOURCES
+        ${LIBLEGACY_SOURCES}
         ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/digests/ripemd_prov.c
     )
 endif()
