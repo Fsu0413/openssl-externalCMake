@@ -322,6 +322,9 @@ jobs:
           - arch: "arm64-v8a"
             platform: "21"
             OPENSSL_BUILD_PLATFORM: android64-aarch64
+          - arch: "x86_64"
+            platform: "21"
+            OPENSSL_BUILD_PLATFORM: linux-x86_64
     continue-on-error: true
     runs-on: ubuntu-latest
     name: "build-Android-${{ matrix.toolchain.arch }}"

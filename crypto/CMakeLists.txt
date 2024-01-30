@@ -75,7 +75,7 @@ set(OPENSSL_RC2_INT "int")
 
 #define RC4_INT unsigned @OPENSSL_RC4_INT@
 if (       WIN32
-        OR ( ANDROID AND ( OPENSSL_TARGET_ARCH STREQUAL "x86" ) )
+        OR ( ANDROID AND ( ( OPENSSL_TARGET_ARCH STREQUAL "x86" ) OR ( OPENSSL_TARGET_ARCH STREQUAL "x64" ) ) )
         OR ( LINUX AND ( ( OPENSSL_TARGET_ARCH STREQUAL "x86" ) OR ( OPENSSL_TARGET_ARCH STREQUAL "x64" ) ) )
         OR ( APPLE AND NOT IOS )
         OR BSD
@@ -183,9 +183,9 @@ else()
 endif()
 
 #define EXTERNALCMAKE_BF_PTR @OPENSSL_BF_PTR@
-if (       ( ANDROID AND NOT ( OPENSSL_TARGET_ARCH STREQUAL "x86" ) )
+if (       ( ANDROID AND ( OPENSSL_TARGET_ARCH MATCHES "arm") )
         OR IOS
-        OR ( LINUX AND ( OPENSSL_TARGET_ARCH MATCHES "arm"))
+        OR ( LINUX AND ( OPENSSL_TARGET_ARCH MATCHES "arm") )
         OR ( CMAKE_SYSTEM_NAME MATCHES "SunOS" AND ( OPENSSL_TARGET_ARCH STREQUAL "x86" ) AND ( CMAKE_C_COMPILER_ID MATCHES "SunPro" ) )
     )
     set(OPENSSL_BF_PTR 1)
@@ -382,7 +382,7 @@ if (OPENSSL_ASM OR OPENSSL_UPLINK)
                 set(OPENSSL_PERLASM_SCHEME "mingw64")
             elseif (MSVC)
                 set(OPENSSL_PERLASM_SCHEME "masm")
-            elseif ( BSD OR LINUX OR ( CMAKE_SYSTEM_NAME MATCHES "SunOS" ) )
+            elseif ( BSD OR LINUX OR ( CMAKE_SYSTEM_NAME MATCHES "SunOS" ) OR ANDROID )
                 set(OPENSSL_PERLASM_SCHEME "elf")
             endif()
         elseif ( OPENSSL_TARGET_ARCH STREQUAL "arm32" )
