@@ -1,6 +1,6 @@
 name: CMake
 
-on: [push]
+on: [workflow_dispatch]
 
 jobs:
   get-version:
