@@ -77,6 +77,14 @@ else()
     message(AUTHOR_WARNING "Perl is not found. Since test cases depends on Perl testing is disabled.")
 endif()
 
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
+include(OpenSslExternalCMakeCheckArchitecture)
+
+# undocumented!
+if ( NOT OPENSSL_TARGET_ARCH )
+    openssl_external_cmake_detect_target_arch(OPENSSL_TARGET_ARCH)
+endif()
+
 # --openssldir
 # option(OPENSSL_OPENSSLDIR "OpenSSL SSL install directory, relative to CMAKE_INSTALL_PREFIX" "ssl")
 set(OPENSSL_OPENSSLDIR "ssl" CACHE STRING "OpenSSL SSL install directory, relative to CMAKE_INSTALL_PREFIX")
@@ -122,7 +130,7 @@ foreach (_OPTION IN ITEMS hw asm err nasm deprecated)
     string(CONCAT _OPTION_HELP "enable OpenSSL option " ${_OPTION})
     if (_OPTION STREQUAL "asm")
         # building ASM needs Perl
-        cmake_dependent_option("${_OPTION_STR}" "${_OPTION_HELP}" ON "Perl_FOUND" OFF)
+        cmake_dependent_option("${_OPTION_STR}" "${_OPTION_HELP}" ON "Perl_FOUND;APPLE AND ( IOS AND OPENSSL_TARGET_ARCH MATCHES \"arm\") OR ( NOT IOS AND NOT OPENSSL_TARGET_ARCH STREQUAL \"\" )" OFF)
     elseif (_OPTION STREQUAL "nasm")
         cmake_dependent_option("${_OPTION_STR}" "${_OPTION_HELP}" OFF "OPENSSL_ASM;MSVC" OFF)
     else()
@@ -241,14 +249,6 @@ foreach (_DEPRECATED_VARIABLE IN ITEMS DEPRECATED_0_9_8 DEPRECATED_1_0_0 DEPRECA
     endif()
 endforeach()
 
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
-
-include(OpenSslExternalCMakeCheckArchitecture)
-
-# undocumented!
-if ( NOT OPENSSL_TARGET_ARCH )
-    openssl_external_cmake_detect_target_arch(OPENSSL_TARGET_ARCH)
-endif()
 
 # 386 and SSE2
 if (OPENSSL_TARGET_ARCH STREQUAL "x64")
