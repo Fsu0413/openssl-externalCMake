@@ -302,33 +302,22 @@ jobs:
           name: openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}
           path: build/OpenSSL-${{ env.FS_OPENSSL_VERSION_STR }}-${{ matrix.toolchain.OPENSSL_BUILD_PLATFORM }}.7z
 
-  # The first NDK version which supports CMake is r13, but since then GCC is no longer supported and is broken (https://github.com/android/ndk/issues/67 is closed as won't fix)
-  # clang on NDK doesn't support the "-mandroid" flag OpenSSL sets. We'd use sed to remove them from command line when using perl-based Configure
-  # TODO: make a CMake toolchain file for known-good NDK r10e (Did I make it in the LibreSSL build project? I'd go search the trash)
-
-  # use r13b for build testing on GCC. OpenSSL 1.0.2 didn't support Android x86_64 so no build test for it.
-
+  # Use latest NDK from GitHub Actions.
+  # OpenSSL 1.0.2 doesn't support Clang assembler (at least on ARM) and GNU assembler got removed using latest NDK.
+  # So this build turns off ASM.
   build-android:
     strategy:
       fail-fast: false
       matrix:
         toolchain:
           - arch: "armeabi-v7a"
-            platform: "9"
             OPENSSL_BUILD_PLATFORM: android-armv7
-            CMAKE_25_LATER_WORKAROUND:
           - arch: "x86"
-            platform: "9"
             OPENSSL_BUILD_PLATFORM: android-x86
-            CMAKE_25_LATER_WORKAROUND:
           - arch: "arm64-v8a"
-            platform: "21"
             OPENSSL_BUILD_PLATFORM: android64-aarch64
-            CMAKE_25_LATER_WORKAROUND:
           - arch: "x86_64"
-            platform: "21"
             OPENSSL_BUILD_PLATFORM: linux-x86_64
-            CMAKE_25_LATER_WORKAROUND: -DCMAKE_FIND_LIBRARY_CUSTOM_LIB_SUFFIX=64
     continue-on-error: true
     runs-on: ubuntu-latest
     name: "build-Android-${{ matrix.toolchain.arch }}"
@@ -347,17 +336,11 @@ jobs:
           echo 'deb [signed-by=/usr/share/keyrings/kitware-archive-keyring.gpg] https://apt.kitware.com/ubuntu/ '"$(. /etc/os-release; echo ${VERSION_CODENAME})"' main' | sudo tee /etc/apt/sources.list.d/kitware.list >/dev/null
           sudo apt-get update
           sudo apt-get install cmake ninja-build perl
-      - name: download Android NDK r13b
-        run: |
-          wget -O ndk.zip https://dl.google.com/android/repository/android-ndk-r13b-linux-x86_64.zip
-          unzip ndk.zip
       - name: run CMake + Ninja
-        # need to unset all Android related stuff before using our own NDK
         run: |
-          unset ANDROID_HOME ANDROID_NDK ANDROID_NDK_HOME ANDROID_NDK_LATEST_HOME ANDROID_NDK_ROOT ANDROID_SDK_ROOT || :
           mkdir -p "build"
           cd "build"
-          cmake -GNinja -DCMAKE_TOOLCHAIN_FILE="${{ github.workspace }}/android-ndk-r13b/build/cmake/android.toolchain.cmake" ${{ matrix.toolchain.CMAKE_25_LATER_WORKAROUND }} -DANDROID_ABI=${{ matrix.toolchain.arch }} -DANDROID_PLATFORM=android-${{ matrix.toolchain.platform }} -DANDROID_TOOLCHAIN=gcc -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}/openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}" -DOPENSSL_ASM=ON -DOPENSSL_ZLIB=ON -DOPENSSL_THREADS=ON "${{ github.workspace }}/openssl-externalCMake"
+          cmake -GNinja -DCMAKE_TOOLCHAIN_FILE="${ANDROID_NDK_HOME}/build/cmake/android.toolchain.cmake" -DANDROID_ABI=${{ matrix.toolchain.arch }} -DANDROID_PLATFORM=24 -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}/openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}" -DOPENSSL_ASM=OFF -DOPENSSL_ZLIB=ON -DOPENSSL_THREADS=ON "${{ github.workspace }}/openssl-externalCMake"
           cmake --build . --parallel
           cmake --build . --parallel -t package
       - uses: actions/upload-artifact@v4
