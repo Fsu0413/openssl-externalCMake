@@ -55,6 +55,14 @@ else()
     message(AUTHOR_WARNING "Perl is not found. Since test cases depends on Perl testing is disabled.")
 endif()
 
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
+include(OpenSslExternalCMakeCheckArchitecture)
+
+# undocumented!
+if ( NOT OPENSSL_TARGET_ARCH )
+    openssl_external_cmake_detect_target_arch(OPENSSL_TARGET_ARCH)
+endif()
+
 # --openssldir
 # option(OPENSSL_OPENSSLDIR "OpenSSL SSL install directory, relative to CMAKE_INSTALL_PREFIX" "ssl")
 set(OPENSSL_OPENSSLDIR "ssl" CACHE STRING "OpenSSL SSL install directory, relative to CMAKE_INSTALL_PREFIX")
@@ -92,7 +100,7 @@ foreach (_OPTION IN ITEMS hw hw-padlock asm err nasm)
     string(CONCAT _OPTION_HELP "enable OpenSSL option " ${_OPTION})
     if (_OPTION STREQUAL "asm")
         # building ASM needs Perl
-        cmake_dependent_option("${_OPTION_STR}" "${_OPTION_HELP}" ON "Perl_FOUND" OFF)
+        cmake_dependent_option("${_OPTION_STR}" "${_OPTION_HELP}" ON "Perl_FOUND;APPLE AND ( IOS AND OPENSSL_TARGET_ARCH MATCHES \"arm\") OR ( NOT IOS AND NOT OPENSSL_TARGET_ARCH STREQUAL \"\" )" OFF)
     elseif (_OPTION STREQUAL "nasm")
         cmake_dependent_option("${_OPTION_STR}" "${_OPTION_HELP}" OFF "OPENSSL_ASM;MSVC" OFF)
     else()
@@ -141,14 +149,6 @@ unset(OPENSSL_KNOWN_RAND_SEED)
 set(OPENSSL_DEFAULT_DISABLED_CIPHERS asan crypto-mdebug crypto-mdebug-backtrace devcryptoeng ec_nistp_64_gcc_128 egd external-tests fuzz-libfuzzer fuzz-afl heartbeats md2 msan rc5
                                      sctp ssl-trace ssl3 ssl3-method ubsan unit-test weak-ssl-ciphers)
 
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
-
-include(OpenSslExternalCMakeCheckArchitecture)
-
-# undocumented!
-if ( NOT OPENSSL_TARGET_ARCH )
-    openssl_external_cmake_detect_target_arch(OPENSSL_TARGET_ARCH)
-endif()
 
 # 386 and SSE2
 if (OPENSSL_TARGET_ARCH STREQUAL "x64")
