@@ -326,6 +326,7 @@ target_link_libraries(openssl
 
 install(TARGETS openssl
     RUNTIME
+    BUNDLE DESTINATION "${CMAKE_BINARY_DIR}"
 )
 
 install(PROGRAMS CA.pl
