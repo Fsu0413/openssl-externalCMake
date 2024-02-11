@@ -5,10 +5,25 @@ static char compiler_flags[] = {
 @LIBCRYPTO_CFLAGS_SOOOOOOOOLONG@
     '\0'
 };
+
+#include <TargetConditionals.h>
+
+#if TARGET_OS_OSX
 #ifdef __aarch64__
 /* match future OpenSSL versions */
 #define PLATFORM "platform: darwin64-arm64-cc"
 #else
 #define PLATFORM "platform: darwin64-x86_64-cc"
-#endif
+#endif /* __aarch64__ */
+#elif TARGET_OS_IOS /* TARGET_OS_OSX */
+#if TARGET_OS_SIMULATOR
+#define PLATFORM "platform: iossimulator-xcrun"
+#else
+#ifdef __aarch64__
+#define PLATFORM "platform: ios64-xcrun"
+#else
+#define PLATFORM "platform: ios-xcrun"
+#endif /* __aarch64__ */
+#endif /* TARGET_OS_SIMULATOR */
+#endif /* TARGET_OS_IOS */
 #define DATE "built on: @OPENSSL_BUILD_TIMESTAMP@"
