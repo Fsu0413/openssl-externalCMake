@@ -91,7 +91,6 @@ if (WIN32)
     configure_file(apps.rc.cmake.in apps.rc @ONLY)
     set(OPENSSL_SOURCES ${OPENSSL_SOURCES} apps.rc)
 endif()
-
 add_executable(openssl
     ${OPENSSL_SOURCES}
     ${OPENSSL_OPTIONAL_SOURCES}
@@ -125,6 +124,7 @@ target_link_libraries(openssl
 
 install(TARGETS openssl
     RUNTIME
+    BUNDLE DESTINATION "${CMAKE_BINARY_DIR}"
 )
 
 install(PROGRAMS CA.pl
