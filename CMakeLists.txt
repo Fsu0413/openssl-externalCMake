@@ -99,7 +99,7 @@ foreach (_OPTION IN ITEMS hw hw-padlock asm err nasm)
     string(CONCAT _OPTION_HELP "enable OpenSSL option " ${_OPTION})
     if (_OPTION STREQUAL "asm")
         # building ASM needs Perl
-        cmake_dependent_option("${_OPTION_STR}" "${_OPTION_HELP}" ON "Perl_FOUND;APPLE AND ( IOS AND OPENSSL_TARGET_ARCH MATCHES \"arm\") OR ( NOT IOS AND OPENSSL_TARGET_ARCH STREQUAL \"x64\" )" OFF)
+        cmake_dependent_option("${_OPTION_STR}" "${_OPTION_HELP}" ON "Perl_FOUND;APPLE AND ( IOS AND OPENSSL_TARGET_ARCH MATCHES \"arm\") OR ( NOT IOS AND NOT OPENSSL_TARGET_ARCH STREQUAL \"\" )" OFF)
     elseif (_OPTION STREQUAL "nasm")
         cmake_dependent_option("${_OPTION_STR}" "${_OPTION_HELP}" OFF "OPENSSL_ASM;MSVC" OFF)
     else()

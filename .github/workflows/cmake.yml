@@ -164,7 +164,7 @@ jobs:
         run: |
           mkdir -p "build"
           cd "build"
-          cmake -GNinja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}/openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}" -DCMAKE_OSX_ARCHITECTURES="arm64" -DOPENSSL_ASM=OFF -DOPENSSL_ZLIB=ON -DOPENSSL_THREADS=ON "${{ github.workspace }}/openssl-externalCMake"
+          cmake -GNinja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}/openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}" -DCMAKE_OSX_ARCHITECTURES="arm64" -DOPENSSL_ASM=ON -DOPENSSL_ZLIB=ON -DOPENSSL_THREADS=ON "${{ github.workspace }}/openssl-externalCMake"
           cmake --build . --parallel
           cmake --build . --parallel -t package
       - uses: actions/upload-artifact@v4
