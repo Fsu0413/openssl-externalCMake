@@ -121,18 +121,27 @@ jobs:
             name: "arm64"
             asm: "ON"
             OPENSSL_BUILD_PLATFORM: "ios64-xcrun"
+            simulator_argument: ""
           - arch: "arm64e"
             name: "arm64e"
             asm: "ON"
             OPENSSL_BUILD_PLATFORM: "ios64-xcrun"
+            simulator_argument: ""
           - arch: "x86_64"
             name: "simulator-x86_64"
             asm: "OFF"
             OPENSSL_BUILD_PLATFORM: "iossimulator-xcrun"
+            simulator_argument: "-DCMAKE_OSX_SYSROOT=\"$(xcrun --show-sdk-path --sdk iphonesimulator)\""
+          - arch: "arm64"
+            name: "simulator-arm64"
+            asm: "OFF"
+            OPENSSL_BUILD_PLATFORM: "iossimulator-xcrun"
+            simulator_argument: "-DCMAKE_OSX_SYSROOT=\"$(xcrun --show-sdk-path --sdk iphonesimulator)\""
           - arch: "arm64;arm64e;x86_64"
             name: "unified64"
             asm: "OFF"
             OPENSSL_BUILD_PLATFORM: "ios64-unified64"
+            simulator_argument: ""
     name: build-iOS-${{ matrix.toolchain.name }}
     continue-on-error: true
     runs-on: macos-14
@@ -153,7 +162,7 @@ jobs:
         run: |
           mkdir -p "build"
           cd "build"
-          cmake -GNinja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}/openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}" -DCMAKE_OSX_ARCHITECTURES="${{ matrix.toolchain.arch }}" -DCMAKE_SYSTEM_NAME=iOS -DOPENSSL_ASM="${{ matrix.toolchain.asm }}" -DOPENSSL_ZLIB=ON -DOPENSSL_THREADS=ON "${{ github.workspace }}/openssl-externalCMake"
+          cmake -GNinja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}/openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}" ${{ matrix.toolchain.simulator_argument }} -DCMAKE_OSX_ARCHITECTURES="${{ matrix.toolchain.arch }}" -DCMAKE_SYSTEM_NAME=iOS -DOPENSSL_ASM="${{ matrix.toolchain.asm }}" -DOPENSSL_ZLIB=ON -DOPENSSL_THREADS=ON "${{ github.workspace }}/openssl-externalCMake"
           cmake --build . --parallel
           cmake --build . --parallel -t package
       - uses: actions/upload-artifact@v4
