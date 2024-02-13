@@ -26,7 +26,7 @@
 | Cygwin x86 | `Cygwin-x86` | Deprecated? |
 | macOS x86_64 | `darwin64-x86_64-cc` | |
 | macOS arm64 | `darwin64-arm64-cc` | |
-| iOS x86_64 | `iossimulator-xcrun` | Distinguishing simulator / actual machine is not done |
+| iOS simulator (Any architecture) | `iossimulator-xcrun` | No ASM is built |
 | iOS arm32 | `ios-xcrun` | |
 | iOS arm64 | `ios64-xcrun` | |
 | iOS (unknown architecture) | `iphoneos-cross` | Legacy |
