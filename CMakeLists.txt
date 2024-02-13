@@ -72,8 +72,28 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 include(OpenSslExternalCMakeCheckArchitecture)
 
 # undocumented!
-if ( NOT OPENSSL_TARGET_ARCH )
+if ( NOT DEFINED OPENSSL_TARGET_ARCH )
     openssl_external_cmake_detect_target_arch(OPENSSL_TARGET_ARCH)
+endif()
+
+# It is needed to distinguish if the target platform is simulator or real machine.
+# I don't know if there is just any way for doing this, but let's compile code for this job.
+if (IOS AND ( DEFINED OPENSSL_TARGET_ARCH ) )
+    include(CheckCSourceCompiles)
+    set(CMAKE_REQUIRED_QUIET true)
+    check_c_source_compiles([[
+#include <TargetConditionals.h>
+
+int main()
+{
+#if TARGET_OS_SIMULATOR
+return 0;
+#else
+#error "Target is not simulator!"
+#endif
+}
+]] OPENSSL_IOS_IS_SIMULATOR)
+    unset(CMAKE_REQUIRED_QUIET)
 endif()
 
 # --openssldir
@@ -117,7 +137,7 @@ foreach (_OPTION IN ITEMS hw hw-4758-cca hw-aep hw-atalla hw-chil hw-cswift hw-i
     if (_OPTION STREQUAL "asm")
         # building ASM needs Perl
         # ASM is not supported on iOS
-        cmake_dependent_option("${_OPTION_STR}" "${_OPTION_HELP}" ON "Perl_FOUND;NOT IOS;APPLE AND NOT IOS AND OPENSSL_TARGET_ARCH STREQUAL \"x64\"" OFF)
+        cmake_dependent_option("${_OPTION_STR}" "${_OPTION_HELP}" ON "Perl_FOUND;DEFINED OPENSSL_TARGET_ARCH;NOT APPLE OR ( NOT IOS AND OPENSSL_TARGET_ARCH STREQUAL \"x64\" )" OFF)
     elseif (_OPTION STREQUAL "nasm")
         cmake_dependent_option("${_OPTION_STR}" "${_OPTION_HELP}" OFF "OPENSSL_ASM;MSVC" OFF)
     else()
