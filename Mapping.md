@@ -25,12 +25,12 @@
 | Cygwin x86_64 | `Cygwin-x86_64` | |
 | Cygwin x86 | `Cygwin-x86` | Deprecated? |
 | macOS x86_64 | `darwin64-x86_64-cc` | |
-| macOS arm64 | `darwin64-arm64-cc` | |
-| iOS x86_64 | `iossimulator-xcrun` | Distinguishing simulator / actual machine is not done |
-| iOS arm32 | `ios-xcrun` | |
-| iOS arm64 | `ios64-xcrun` | |
+| macOS arm64 | `darwin64-arm64-cc` | Use `ios64` perlasm scheme for ASM although not officially supported |
+| iOS simulator (Any architecture) | `iphoneos-cross` | Use legacy platform name since OpenSSL has no support for it. No ASM is built |
+| iOS arm32 | `ios-cross` | |
+| iOS arm64 | `ios64-cross` | |
 | iOS (unknown architecture) | `iphoneos-cross` | Legacy |
-| Android x86_64 | `android-x86_64` | |
+| Android x86_64 | `linux-x86_64` or `linux-x86_64-clang` | 1.1.0 does not support this one so use generic Linux OS / Platform. Value depends on compiler |
 | Android arm32 | `android-armeabi` | |
 | Android x86 | `android-x86` | |
 | Android arm64 | `android64-aarch64` | |
