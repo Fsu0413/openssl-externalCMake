@@ -59,8 +59,28 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 include(OpenSslExternalCMakeCheckArchitecture)
 
 # undocumented!
-if ( NOT OPENSSL_TARGET_ARCH )
+if ( NOT DEFINED OPENSSL_TARGET_ARCH )
     openssl_external_cmake_detect_target_arch(OPENSSL_TARGET_ARCH)
+endif()
+
+# It is needed to distinguish if the target platform is simulator or real machine.
+# I don't know if there is just any way for doing this, but let's compile code for this job.
+if (IOS AND ( DEFINED OPENSSL_TARGET_ARCH ) )
+    include(CheckCSourceCompiles)
+    set(CMAKE_REQUIRED_QUIET true)
+    check_c_source_compiles([[
+#include <TargetConditionals.h>
+
+int main()
+{
+#if TARGET_OS_SIMULATOR
+return 0;
+#else
+#error "Target is not simulator!"
+#endif
+}
+]] OPENSSL_IOS_IS_SIMULATOR)
+    unset(CMAKE_REQUIRED_QUIET)
 endif()
 
 # --openssldir
@@ -100,7 +120,7 @@ foreach (_OPTION IN ITEMS hw hw-padlock asm err nasm)
     string(CONCAT _OPTION_HELP "enable OpenSSL option " ${_OPTION})
     if (_OPTION STREQUAL "asm")
         # building ASM needs Perl
-        cmake_dependent_option("${_OPTION_STR}" "${_OPTION_HELP}" ON "Perl_FOUND;APPLE AND ( IOS AND OPENSSL_TARGET_ARCH MATCHES \"arm\") OR ( NOT IOS AND NOT OPENSSL_TARGET_ARCH STREQUAL \"\" )" OFF)
+        cmake_dependent_option("${_OPTION_STR}" "${_OPTION_HELP}" ON "Perl_FOUND;DEFINED OPENSSL_TARGET_ARCH;( IOS AND NOT OPENSSL_IOS_IS_SIMULATOR ) OR ( NOT IOS )" OFF)
     elseif (_OPTION STREQUAL "nasm")
         cmake_dependent_option("${_OPTION_STR}" "${_OPTION_HELP}" OFF "OPENSSL_ASM;MSVC" OFF)
     else()
@@ -447,12 +467,16 @@ elseif (IOS)
     if (OPENSSL_OSX_ARCHITECTURES_LENGTH GREATER 1)
         # set in buildinf.h.appleUnified.cmake.in
     else()
-        if (OPENSSL_TARGET_ARCH STREQUAL "arm64")
-            set(OPENSSL_BUILD_PLATFORM "ios64-xcrun")
-        elseif (OPENSSL_TARGET_ARCH STREQUAL "arm32")
-            set(OPENSSL_BUILD_PLATFORM "ios-xcrun")
-        else()
+        # The default value
+        set(OPENSSL_BUILD_PLATFORM "iphoneos-cross")
+        if (OPENSSL_IOS_IS_SIMULATOR)
             set(OPENSSL_BUILD_PLATFORM "iossimulator-xcrun")
+        else()
+            if (OPENSSL_TARGET_ARCH STREQUAL "arm64")
+                set(OPENSSL_BUILD_PLATFORM "ios64-xcrun")
+            elseif (OPENSSL_TARGET_ARCH STREQUAL "arm32")
+                set(OPENSSL_BUILD_PLATFORM "ios-xcrun")
+            endif()
         endif()
     endif()
 elseif (ANDROID)
