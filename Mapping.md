@@ -24,8 +24,9 @@
 | Cygwin x86_64 | `Cygwin-x86_64` | |
 | Cygwin x86 | `Cygwin` | Deprecated? |
 | macOS x86_64 | `darwin64-x86_64-cc` | |
-| macOS arm64 | `darwin64-arm64-cc` | 1.0.2 does not support this one. This name is taken from 1.1.1. |
-| iOS (Any architecture) | `iphoneos-cross` | |
+| macOS arm64 | `darwin64-arm64-cc` | 1.0.2 does not support this one. This name is taken from 1.1.1. No ASM is built |
+| iOS (Any architecture) | `iphoneos-cross` | No ASM is built |
+| Android x86_64 | `linux-x86_64` or `linux-x86_64-clang` | 1.0.2 does not support this one so use generic Linux OS / Platform. Value depends on compiler |
 | Android arm32 | `android-armv7` | |
 | Android x86 | `android-x86` | |
 | Android arm64 | `android64-aarch64` | |
