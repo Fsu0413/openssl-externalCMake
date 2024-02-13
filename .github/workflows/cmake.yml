@@ -112,6 +112,55 @@ jobs:
           name: openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}
           path: build/OpenSSL-${{ env.FS_OPENSSL_VERSION_STR }}-linux-x86_64.tar.xz
 
+  build-iOS:
+    strategy:
+      fail-fast: false
+      matrix:
+        toolchain:
+          - arch: "arm64"
+            name: "arm64"
+            asm: "ON"
+            OPENSSL_BUILD_PLATFORM: "ios64-xcrun"
+          - arch: "arm64e"
+            name: "arm64e"
+            asm: "ON"
+            OPENSSL_BUILD_PLATFORM: "ios64-xcrun"
+          - arch: "x86_64"
+            name: "simulator-x86_64"
+            asm: "OFF"
+            OPENSSL_BUILD_PLATFORM: "iossimulator-xcrun"
+          - arch: "arm64;arm64e;x86_64"
+            name: "unified64"
+            asm: "OFF"
+            OPENSSL_BUILD_PLATFORM: "ios64-unified64"
+    name: build-iOS-${{ matrix.toolchain.name }}
+    continue-on-error: true
+    runs-on: macos-14
+    needs: get-version
+    env:
+      FS_OPENSSL_PACKAGE_STR: iOS-${{ matrix.toolchain.name }}
+      FS_OPENSSL_VERSION_STR: ${{ needs.get-version.outputs.openssl_version }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+          path: openssl-externalCMake
+      - name: install cmake and ninja
+        run: |
+          while ! brew update; do :; done
+          brew install cmake ninja
+      - name: run CMake + Ninja
+        run: |
+          mkdir -p "build"
+          cd "build"
+          cmake -GNinja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}/openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}" -DCMAKE_OSX_ARCHITECTURES="${{ matrix.toolchain.arch }}" -DCMAKE_SYSTEM_NAME=iOS -DOPENSSL_ASM="${{ matrix.toolchain.asm }}" -DOPENSSL_ZLIB=ON -DOPENSSL_THREADS=ON "${{ github.workspace }}/openssl-externalCMake"
+          cmake --build . --parallel
+          cmake --build . --parallel -t package
+      - uses: actions/upload-artifact@v4
+        with:
+          name: openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}
+          path: build/OpenSSL-${{ env.FS_OPENSSL_VERSION_STR }}-${{ matrix.toolchain.OPENSSL_BUILD_PLATFORM }}.tar.xz
+
   build-macOS:
     strategy:
       fail-fast: false
