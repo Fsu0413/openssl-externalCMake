@@ -13,6 +13,7 @@
 # define OSSL_CRYPTO_DSO_CONF_H
 # pragma once
 
+#cmakedefine DSO_NONE
 #cmakedefine DSO_WIN32
 #cmakedefine DSO_DLFCN
 #cmakedefine HAVE_DLFCN_H
