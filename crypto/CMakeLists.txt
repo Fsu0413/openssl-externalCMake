@@ -771,15 +771,28 @@ add_library(crypto
 
 add_dependencies(crypto generate_stackhash)
 
-target_link_libraries(crypto
-    PRIVATE libdefault
-            libcommon
-)
+if (BUILD_SHARED_LIBS)
+    target_link_libraries(crypto
+        PRIVATE libdefault
+                libcommon
+    )
+else()
+    target_sources(crypto
+        PRIVATE $<TARGET_OBJECTS:libdefault>
+                $<TARGET_OBJECTS:libcommon>
+    )
+endif()
 if (OPENSSL_LEGACY)
     if ( NOT OPENSSL_MODULE )
-        target_link_libraries(crypto
-            PRIVATE legacy
-        )
+        if (BUILD_SHARED_LIBS)
+            target_link_libraries(crypto
+                PRIVATE legacy
+            )
+        else()
+            target_sources(crypto
+                PRIVATE $<TARGET_OBJECTS:legacy>
+            )
+        endif()
     else()
         target_link_libraries(legacy
             PRIVATE crypto
