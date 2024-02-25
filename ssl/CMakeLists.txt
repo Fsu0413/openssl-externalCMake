@@ -92,13 +92,15 @@ if (WIN32)
         set(LIBSSL_RUNTIME_OUTPUT_NAME libssl-1_1)
     endif()
 
-    add_custom_command(
-        OUTPUT ssl.def
-        COMMAND "${CMAKE_COMMAND}" -DNUMFILE="${CMAKE_SOURCE_DIR}/openssl/util/libssl.num" -DLIBRARY_FILE="${LIBSSL_RUNTIME_OUTPUT_NAME}" -DBINARY_DIR="${CMAKE_BINARY_DIR}" -DOUTPUT_FILE="${CMAKE_CURRENT_BINARY_DIR}/ssl.def" -DPLATFORM=_WIN32 -P "${CMAKE_CURRENT_SOURCE_DIR}/../crypto/mkdef.cmake"
-        MAIN_DEPENDENCY "${CMAKE_SOURCE_DIR}/openssl/util/libssl.num"
-        DEPENDS ../crypto/mkdef.cmake
-    )
-    set(LIBSSL_SOURCES ${LIBSSL_SOURCES} ssl.def)
+    if (BUILD_SHARED_LIBS)
+        add_custom_command(
+            OUTPUT ssl.def
+            COMMAND "${CMAKE_COMMAND}" -DNUMFILE="${CMAKE_SOURCE_DIR}/openssl/util/libssl.num" -DLIBRARY_FILE="${LIBSSL_RUNTIME_OUTPUT_NAME}" -DBINARY_DIR="${CMAKE_BINARY_DIR}" -DOUTPUT_FILE="${CMAKE_CURRENT_BINARY_DIR}/ssl.def" -DPLATFORM=_WIN32 -P "${CMAKE_CURRENT_SOURCE_DIR}/../crypto/mkdef.cmake"
+            MAIN_DEPENDENCY "${CMAKE_SOURCE_DIR}/openssl/util/libssl.num"
+            DEPENDS ../crypto/mkdef.cmake
+        )
+        set(LIBSSL_SOURCES ${LIBSSL_SOURCES} ssl.def)
+    endif()
 endif()
 add_library(ssl
     ${LIBSSL_SOURCES}
@@ -113,15 +115,17 @@ if (WIN32)
         )
     endif()
 elseif ( ( CMAKE_C_COMPILER_ID MATCHES "GNU" OR CMAKE_C_COMPILER_ID MATCHES "[Cc]lang" ) AND NOT APPLE AND NOT ( CMAKE_SYSTEM_NAME MATCHES "SunOS") )
-    add_custom_command(
-        OUTPUT ssl.map
-        COMMAND "${CMAKE_COMMAND}" -DNUMFILE="${CMAKE_SOURCE_DIR}/openssl/util/libssl.num" -DLIBRARY_FILE="${LIBCRYPTO_RUNTIME_OUTPUT_NAME}" -DBINARY_DIR="${CMAKE_BINARY_DIR}" -DOUTPUT_FILE="${CMAKE_CURRENT_BINARY_DIR}/ssl.map" -DPLATFORM=ELF -P "${CMAKE_CURRENT_SOURCE_DIR}/../crypto/mkdef.cmake"
-        MAIN_DEPENDENCY "${CMAKE_SOURCE_DIR}/openssl/util/libssl.num"
-        DEPENDS ../crypto/mkdef.cmake
-    )
-    add_custom_target(ssl_map SOURCES ssl.map)
-    add_dependencies(ssl ssl_map)
-    target_link_options(ssl PRIVATE "LINKER:--version-script=${CMAKE_CURRENT_BINARY_DIR}/ssl.map")
+    if (BUILD_SHARED_LIBS)
+        add_custom_command(
+            OUTPUT ssl.map
+            COMMAND "${CMAKE_COMMAND}" -DNUMFILE="${CMAKE_SOURCE_DIR}/openssl/util/libssl.num" -DLIBRARY_FILE="${LIBCRYPTO_RUNTIME_OUTPUT_NAME}" -DBINARY_DIR="${CMAKE_BINARY_DIR}" -DOUTPUT_FILE="${CMAKE_CURRENT_BINARY_DIR}/ssl.map" -DPLATFORM=ELF -P "${CMAKE_CURRENT_SOURCE_DIR}/../crypto/mkdef.cmake"
+            MAIN_DEPENDENCY "${CMAKE_SOURCE_DIR}/openssl/util/libssl.num"
+            DEPENDS ../crypto/mkdef.cmake
+        )
+        add_custom_target(ssl_map SOURCES ssl.map)
+        add_dependencies(ssl ssl_map)
+        target_link_options(ssl PRIVATE "LINKER:--version-script=${CMAKE_CURRENT_BINARY_DIR}/ssl.map")
+    endif()
 endif()
 set_target_properties(ssl PROPERTIES
     SOVERSION 1.1
