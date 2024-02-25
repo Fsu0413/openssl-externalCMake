@@ -410,13 +410,15 @@ if (WIN32)
         set(LIBCRYPTO_RUNTIME_OUTPUT_NAME libcrypto-1_1)
     endif()
 
-    add_custom_command(
-        OUTPUT crypto.def
-        COMMAND "${CMAKE_COMMAND}" -DNUMFILE="${CMAKE_SOURCE_DIR}/openssl/util/libcrypto.num" -DLIBRARY_FILE="${LIBCRYPTO_RUNTIME_OUTPUT_NAME}" -DBINARY_DIR="${CMAKE_BINARY_DIR}" -DOUTPUT_FILE="${CMAKE_CURRENT_BINARY_DIR}/crypto.def" -DPLATFORM=_WIN32 -P "${CMAKE_CURRENT_SOURCE_DIR}/mkdef.cmake"
-        MAIN_DEPENDENCY "${CMAKE_SOURCE_DIR}/openssl/util/libcrypto.num"
-        DEPENDS mkdef.cmake
-    )
-    set(LIBCRYPTO_SOURCES ${LIBCRYPTO_SOURCES} crypto.def)
+    if (BUILD_SHARED_LIBS)
+        add_custom_command(
+            OUTPUT crypto.def
+            COMMAND "${CMAKE_COMMAND}" -DNUMFILE="${CMAKE_SOURCE_DIR}/openssl/util/libcrypto.num" -DLIBRARY_FILE="${LIBCRYPTO_RUNTIME_OUTPUT_NAME}" -DBINARY_DIR="${CMAKE_BINARY_DIR}" -DOUTPUT_FILE="${CMAKE_CURRENT_BINARY_DIR}/crypto.def" -DPLATFORM=_WIN32 -P "${CMAKE_CURRENT_SOURCE_DIR}/mkdef.cmake"
+            MAIN_DEPENDENCY "${CMAKE_SOURCE_DIR}/openssl/util/libcrypto.num"
+            DEPENDS mkdef.cmake
+        )
+        set(LIBCRYPTO_SOURCES ${LIBCRYPTO_SOURCES} crypto.def)
+    endif()
 endif()
 add_library(crypto
     ${CMAKE_BINARY_DIR}/include/openssl/opensslconf.h
