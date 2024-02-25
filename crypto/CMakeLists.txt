@@ -2,10 +2,15 @@
 
 set(OPENSSL_SYS_DEFINE)
 if (MSVC)
+    # Note: All Windows platform defines OPENSSL_SYS_WIN32 regardless of what OPENSSL_SYS_DEFINE is
+
     if (OPENSSL_TARGET_ARCH STREQUAL "x86")
+        # Seems unneeded, but keep compatibility with OpenSSL
         set(OPENSSL_SYS_DEFINE "OPENSSL_SYS_WIN32")
     elseif (OPENSSL_TARGET_ARCH STREQUAL "x64")
         set(OPENSSL_SYS_DEFINE "OPENSSL_SYS_WIN64A")
+    elseif (OPENSSL_TARGET_ARCH MATCHES "arm")
+        # Nothing should be defined. OPENSSL_SYS_WIN_CORE is not OPENSSL_SYS_DEFINE
     else()
         message(FATAL_ERROR "This version of MSVC is not yet supported")
     endif()
@@ -23,6 +28,7 @@ elseif (APPLE)
     if (IOS)
         set(OPENSSL_SYS_DEFINE "OPENSSL_SYS_iOS")
     else()
+        # assume macOS since OpenSSL hasn't yet supports watchOS, tvOS, etc.
         set(OPENSSL_SYS_DEFINE "OPENSSL_SYS_MACOSX")
     endif()
 endif()
@@ -52,7 +58,7 @@ else()
 endif()
 
 #define RC4_INT unsigned @OPENSSL_RC4_INT@
-if (       WIN32
+if (       ( WIN32 AND ( ( OPENSSL_TARGET_ARCH STREQUAL "x86" ) OR ( OPENSSL_TARGET_ARCH STREQUAL "x64" ) ) )
         OR ( ANDROID AND ( ( OPENSSL_TARGET_ARCH STREQUAL "x86" ) OR ( OPENSSL_TARGET_ARCH STREQUAL "x64" ) ) )
         OR APPLE
         OR BSD
@@ -66,7 +72,7 @@ endif()
 #cmakedefine BN_LLONG
 if (       ( BSD AND ( OPENSSL_TARGET_ARCH STREQUAL "x86" ) )
         OR ( CYGWIN AND ( OPENSSL_TARGET_ARCH STREQUAL "x86" ) )
-        OR ( WIN32 AND ( OPENSSL_TARGET_ARCH STREQUAL "x86" ) )
+        OR ( WIN32 AND ( ( OPENSSL_TARGET_ARCH STREQUAL "x86" ) OR ( OPENSSL_TARGET_ARCH STREQUAL "arm32" ) ) )
         OR ( ANDROID AND ( ( OPENSSL_TARGET_ARCH STREQUAL "x86" ) OR ( OPENSSL_TARGET_ARCH STREQUAL "arm32" ) ) )
         OR ( LINUX AND ( ( OPENSSL_TARGET_ARCH STREQUAL "x86" ) OR ( OPENSSL_TARGET_ARCH STREQUAL "arm32" ) ) )
         OR ( CMAKE_SYSTEM_NAME MATCHES "SunOS" AND ( OPENSSL_TARGET_ARCH STREQUAL "x86" ) ) # # TODO: Solaris on sparcv7 and sparcv9-64 have BN_LLONG
@@ -265,6 +271,12 @@ set(LIBCRYPTO_DIRECTORIES _cryptoDir async err dso)
 set(LIBCRYPTO_CFLAGS)
 if (WIN32)
     set(LIBCRYPTO_CFLAGS ${LIBCRYPTO_CFLAGS} "-DOPENSSL_SYS_WIN32" "-DWIN32_LEAN_AND_MEAN" "-D_WINSOCK_DEPRECATED_NO_WARNINGS" "-DUNICODE" "-D_UNICODE")
+    if (WINDOWS_ONECORE OR WINDOWS_PHONE OR WINDOWS_STORE)
+        set(LIBCRYPTO_CFLAGS ${LIBCRYPTO_CFLAGS} "-DOPENSSL_SYS_WIN_CORE")
+        if (OPENSSL_TARGET_ARCH MATCHES "arm")
+            set(LIBCRYPTO_CFLAGS ${LIBCRYPTO_CFLAGS} "-D_ARM_WINAPI_PARTITION_DESKTOP_SDK_AVAILABLE")
+        endif()
+    endif()
 endif()
 if (CMAKE_SYSTEM_NAME MATCHES "SunOS")
     set(LIBCRYPTO_CFLAGS ${LIBCRYPTO_CFLAGS} "-DFILIO_H")
