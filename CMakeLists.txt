@@ -71,7 +71,7 @@ endif()
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 include(OpenSslExternalCMakeCheckArchitecture)
 
-# undocumented!
+# Defining customized OPENSSL_TARGET_ARCH shouldn't be a designed workflow, since an available architecture must be determined for ASM being built
 if ( NOT DEFINED OPENSSL_TARGET_ARCH )
     openssl_external_cmake_detect_target_arch(OPENSSL_TARGET_ARCH)
 endif()
@@ -137,7 +137,7 @@ foreach (_OPTION IN ITEMS hw hw-4758-cca hw-aep hw-atalla hw-chil hw-cswift hw-i
     if (_OPTION STREQUAL "asm")
         # building ASM needs Perl
         # ASM is not supported on iOS
-        cmake_dependent_option("${_OPTION_STR}" "${_OPTION_HELP}" ON "Perl_FOUND;DEFINED OPENSSL_TARGET_ARCH;NOT APPLE OR ( NOT IOS AND OPENSSL_TARGET_ARCH STREQUAL \"x64\" )" OFF)
+        cmake_dependent_option("${_OPTION_STR}" "${_OPTION_HELP}" ON "Perl_FOUND;DEFINED OPENSSL_TARGET_ARCH;NOT APPLE OR ( NOT IOS AND OPENSSL_TARGET_ARCH STREQUAL \"x64\" );( MSVC AND NOT ( OPENSSL_TARGET_ARCH MATCHES \"arm\" ) ) OR ( NOT MSVC )" OFF)
     elseif (_OPTION STREQUAL "nasm")
         cmake_dependent_option("${_OPTION_STR}" "${_OPTION_HELP}" OFF "OPENSSL_ASM;MSVC" OFF)
     else()
@@ -215,7 +215,9 @@ foreach (_CIPHER IN ITEMS
     elseif (_CIPHER STREQUAL "heartbeats")
         cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "OPENSSL_TLSEXT" OFF)
     elseif (_CIPHER STREQUAL "uplink")
-        cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "WIN32;MSVC OR ( OPENSSL_TARGET_ARCH STREQUAL \"x86\" );NOT OPENSSL_386;BUILD_SHARED_LIBS" OFF)
+        cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "WIN32;( MSVC AND NOT ( OPENSSL_TARGET_ARCH MATCHES \"arm\" ) ) OR ( OPENSSL_TARGET_ARCH STREQUAL \"x86\" );NOT OPENSSL_386;BUILD_SHARED_LIBS;NOT WINDOWS_STORE;NOT WINDOWS_PHONE" OFF)
+    elseif ( ( _CIPHER STREQUAL "stdio" ) OR ( _CIPHER STREQUAL "ui" ) )
+        cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "( WIN32 AND ( NOT WINDOWS_STORE AND NOT WINDOWS_PHONE ) ) OR ( NOT WIN32 )" OFF)
     else()
         option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}")
     endif()
@@ -325,12 +327,47 @@ configure_file(${CMAKE_SOURCE_DIR}/openssl/e_os2.h ${CMAKE_BINARY_DIR}/include/o
 # currently only supported platforms are listed - other platforms will be added when finished
 if (WIN32)
     if (MSVC)
-        if (OPENSSL_TARGET_ARCH STREQUAL "x64")
-            set(OPENSSL_BUILD_PLATFORM "VC-WIN64A")
-        elseif (OPENSSL_TARGET_ARCH STREQUAL "x86")
-            set(OPENSSL_BUILD_PLATFORM "VC-WIN32")
+        if (WINDOWS_STORE)
+            if (OPENSSL_TARGET_ARCH STREQUAL "x64")
+                set(OPENSSL_BUILD_PLATFORM "VC-WIN64A-UWP")
+            elseif (OPENSSL_TARGET_ARCH STREQUAL "arm32")
+                set(OPENSSL_BUILD_PLATFORM "VC-WIN32-ARM-UWP")
+            elseif (OPENSSL_TARGET_ARCH STREQUAL "x86")
+                set(OPENSSL_BUILD_PLATFORM "VC-WIN32-UWP")
+            elseif (OPENSSL_TARGET_ARCH STREQUAL "arm64")
+                set(OPENSSL_BUILD_PLATFORM "VC-WIN64-ARM-UWP")
+            endif()
+        elseif (WINDOWS_ONECORE OR WINDOWS_PHONE)
+            # OneCore is not supported by CMake right now (as of 3.28)
+            # So we need a toolchain file which sets options for OneCore
+            # Assuming WINDOWS_ONECORE variable is set to 1 and CMAKE_SYSTEM_NAME is set to "WindowsOneCore"
+            # (Although on Windows only WIN32 is judged, CMAKE_SYSTEM_NAME does not make any difference here)
+            # Note that the library set for OneCore is not maintained here since it shouldn't be. It may only be specified by a toolchain file or CMake itself.
+            if (OPENSSL_TARGET_ARCH STREQUAL "x64")
+                set(OPENSSL_BUILD_PLATFORM "VC-WIN64A-ONECORE")
+            elseif (OPENSSL_TARGET_ARCH STREQUAL "arm32")
+                set(OPENSSL_BUILD_PLATFORM "VC-WIN32-ARM")
+            elseif (OPENSSL_TARGET_ARCH STREQUAL "x86")
+                set(OPENSSL_BUILD_PLATFORM "VC-WIN32-ONECORE")
+            elseif (OPENSSL_TARGET_ARCH STREQUAL "arm64")
+                set(OPENSSL_BUILD_PLATFORM "VC-WIN64-ARM")
+            endif()
+        else()
+            if (OPENSSL_TARGET_ARCH STREQUAL "x64")
+                set(OPENSSL_BUILD_PLATFORM "VC-WIN64A")
+            elseif (OPENSSL_TARGET_ARCH STREQUAL "arm32")
+                # not using original "VC-WIN32-ARM" since it targets for OneCore - see above
+                set(OPENSSL_BUILD_PLATFORM "VC-WIN32-ARM-DESKTOP")
+            elseif (OPENSSL_TARGET_ARCH STREQUAL "x86")
+                set(OPENSSL_BUILD_PLATFORM "VC-WIN32")
+            elseif (OPENSSL_TARGET_ARCH STREQUAL "arm64")
+                # not using original "VC-WIN64-ARM" since it targets for OneCore - see above
+                set(OPENSSL_BUILD_PLATFORM "VC-WIN64-ARM-DESKTOP")
+            endif()
         endif()
     else()
+        # OpenSSL never supports Windows on ARM using MinGW toolchain
+        # TODO: check how MSYS2 is patching OpenSSL for ASM builds
         if (OPENSSL_TARGET_ARCH STREQUAL "x64")
             set(OPENSSL_BUILD_PLATFORM "mingw64")
         elseif (OPENSSL_TARGET_ARCH STREQUAL "x86")

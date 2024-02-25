@@ -2,10 +2,15 @@
 
 set(OPENSSL_SYS_DEFINE)
 if (MSVC)
+    # Note: All Windows platform defines OPENSSL_SYSNAME_WIN32 regardless of what OPENSSL_SYS_DEFINE is
+
     if (OPENSSL_TARGET_ARCH STREQUAL "x86")
+        # Seems unneeded, but keep compatibility with OpenSSL
         set(OPENSSL_SYS_DEFINE "OPENSSL_SYSNAME_WIN32")
     elseif (OPENSSL_TARGET_ARCH STREQUAL "x64")
         set(OPENSSL_SYS_DEFINE "OPENSSL_SYSNAME_WIN64A")
+    elseif (OPENSSL_TARGET_ARCH MATCHES "arm")
+        # Nothing should be defined. OPENSSL_SYS_WIN_CORE is not OPENSSL_SYS_DEFINE
     else()
         message(FATAL_ERROR "This version of MSVC is not yet supported")
     endif()
@@ -23,6 +28,7 @@ elseif (APPLE)
     if (IOS)
         set(OPENSSL_SYS_DEFINE "OPENSSL_SYSNAME_iOS")
     else()
+        # assume macOS since OpenSSL hasn't yet supports watchOS, tvOS, etc.
         set(OPENSSL_SYS_DEFINE "OPENSSL_SYSNAME_MACOSX")
     endif()
 endif()
@@ -74,7 +80,7 @@ set(OPENSSL_MD2_INT "int")
 set(OPENSSL_RC2_INT "int")
 
 #define RC4_INT unsigned @OPENSSL_RC4_INT@
-if (       WIN32
+if (       ( WIN32 AND ( ( OPENSSL_TARGET_ARCH STREQUAL "x86" ) OR ( OPENSSL_TARGET_ARCH STREQUAL "x64" ) ) )
         OR ( ANDROID AND ( ( OPENSSL_TARGET_ARCH STREQUAL "x86" ) OR ( OPENSSL_TARGET_ARCH STREQUAL "x64" ) ) )
         OR ( LINUX AND ( ( OPENSSL_TARGET_ARCH STREQUAL "x86" ) OR ( OPENSSL_TARGET_ARCH STREQUAL "x64" ) ) )
         OR ( APPLE AND NOT IOS )
@@ -118,7 +124,7 @@ endif()
 #cmakedefine BN_LLONG
 if (       ( BSD AND ( OPENSSL_TARGET_ARCH STREQUAL "x86" ) )
         OR ( CYGWIN AND ( OPENSSL_TARGET_ARCH STREQUAL "x86" ) )
-        OR ( WIN32 AND ( OPENSSL_TARGET_ARCH STREQUAL "x86" ) )
+        OR ( WIN32 AND ( ( OPENSSL_TARGET_ARCH STREQUAL "x86" ) OR ( OPENSSL_TARGET_ARCH STREQUAL "arm32" ) ) )
         OR ( ANDROID AND ( ( OPENSSL_TARGET_ARCH STREQUAL "x86" ) OR ( OPENSSL_TARGET_ARCH STREQUAL "arm32" ) ) )
         OR IOS
         OR ( LINUX AND ( ( OPENSSL_TARGET_ARCH STREQUAL "x86" ) OR ( OPENSSL_TARGET_ARCH STREQUAL "arm32" ) ) )
@@ -492,6 +498,12 @@ if (WIN32)
     set(LIBCRYPTO_CFLAGS ${LIBCRYPTO_CFLAGS} "-DOPENSSL_SYSNAME_WIN32" "-DWIN32_LEAN_AND_MEAN" "-D_WINSOCK_DEPRECATED_NO_WARNINGS")
     if ( OPENSSL_TARGET_ARCH STREQUAL "x64" )
         set(LIBCRYPTO_CFLAGS ${LIBCRYPTO_CFLAGS} "-DUNICODE" "-D_UNICODE")
+    endif()
+    if (WINDOWS_ONECORE OR WINDOWS_PHONE OR WINDOWS_STORE)
+        set(LIBCRYPTO_CFLAGS ${LIBCRYPTO_CFLAGS} "-DOPENSSL_SYSNAME_WIN_CORE")
+        if (OPENSSL_TARGET_ARCH MATCHES "arm")
+            set(LIBCRYPTO_CFLAGS ${LIBCRYPTO_CFLAGS} "-D_ARM_WINAPI_PARTITION_DESKTOP_SDK_AVAILABLE")
+        endif()
     endif()
 endif()
 if (OPENSSL_SSE2)
