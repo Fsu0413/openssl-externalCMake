@@ -75,13 +75,15 @@ if (WIN32)
     configure_file(ssl.rc.cmake.in ssl.rc @ONLY)
     set(LIBSSL_SOURCES ${LIBSSL_SOURCES} ssl.rc)
 
-    add_custom_command(
-        OUTPUT ssl.def
-        COMMAND "${CMAKE_COMMAND}" -DNUMFILE="${CMAKE_SOURCE_DIR}/openssl/util/ssleay.num" -DLIBRARY_FILE=SSLEAY32 -DBINARY_DIR="${CMAKE_BINARY_DIR}" -DOUTPUT_FILE="${CMAKE_CURRENT_BINARY_DIR}/ssl.def" -DPLATFORM=WIN32 -P "${CMAKE_CURRENT_SOURCE_DIR}/../crypto/mkdef.cmake"
-        MAIN_DEPENDENCY "${CMAKE_SOURCE_DIR}/openssl/util/ssleay.num"
-        DEPENDS ../crypto/mkdef.cmake
-    )
-    set(LIBSSL_SOURCES ${LIBSSL_SOURCES} ssl.def)
+    if (BUILD_SHARED_LIBS)
+        add_custom_command(
+            OUTPUT ssl.def
+            COMMAND "${CMAKE_COMMAND}" -DNUMFILE="${CMAKE_SOURCE_DIR}/openssl/util/ssleay.num" -DLIBRARY_FILE=SSLEAY32 -DBINARY_DIR="${CMAKE_BINARY_DIR}" -DOUTPUT_FILE="${CMAKE_CURRENT_BINARY_DIR}/ssl.def" -DPLATFORM=WIN32 -P "${CMAKE_CURRENT_SOURCE_DIR}/../crypto/mkdef.cmake"
+            MAIN_DEPENDENCY "${CMAKE_SOURCE_DIR}/openssl/util/ssleay.num"
+            DEPENDS ../crypto/mkdef.cmake
+        )
+        set(LIBSSL_SOURCES ${LIBSSL_SOURCES} ssl.def)
+    endif()
 endif()
 add_library(ssl
     ${LIBSSL_SOURCES}
