@@ -21,7 +21,7 @@ file(STRINGS "${NUMFILE}" NUMFILE_CONTENT)
 # Read content from content to variables
 set(I 0)
 foreach(CONTENT_ITEM IN LISTS NUMFILE_CONTENT)
-    if (CONTENT_ITEM MATCHES "^([A-Za-z_][A-Za-z0-9_]*)[ \t\r\n]+([1-9][0-9]*)[ \t\r\n]+(EXIST|NOEXIST):([^:]*):(FUNCTION|VARIABLE):([^:]*)$")
+    if (CONTENT_ITEM MATCHES "^([A-Za-z_][A-Za-z0-9_]*)[ \t\r\n]+([1-9][0-9]*|\\?)[ \t\r\n]+(EXIST|NOEXIST):([^:]*):(FUNCTION|VARIABLE):([^:]*)$")
         # directly strip nonexist symbol!
         if (CMAKE_MATCH_3 STREQUAL "EXIST")
             set("CONTENT_ITEM_${I}_SYMBOL" "${CMAKE_MATCH_1}")
