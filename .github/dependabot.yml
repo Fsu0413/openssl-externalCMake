@@ -30,3 +30,8 @@ updates:
     schedule:
       interval: "daily"
     target-branch: "3.2"
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    target-branch: "3.3"
