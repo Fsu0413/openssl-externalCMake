@@ -746,6 +746,18 @@ add_library(crypto
     ${CMAKE_SOURCE_DIR}/openssl/include/internal/thread_arch.h
     ${CMAKE_SOURCE_DIR}/openssl/include/internal/time.h
     ${CMAKE_SOURCE_DIR}/openssl/include/internal/uint_set.h
+    ${CMAKE_SOURCE_DIR}/openssl/include/internal/json_enc.h
+    ${CMAKE_SOURCE_DIR}/openssl/include/internal/qlog.h
+    ${CMAKE_SOURCE_DIR}/openssl/include/internal/qlog_event_helpers.h
+    ${CMAKE_SOURCE_DIR}/openssl/include/internal/qlog_events.h
+    ${CMAKE_SOURCE_DIR}/openssl/include/internal/quic_engine.h
+    ${CMAKE_SOURCE_DIR}/openssl/include/internal/quic_lcidm.h
+    ${CMAKE_SOURCE_DIR}/openssl/include/internal/quic_port.h
+    ${CMAKE_SOURCE_DIR}/openssl/include/internal/quic_predef.h
+    ${CMAKE_SOURCE_DIR}/openssl/include/internal/quic_rcidm.h
+    ${CMAKE_SOURCE_DIR}/openssl/include/internal/quic_srt_gen.h
+    ${CMAKE_SOURCE_DIR}/openssl/include/internal/quic_srtm.h
+    ${CMAKE_SOURCE_DIR}/openssl/include/internal/rcu.h
     ${CMAKE_SOURCE_DIR}/openssl/include/openssl/aes.h
     ${CMAKE_SOURCE_DIR}/openssl/include/openssl/asn1err.h
     ${CMAKE_SOURCE_DIR}/openssl/include/openssl/asn1_mac.h

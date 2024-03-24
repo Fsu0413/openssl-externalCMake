@@ -34,7 +34,27 @@ set(LIBSSL_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/ssl/quic/quic_channel_local.h
     ${CMAKE_SOURCE_DIR}/openssl/ssl/quic/quic_local.h
     ${CMAKE_SOURCE_DIR}/openssl/ssl/quic/quic_record_shared.h
+    ${CMAKE_SOURCE_DIR}/openssl/ssl/quic/qlog_event_helpers.c
+    ${CMAKE_SOURCE_DIR}/openssl/ssl/quic/quic_engine.c
+    ${CMAKE_SOURCE_DIR}/openssl/ssl/quic/quic_engine_local.h
+    ${CMAKE_SOURCE_DIR}/openssl/ssl/quic/quic_lcidm.c
+    ${CMAKE_SOURCE_DIR}/openssl/ssl/quic/quic_port.c
+    ${CMAKE_SOURCE_DIR}/openssl/ssl/quic/quic_port_local.h
+    ${CMAKE_SOURCE_DIR}/openssl/ssl/quic/quic_rcidm.c
+    ${CMAKE_SOURCE_DIR}/openssl/ssl/quic/quic_srt_gen.c
+    ${CMAKE_SOURCE_DIR}/openssl/ssl/quic/quic_srtm.c
+    ${CMAKE_SOURCE_DIR}/openssl/ssl/quic/quic_types.c
 )
+
+if (OPENSSL_QLOG)
+    set(LIBSSL_SOURCES
+        ${LIBSSL_SOURCES}
+        ${CMAKE_SOURCE_DIR}/openssl/ssl/quic/json_enc.c
+        ${CMAKE_SOURCE_DIR}/openssl/ssl/quic/qlog.c
+        ${CMAKE_SOURCE_DIR}/openssl/crypto/getenv.c
+        ${CMAKE_SOURCE_DIR}/openssl/crypto/ctype.c
+    )
+endif()
 
 if (BUILD_SHARED_LIBS)
     # WHY the hell is the libssl thread code in libcrypto?

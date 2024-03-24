@@ -81,6 +81,8 @@ if (OPENSSL_QUIC)
     include(quic.cmake)
 endif()
 
+include(rio.cmake)
+
 if (WIN32)
     configure_file(ssl.rc.cmake.in ssl.rc @ONLY)
     set(LIBSSL_SOURCES ${LIBSSL_SOURCES} ssl.rc)

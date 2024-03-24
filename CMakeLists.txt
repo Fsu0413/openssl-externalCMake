@@ -325,10 +325,11 @@ foreach (_CIPHER IN ITEMS
     aes asn1 bio bn buffer conf crmf encode_decode ess evp ffc hmac hpke http kdf lhash md5 modes objects pem pkcs7 pkcs12 property rand rsa sha stack store thread txt_db
     x509 # directories
     dtls1_2 dtls1 tls1_3 tls1_2 tls1_1 tls1 ssl3 # TLS protocol
-    acvp-tests afalgeng aria apps argon2 asan async autoalginit autoerrinit autoload-config bf brotli buildtest-c++ cached-fetch camellia capieng winstore cast chacha cms
+    acvp-tests afalgeng aria apps argon2 asan async atexit autoalginit autoerrinit autoload-config bf brotli buildtest-c++ cached-fetch camellia capieng winstore cast chacha cms
     crypto-mdebug ct default-thread-pool devcryptoeng dh dsa docs ec2m ec_nistp_64_gcc_128 ecdh ecdsa ecx egd external-tests filenames fips fips-securitychecks fuzz-afl
-    fuzz-libfuzzer gost idea ktls loadereng makedepend md2 md4 mdc2 multiblock nextprotoneg ocb ocsp padlockeng pinshared poly1305 posix-io psk quic rc2 rc4 rc5 rdrand rfc3779
-    rmd160 scrypt sctp secure-memory seed siphash siv sm2 sm2-precomp sm4 srp srtp ssl-trace tfo trace ts ubsan ui-console uplink weak-ssl-ciphers whirlpool zlib zstd
+    fuzz-libfuzzer gost idea ktls loadereng makedepend md2 md4 mdc2 multiblock nextprotoneg ocb ocsp padlockeng pinshared poly1305 posix-io psk quic unstable-qlog qlog rc2 rc4 rc5
+    rdrand rfc3779 rmd160 scrypt sctp secure-memory seed siphash siv sm2 sm2-precomp sm4 srp srtp ssl-trace tfo trace ts ubsan ui-console uplink weak-ssl-ciphers whirlpool zlib
+    zstd
 )
 
     list(FIND OPENSSL_DEFAULT_DISABLED_CIPHERS ${_CIPHER} _CIPHER_IS_DEFAULT_DISABLED)
@@ -460,6 +461,10 @@ foreach (_CIPHER IN ITEMS
         cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "WIN32;( MSVC AND NOT ( OPENSSL_TARGET_ARCH MATCHES \"arm\" ) ) OR ( OPENSSL_TARGET_ARCH STREQUAL \"x86\" );NOT OPENSSL_386;BUILD_SHARED_LIBS;NOT WINDOWS_STORE;NOT WINDOWS_PHONE" OFF)
     elseif ( ( _CIPHER STREQUAL "stdio" ) OR ( _CIPHER STREQUAL "ui-console" ) OR ( _CIPHER STREQUAL "async") )
         cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "( WIN32 AND ( NOT WINDOWS_STORE AND NOT WINDOWS_PHONE ) ) OR ( NOT WIN32 )" OFF)
+    elseif ( _CIPHER STREQUAL "unstable-qlog" )
+        cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "OPENSSL_QUIC" OFF)
+    elseif ( _CIPHER STREQUAL "qlog" )
+        cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "OPENSSL_UNSTABLE_QLOG" OFF)
     else()
         option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}")
     endif()
