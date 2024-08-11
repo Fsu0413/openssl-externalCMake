@@ -966,7 +966,7 @@ endif()
 
 if (WIN32)
     target_link_libraries(crypto
-        PUBLIC ws2_32 crypt32
+        PUBLIC ws2_32 crypt32 user32 advapi32
     )
 endif()
 
