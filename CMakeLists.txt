@@ -2,6 +2,10 @@
 
 cmake_minimum_required(VERSION 3.22)
 
+if (DEFINED PROJECT_NAME)
+    message(FATAL_ERROR "Please build this project separately. add_subdirectory won't be supported.")
+endif()
+
 project(OpenSSL
     VERSION 1.1.1.23
     DESCRIPTION "TLS/SSL and crypto library"
