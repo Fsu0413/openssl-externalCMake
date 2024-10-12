@@ -2,6 +2,10 @@
 
 cmake_minimum_required(VERSION 3.22)
 
+if (DEFINED PROJECT_NAME)
+    message(FATAL_ERROR "Please build this project separately. add_subdirectory won't be supported.")
+endif()
+
 set(OPENSSL_VERSION_DAT_REGEX "([A-Z_]+)=(.*)")
 file(STRINGS "${CMAKE_CURRENT_SOURCE_DIR}/openssl/VERSION.dat" OPENSSL_VERSION_DAT)
 
