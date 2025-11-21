@@ -7,7 +7,7 @@ jobs:
   get-version:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           submodules: true
           path: openssl-externalCMake
@@ -26,7 +26,7 @@ jobs:
     env:
       FS_OPENSSL_VERSION_STR: ${{ needs.get-version.outputs.openssl_version }}
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           submodules: true
           path: openssl-externalCMake
@@ -58,7 +58,7 @@ jobs:
       - name: configure
         shell: cmd
         run: git config --global core.autocrlf true
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           submodules: true
           path: openssl-externalCMake
@@ -90,7 +90,7 @@ jobs:
       FS_OPENSSL_PACKAGE_STR: Ubuntu-x86_64
       FS_OPENSSL_VERSION_STR: ${{ needs.get-version.outputs.openssl_version }}
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           submodules: true
           path: openssl-externalCMake
@@ -150,7 +150,7 @@ jobs:
       FS_OPENSSL_PACKAGE_STR: iOS-${{ matrix.toolchain.name }}
       FS_OPENSSL_VERSION_STR: ${{ needs.get-version.outputs.openssl_version }}
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           submodules: true
           path: openssl-externalCMake
@@ -198,7 +198,7 @@ jobs:
       FS_OPENSSL_PACKAGE_STR: macOS-${{ matrix.toolchain.name }}
       FS_OPENSSL_VERSION_STR: ${{ needs.get-version.outputs.openssl_version }}
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           submodules: true
           path: openssl-externalCMake
@@ -241,7 +241,7 @@ jobs:
       FS_OPENSSL_PACKAGE_STR: MinGW-GCC${{ matrix.toolchain.version }}-${{ matrix.toolchain.arch }}
       FS_OPENSSL_VERSION_STR: ${{ needs.get-version.outputs.openssl_version }}
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           submodules: true
           path: openssl-externalCMake
@@ -294,7 +294,7 @@ jobs:
       FS_OPENSSL_PACKAGE_STR: MSVC${{ matrix.toolchain.version }}-${{ matrix.toolchain.arch }}
       FS_OPENSSL_VERSION_STR: ${{ needs.get-version.outputs.openssl_version }}
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           submodules: true
           path: openssl-externalCMake
@@ -340,7 +340,7 @@ jobs:
       FS_OPENSSL_PACKAGE_STR: Android-${{ matrix.toolchain.arch }}
       FS_OPENSSL_VERSION_STR: ${{ needs.get-version.outputs.openssl_version }}
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           submodules: true
           path: openssl-externalCMake
