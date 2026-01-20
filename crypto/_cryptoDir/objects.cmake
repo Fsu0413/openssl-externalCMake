@@ -65,6 +65,8 @@ set(LIBCRYPTO_CURRENTDIR_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/crypto/vms_rms.h
     ${CMAKE_SOURCE_DIR}/openssl/crypto/time.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/sleep.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/sslerr.h
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/ssl_err.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/deterministic_nonce.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/quic_vlint.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/defaults.c

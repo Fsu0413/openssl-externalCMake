@@ -32,7 +32,6 @@ set(LIBSSL_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/ssl/ssl_conf.c
     ${CMAKE_SOURCE_DIR}/openssl/ssl/ssl_mcnf.c
     ${CMAKE_SOURCE_DIR}/openssl/ssl/bio_ssl.c
-    ${CMAKE_SOURCE_DIR}/openssl/ssl/ssl_err.c
     ${CMAKE_SOURCE_DIR}/openssl/ssl/ssl_err_legacy.c
     ${CMAKE_SOURCE_DIR}/openssl/ssl/tls_srp.c
     ${CMAKE_SOURCE_DIR}/openssl/ssl/t1_trce.c
@@ -43,7 +42,6 @@ set(LIBSSL_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/crypto/packet.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/quic_vlint.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/time.c
-    ${CMAKE_SOURCE_DIR}/openssl/ssl/sslerr.h
     ${CMAKE_SOURCE_DIR}/openssl/ssl/ssl_cert_table.h
     ${CMAKE_SOURCE_DIR}/openssl/ssl/ssl_local.h
     ${CMAKE_SOURCE_DIR}/openssl/ssl/statem/statem_local.h
