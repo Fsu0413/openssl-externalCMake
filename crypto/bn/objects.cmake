@@ -26,7 +26,9 @@ perlasm_generate_src(x86_64-mont5${OPENSSL_ASM_PREPROCESSED} ${CMAKE_SOURCE_DIR}
 perlasm_generate_src(x86_64-gf2m${OPENSSL_ASM_PREPROCESSED} ${CMAKE_SOURCE_DIR}/openssl/crypto/bn/asm/x86_64-gf2m.pl)
 perlasm_generate_src(rsaz-x86_64${OPENSSL_ASM_PREPROCESSED} ${CMAKE_SOURCE_DIR}/openssl/crypto/bn/asm/rsaz-x86_64.pl)
 perlasm_generate_src(rsaz-avx2${OPENSSL_ASM_PREPROCESSED} ${CMAKE_SOURCE_DIR}/openssl/crypto/bn/asm/rsaz-avx2.pl)
-perlasm_generate_src(rsaz-avx512${OPENSSL_ASM_PREPROCESSED} ${CMAKE_SOURCE_DIR}/openssl/crypto/bn/asm/rsaz-avx512.pl)
+perlasm_generate_src(rsaz-2k-avx512${OPENSSL_ASM_PREPROCESSED} ${CMAKE_SOURCE_DIR}/openssl/crypto/bn/asm/rsaz-2k-avx512.pl)
+perlasm_generate_src(rsaz-3k-avx512${OPENSSL_ASM_PREPROCESSED} ${CMAKE_SOURCE_DIR}/openssl/crypto/bn/asm/rsaz-3k-avx512.pl)
+perlasm_generate_src(rsaz-4k-avx512${OPENSSL_ASM_PREPROCESSED} ${CMAKE_SOURCE_DIR}/openssl/crypto/bn/asm/rsaz-4k-avx512.pl)
 perlasm_generate_src(ia64-mont${OPENSSL_ASM_PREPROCESSED} ${CMAKE_SOURCE_DIR}/openssl/crypto/bn/asm/ia64-mont.pl)
 perlasm_generate_src(parisc-mont${OPENSSL_ASM_PREPROCESSED} ${CMAKE_SOURCE_DIR}/openssl/crypto/bn/asm/parisc-mont.pl)
 perlasm_generate_src(bn-ppc${OPENSSL_ASM_PREPROCESSED} ${CMAKE_SOURCE_DIR}/openssl/crypto/bn/asm/ppc.pl)
@@ -100,7 +102,9 @@ if (OPENSSL_ASM)
             rsaz-x86_64${OPENSSL_ASM_PREPROCESSED}
             rsaz-avx2${OPENSSL_ASM_PREPROCESSED}
             ${CMAKE_SOURCE_DIR}/openssl/crypto/bn/rsaz_exp_x2.c
-            rsaz-avx512${OPENSSL_ASM_PREPROCESSED}
+            rsaz-2k-avx512${OPENSSL_ASM_PREPROCESSED}
+            rsaz-3k-avx512${OPENSSL_ASM_PREPROCESSED}
+            rsaz-4k-avx512${OPENSSL_ASM_PREPROCESSED}
         )
         if (MSVC)
             set(LIBCRYPTO_CURRENTDIR_ASM_SOURCES

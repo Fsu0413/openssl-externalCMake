@@ -126,7 +126,7 @@ set(DISABLEABLES # "rsa" # original disableables have no RSA??
     "ec_nistp_64_gcc_128" "ecdh" "ecdsa" "egd" "engine" "err" "external-tests" "filenames" "fips" "fips-securitychecks" "fuzz-afl" "fuzz-libfuzzer" "gost" "idea" "ktls" "legacy"
     "loadereng" "makedepend" "md2" "md4" "mdc2" "module" "msan" "multiblock" "nextprotoneg" "ocb" "ocsp" "padlockeng" "pic" "pinshared" "poly1305" "posix-io" "psk" "rc2" "rc4"
     "rc5" "rdrand" "rfc3779" "rmd160" "scrypt" "sctp" "secure-memory" "seed" "shared" "siphash" "siv" "sm2" "sm3" "sm4" "sock" "srp" "srtp" "sse2" "ssl" "ssl-trace" "static-engine"
-    "stdio" "tests" "threads" "tls" "trace" "ts" "ubsan" "ui-console" "unit-test" "uplink" "weak-ssl-ciphers" "whirlpool" "zlib" "zlib-dynamic"
+    "stdio" "tests" "threads" "tls" "trace" "ts" "ubsan" "ui-console" "unit-test" "uplink" "weak-ssl-ciphers" "whirlpool" "zlib" "zlib-dynamic" "brotli" "zstd"
 )
 
 foreach (RUNCOMMAND IN LISTS COMMANDS)
@@ -211,7 +211,7 @@ foreach (FULLCOMMAND IN ITEMS "aes-128-cbc" "aes-128-ecb" "aes-192-cbc" "aes-192
                               "rc4-40" "rc2" "bf" "cast" "rc5" "des-ecb" "des-ede" "des-ede3" "des-cbc" "des-ede-cbc" "des-ede3-cbc" "des-cfb" "des-ede-cfb" "des-ede3-cfb"
                               "des-ofb" "des-ede-ofb" "des-ede3-ofb" "idea-cbc" "idea-ecb" "idea-cfb" "idea-ofb" "seed-cbc" "seed-ecb" "seed-cfb" "seed-ofb" "rc2-cbc" "rc2-ecb"
                               "rc2-cfb" "rc2-ofb" "rc2-64-cbc" "rc2-40-cbc" "bf-cbc" "bf-ecb" "bf-cfb" "bf-ofb" "cast5-cbc" "cast5-ecb" "cast5-cfb" "cast5-ofb" "cast-cbc" "rc5-cbc"
-                              "rc5-ecb" "rc5-cfb" "rc5-ofb" "sm4-cbc" "sm4-ecb" "sm4-cfb" "sm4-ofb" "sm4-ctr"
+                              "rc5-ecb" "rc5-cfb" "rc5-ofb" "sm4-cbc" "sm4-ecb" "sm4-cfb" "sm4-ofb" "sm4-ctr" "brotli" "zstd"
 )
     set(RUNCOMMAND ${FULLCOMMAND})
     if (FULLCOMMAND MATCHES "-")
@@ -221,13 +221,8 @@ foreach (FULLCOMMAND IN ITEMS "aes-128-cbc" "aes-128-ecb" "aes-192-cbc" "aes-192
     string(TOUPPER "${DNAMMOCNUR}" DNAMMOCNUR_UPPER)
     list(FIND DISABLEABLES ${DNAMMOCNUR} I)
     if (NOT I EQUAL -1)
-        if (RUNCOMMAND STREQUAL "zlib")
-            set(MACRONAME "ZLIB")
-            string(APPEND OUTPUT_CONTENTS_C "#ifdef ${MACRONAME}\n")
-        else()
-            set(MACRONAME "OPENSSL_NO_${DNAMMOCNUR_UPPER}")
-            string(APPEND OUTPUT_CONTENTS_C "#ifndef ${MACRONAME}\n")
-        endif()
+        set(MACRONAME "OPENSSL_NO_${DNAMMOCNUR_UPPER}")
+        string(APPEND OUTPUT_CONTENTS_C "#ifndef ${MACRONAME}\n")
     endif()
     string(APPEND OUTPUT_CONTENTS_C "    {FT_cipher, \"${FULLCOMMAND}\", enc_main, enc_options, NULL},\n")
     if (DEFINED MACRONAME)

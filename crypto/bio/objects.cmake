@@ -29,4 +29,5 @@ set(LIBCRYPTO_CURRENTDIR_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/crypto/bio/bf_prefix.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/bio/bf_readbuff.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/bio/bio_local.h
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/bio/bss_dgram_pair.c
 )

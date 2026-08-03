@@ -33,6 +33,8 @@ set(LIBCRYPTO_CURRENTDIR_SOURCES ${LIBCRYPTO_CURRENTDIR_SOURCES}
     ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/evp_rand.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/asymcipher.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/kem.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/skeymgmt_meth.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/s_lib.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/dh_support.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/ec_support.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/pmeth_check.c

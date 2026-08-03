@@ -28,7 +28,9 @@ Note: On Apple platform, `CMAKE_OSX_ARCHITECTURES` (when number of values is gre
 | Cygwin x86 | `Cygwin-x86` | Deprecated? |
 | macOS x86_64 | `darwin64-x86_64` | |
 | macOS arm64 | `darwin64-arm64` | |
-| iOS simulator (Any architecture) | `iossimulator-xcrun` | No ASM is built |
+| iOS simulator x86_64 | `iossimulator-x86_64-xcrun` | No ASM is built |
+| iOS simulator x86 | `iossimulator-i386-xcrun` | No ASM is built |
+| iOS simulator arm64 | `iossimulator-arm64-xcrun` | No ASM is built |
 | iOS arm32 | `ios-xcrun` | |
 | iOS arm64 | `ios64-xcrun` | |
 | iOS (unknown architecture) | `iphoneos-cross` | Legacy |
@@ -50,3 +52,16 @@ Note: On Apple platform, `CMAKE_OSX_ARCHITECTURES` (when number of values is gre
 | Any BSD (unknown architecture, sizeof pointer equals 8) | `BSD-generic64` | |
 | Any BSD (unknown architecture, sizeof pointer equals 4) | `BSD-generic32` | |
 | Others | (unknown) | Will be added when supported |
+
+
+## OpenSSL 3.5 notes
+
+| Feature | CMake | Default | Notes |
+|-|-|-|-|
+| `ml-kem` | `-DOPENSSL_ML_KEM=` | ON | Post-quantum KEM (FIPS 203) |
+| `ml-dsa` | `-DOPENSSL_ML_DSA=` | ON | Post-quantum signature (FIPS 204) |
+| `slh-dsa` | `-DOPENSSL_SLH_DSA=` | ON | Post-quantum hash-based signature (FIPS 205) |
+| `skeymgmt` / EVP_SKEY | always built when present | — | Opaque symmetric key objects |
+| `tls-deprecated-ec` | `-DOPENSSL_TLS_DEPRECATED_EC=` | ON with deprecated | Disable with `-DOPENSSL_TLS_DEPRECATED_EC=OFF` |
+| `fips-jitter` | `-DOPENSSL_FIPS_JITTER=` | OFF | FIPS provider jitter seed source |
+| Server-side QUIC | `-DOPENSSL_QUIC=` | ON | Requires DTLS + TLS1.3 |

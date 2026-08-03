@@ -81,6 +81,28 @@ set(LIBCRYPTO_CURRENTDIR_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/standard_exts.h
     ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/v3_admis.h
     ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/x509_local.h
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/v3_group_ac.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/v3_ind_iss.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/v3_no_ass.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/v3_no_rev_avail.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/v3_single_use.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/v3_soa_id.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/x509_acert.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/x509aset.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/t_acert.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/x_ietfatt.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/v3_ac_tgt.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/v3_sda.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/v3_usernotice.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/v3_battcons.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/v3_audit_id.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/v3_iobo.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/v3_timespec.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/v3_rolespec.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/v3_authattid.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/v3_attrmap.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/v3_attrdesc.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/v3_aaa.c
 )
 
 if ( OPENSSL_DEPRECATED_3_0 )

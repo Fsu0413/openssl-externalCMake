@@ -125,12 +125,6 @@ cmake_dependent_option(BUILD_SHARED_LIBS "Build Shared Libraries" ON "NOT IOS" O
 # answer is simple - the providers are static libraries but are linked to shared libraries
 cmake_dependent_option(CMAKE_POSITION_INDEPENDENT_CODE "Build Position independent code" OFF "NOT ANDROID;NOT BUILD_SHARED_LIBS" ON)
 
-# [no-]zlib
-option(OPENSSL_ZLIB "build with ZLIB" OFF)
-
-# zlib-dynamic
-cmake_dependent_option(OPENSSL_ZLIB_DYNAMIC "build ZLIB as dynamic loaded object" OFF "OPENSSL_ZLIB" OFF)
-
 # module
 cmake_dependent_option(OPENSSL_MODULE "Build module" ON "BUILD_SHARED_LIBS" OFF)
 
@@ -201,7 +195,8 @@ unset(OPENSSL_KNOWN_RAND_SEED)
 
 # no-<cipher>
 set(OPENSSL_DEFAULT_DISABLED_CIPHERS asan buildtest-c++ crypto-mdebug crypto-mdebug-backtrace devcryptoeng ec_nistp_64_gcc_128 egd external-tests fuzz-afl fuzz-libfuzzer ktls md2
-                                     msan rc5 sctp ssl3 ssl3-method trace ubsan unit-test weak-ssl-ciphers
+                                     msan rc5 sctp ssl3 ssl3-method trace ubsan unit-test weak-ssl-ciphers brotli brotli-dynamic tfo zstd zstd-dynamic zlib zlib-dynamic jitter
+                                     demos h3demo pie jitter fips-jitter
 )
 
 set(OPENSSL_MIN_API_LEVEL "3.0.0" CACHE STRING "OpenSSL SSL minimum API LEVEL")
@@ -330,14 +325,17 @@ foreach (_CIPHER IN ITEMS ssl2 buf-freelists crypto-mdebug-backtrace hw-padlock 
 endforeach()
 
 foreach (_CIPHER IN ITEMS
-    bulk ssl des ec sock dgram dtls tls engine stdio tests comp sm3 unit-test msan cmac legacy cmp # dependent
+    bulk ssl des ec sock dgram dtls tls engine stdio tests sm3 unit-test msan cmac legacy cmp comp brotli-dynamic zstd-dynamic zlib-dynamic thread-pool blake2 # dependent
     dtls1_2-method dtls1-method tls1_2-method tls1_1-method tls1-method ssl3-method # method
-    aes asn1 bio bn buffer conf crmf encode_decode ess evp ffc hmac http kdf lhash md5 modes objects pem pkcs7 pkcs12 property rand rsa sha stack store txt_db x509 # directories
+    aes asn1 bio bn buffer conf crmf encode_decode ess evp ffc hmac hpke http kdf lhash md5 modes objects pem pkcs7 pkcs12 property rand rsa sha stack store thread txt_db
+    x509 hashtable # directories
     dtls1_2 dtls1 tls1_3 tls1_2 tls1_1 tls1 ssl3 # TLS protocol
-    acvp-tests afalgeng aria asan async autoalginit autoerrinit autoload-config bf blake2 buildtest-c++ cached-fetch camellia capieng cast chacha cms crypto-mdebug ct devcryptoeng
-    dh dsa ec2m ec_nistp_64_gcc_128 ecdh ecdsa egd external-tests filenames fips fips-securitychecks fuzz-afl fuzz-libfuzzer gost idea ktls loadereng makedepend md2 md4 mdc2
-    multiblock nextprotoneg ocb ocsp padlockeng pinshared poly1305 posix-io psk rc2 rc4 rc5 rdrand rfc3779 rmd160 scrypt sctp secure-memory seed siphash siv sm2 sm4 sock srp
-    srtp ssl-trace threads trace ts ubsan ui-console uplink weak-ssl-ciphers whirlpool
+    acvp-tests afalgeng aria apps argon2 asan async atexit autoalginit autoerrinit autoload-config bf brotli buildtest-c++ cached-fetch camellia capieng winstore cast chacha cms
+    crypto-mdebug ct default-thread-pool devcryptoeng dh dsa docs ec2m ec_nistp_64_gcc_128 ecdh ecdsa ecx egd external-tests filenames fips fips-securitychecks fuzz-afl
+    fuzz-libfuzzer gost idea ktls loadereng makedepend md2 md4 mdc2 multiblock nextprotoneg ocb ocsp padlockeng pinshared poly1305 posix-io psk quic unstable-qlog qlog rc2 rc4 rc5
+    rdrand rfc3779 rmd160 scrypt sctp secure-memory seed siphash siv sm2 sm2-precomp sm4 srp srtp ssl-trace tfo trace ts ubsan ui-console uplink weak-ssl-ciphers whirlpool zlib
+    zstd jitter demos h3demo fips-post pie integrity-only-ciphers
+    ml-kem ml-dsa slh-dsa skeymgmt tls-deprecated-ec fips-jitter
 )
 
     list(FIND OPENSSL_DEFAULT_DISABLED_CIPHERS ${_CIPHER} _CIPHER_IS_DEFAULT_DISABLED)
@@ -361,6 +359,8 @@ foreach (_CIPHER IN ITEMS
     elseif (_CIPHER STREQUAL "ecdsa")
         cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "OPENSSL_EC" OFF)
     elseif (_CIPHER STREQUAL "ecdh")
+        cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "OPENSSL_EC" OFF)
+    elseif (_CIPHER STREQUAL "ecx")
         cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "OPENSSL_EC" OFF)
     elseif (_CIPHER STREQUAL "sm2")
         cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "OPENSSL_SM3;OPENSSL_EC" OFF)
@@ -421,8 +421,6 @@ foreach (_CIPHER IN ITEMS
         # Original Configure deleted $disabled{'egd'} when --with-rand-seed=egd. This is definitely error when stdio is turned off but --with-rand-seed=egd is specified.
         cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "OPENSSL_STDIO" OFF)
         # cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "NOT OPENSSL_RAND_SEED_EGD" ON)
-    elseif (_CIPHER STREQUAL "comp")
-        cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "OPENSSL_ZLIB" OFF)
     elseif (_CIPHER STREQUAL "heartbeats")
         cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "OPENSSL_NO_UNITTEST" OFF)
     elseif (_CIPHER STREQUAL "msan")
@@ -439,10 +437,40 @@ foreach (_CIPHER IN ITEMS
         cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "OPENSSL_FIPS" OFF)
     elseif (_CIPHER STREQUAL "srp")
         cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "OPENSSL_DEPRECATED_3_0" OFF)
+    elseif (_CIPHER STREQUAL "brotli-dynamic")
+        cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "OPENSSL_BROTLI" OFF)
+    elseif (_CIPHER STREQUAL "brotli")
+        cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "OPENSSL_COMP" OFF)
+    elseif (_CIPHER STREQUAL "zstd-dynamic")
+        cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "OPENSSL_ZSTD" OFF)
+    elseif (_CIPHER STREQUAL "zstd")
+        cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "OPENSSL_COMP" OFF)
+    elseif (_CIPHER STREQUAL "zlib-dynamic")
+        cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "OPENSSL_ZLIB" OFF)
+    elseif (_CIPHER STREQUAL "zlib")
+        cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "OPENSSL_COMP" OFF)
+    elseif (_CIPHER STREQUAL "quic")
+        cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "OPENSSL_DGRAM;OPENSSL_TLS1_3" OFF)
+    elseif (_CIPHER STREQUAL "tfo")
+        cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "OPENSSL_SOCK" OFF)
+    elseif (_CIPHER STREQUAL "argon2")
+        cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "OPENSSL_BLAKE2" OFF)
+    elseif (_CIPHER STREQUAL "ocsp")
+        cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "OPENSSL_HTTP" OFF)
+    elseif (_CIPHER STREQUAL "winstore")
+        cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "WIN32" OFF)
+    elseif (_CIPHER STREQUAL "thread-pool")
+        cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "OPENSSL_THREADS" OFF)
+    elseif (_CIPHER STREQUAL "default-thread-pool")
+        cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "OPENSSL_THREAD_POOL" OFF)
     elseif (_CIPHER STREQUAL "uplink")
         cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "WIN32;( MSVC AND NOT ( OPENSSL_TARGET_ARCH MATCHES \"arm\" ) ) OR ( OPENSSL_TARGET_ARCH STREQUAL \"x86\" );NOT OPENSSL_386;BUILD_SHARED_LIBS;NOT WINDOWS_STORE;NOT WINDOWS_PHONE" OFF)
     elseif ( ( _CIPHER STREQUAL "stdio" ) OR ( _CIPHER STREQUAL "ui-console" ) OR ( _CIPHER STREQUAL "async") )
         cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "( WIN32 AND ( NOT WINDOWS_STORE AND NOT WINDOWS_PHONE ) ) OR ( NOT WIN32 )" OFF)
+    elseif ( _CIPHER STREQUAL "unstable-qlog" )
+        cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "OPENSSL_QUIC" OFF)
+    elseif ( _CIPHER STREQUAL "qlog" )
+        cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "OPENSSL_UNSTABLE_QLOG" OFF)
     else()
         option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}")
     endif()
@@ -517,6 +545,31 @@ if (OPENSSL_ZLIB)
     set(OPENSSL_NO_ZLIB OFF CACHE BOOL "build without ZLIB (automatically set, use OPENSSL_ZLIB if this is to be modified)" FORCE)
 else()
     set(OPENSSL_NO_ZLIB ON CACHE BOOL "build without ZLIB (automatically set, use OPENSSL_ZLIB if this is to be modified)" FORCE)
+endif()
+
+# TODO: brotli uses pkg-config instead of CMake so we'd find it use pkg-config
+#if (OPENSSL_BROTLI)
+#    find_package(BROTLI REQUIRED)
+#    if (OPENSSL_BROTLI_DYNAMIC)
+#        set(OPENSSL_NO_BROTLI_DYNAMIC OFF CACHE BOOL "build Brotli not as dynamic loaded object (automatically set, use OPENSSL_BROTLI_DYNAMIC if this is to be modified)" FORCE)
+#    else()
+#        set(OPENSSL_NO_BROTLI_DYNAMIC ON CACHE BOOL "build Brotli not as dynamic loaded object (automatically set, use OPENSSL_BROTLI_DYNAMIC if this is to be modified)" FORCE)
+#    endif()
+#    set(OPENSSL_NO_BROTLI OFF CACHE BOOL "build without Brotli (automatically set, use OPENSSL_BROTLI if this is to be modified)" FORCE)
+#else()
+#    set(OPENSSL_NO_BROTLI ON CACHE BOOL "build without Brotli (automatically set, use OPENSSL_BROTLI if this is to be modified)" FORCE)
+#endif()
+
+if (OPENSSL_ZSTD)
+    find_package(zstd REQUIRED)
+    if (OPENSSL_ZSTD_DYNAMIC)
+        set(OPENSSL_NO_ZSTD_DYNAMIC OFF CACHE BOOL "build Zstandard not as dynamic loaded object (automatically set, use OPENSSL_ZSTD_DYNAMIC if this is to be modified)" FORCE)
+    else()
+        set(OPENSSL_NO_ZSTD_DYNAMIC ON CACHE BOOL "build Zstandard not as dynamic loaded object (automatically set, use OPENSSL_ZSTD_DYNAMIC if this is to be modified)" FORCE)
+    endif()
+    set(OPENSSL_NO_ZSTD OFF CACHE BOOL "build without Zstandard (automatically set, use OPENSSL_ZSTD if this is to be modified)" FORCE)
+else()
+    set(OPENSSL_NO_ZSTD ON CACHE BOOL "build without Zstandard (automatically set, use OPENSSL_ZSTD if this is to be modified)" FORCE)
 endif()
 
 if (OPENSSL_STATIC_ENGINE)
@@ -624,7 +677,15 @@ elseif (IOS)
         # The default value
         set(OPENSSL_BUILD_PLATFORM "iphoneos-cross")
         if (OPENSSL_IOS_IS_SIMULATOR)
-            set(OPENSSL_BUILD_PLATFORM "iossimulator-xcrun")
+            if (OPENSSL_TARGET_ARCH STREQUAL "arm64")
+                set(OPENSSL_BUILD_PLATFORM "iossimulator-arm64-xcrun")
+            elseif (OPENSSL_TARGET_ARCH STREQUAL "x64")
+                set(OPENSSL_BUILD_PLATFORM "iossimulator-x86_64-xcrun")
+            elseif (OPENSSL_TARGET_ARCH STREQUAL "x86")
+                set(OPENSSL_BUILD_PLATFORM "iossimulator-i386-xcrun")
+            else()
+                set(OPENSSL_BUILD_PLATFORM "iossimulator-xcrun")
+            endif()
         else()
             if (OPENSSL_TARGET_ARCH STREQUAL "arm64")
                 set(OPENSSL_BUILD_PLATFORM "ios64-xcrun")
@@ -772,6 +833,7 @@ set(CPACK_SOURCE_IGNORE_FILES
     [[/openssl/Configurations/90-team\\.norelease\\.conf$]]
     [[/openssl/util/mktar\\.sh$]]
     [[/openssl/dev/]]
+    [[/openssl/\\.ctags\\.d/]]
 
     # OpenSSL fuzzer files
     [[/openssl/fuzz/corpora/]]
@@ -781,5 +843,10 @@ set(CPACK_SOURCE_IGNORE_FILES
     [[/openssl/pyca-cryptography/]]
     [[/openssl/wycheproof/]]
     [[/openssl/gost-engine/]]
+    [[/openssl/oqs-provider/]]
+    [[/openssl/python-ecdsa/]]
+    [[/openssl/tlsfuzzer/]]
+    [[/openssl/tlslite-ng/]]
+    [[/openssl/cloudflare-quiche/]]
 )
 include(CPack)

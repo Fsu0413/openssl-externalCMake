@@ -27,6 +27,7 @@ set(LIBLEGACY_SOURCES
 
     ${CMAKE_SOURCE_DIR}/openssl/providers/legacyprov.c
     ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/kdfs/pbkdf1.c
+    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/kdfs/pvkkdf.c
 
     ${CMAKE_SOURCE_DIR}/openssl/providers/common/include/prov/provider_ctx.h
     ${CMAKE_SOURCE_DIR}/openssl/providers/common/include/prov/provider_util.h
@@ -313,6 +314,7 @@ target_include_directories(legacy
             ${CMAKE_SOURCE_DIR}/openssl/crypto
             ${CMAKE_BINARY_DIR}/providers/common/include
             ${CMAKE_SOURCE_DIR}/openssl/providers/include
+            ${CMAKE_SOURCE_DIR}/openssl/providers/fips/include
 )
 
 # workaround!
