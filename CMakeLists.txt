@@ -196,7 +196,7 @@ unset(OPENSSL_KNOWN_RAND_SEED)
 # no-<cipher>
 set(OPENSSL_DEFAULT_DISABLED_CIPHERS asan buildtest-c++ crypto-mdebug crypto-mdebug-backtrace devcryptoeng ec_nistp_64_gcc_128 egd external-tests fuzz-afl fuzz-libfuzzer ktls md2
                                      msan rc5 sctp ssl3 ssl3-method trace ubsan unit-test weak-ssl-ciphers brotli brotli-dynamic tfo zstd zstd-dynamic zlib zlib-dynamic jitter
-                                     demos h3demo pie jitter
+                                     demos h3demo pie jitter lms ec_explicit_curves tls-deprecated-ec engine static-engine dynamic-engine
 )
 
 set(OPENSSL_MIN_API_LEVEL "3.0.0" CACHE STRING "OpenSSL SSL minimum API LEVEL")
@@ -335,6 +335,7 @@ foreach (_CIPHER IN ITEMS
     fuzz-libfuzzer gost idea ktls loadereng makedepend md2 md4 mdc2 multiblock nextprotoneg ocb ocsp padlockeng pinshared poly1305 posix-io psk quic unstable-qlog qlog rc2 rc4 rc5
     rdrand rfc3779 rmd160 scrypt sctp secure-memory seed siphash siv sm2 sm2-precomp sm4 srp srtp ssl-trace tfo trace ts ubsan ui-console uplink weak-ssl-ciphers whirlpool zlib
     zstd jitter demos h3demo fips-post pie integrity-only-ciphers
+    ml-kem ml-dsa slh-dsa lms ech snmpkdf srtpkdf ec_explicit_curves tls-deprecated-ec skeymgmt
 )
 
     list(FIND OPENSSL_DEFAULT_DISABLED_CIPHERS ${_CIPHER} _CIPHER_IS_DEFAULT_DISABLED)
@@ -365,8 +366,9 @@ foreach (_CIPHER IN ITEMS
         cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "OPENSSL_SM3;OPENSSL_EC" OFF)
     elseif (_CIPHER STREQUAL "gost")
         cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "OPENSSL_EC" OFF)
-    elseif (_CIPHER STREQUAL "ssl3")
-        cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "OPENSSL_SSL;OPENSSL_SSL3_METHOD" OFF)
+    elseif (_CIPHER STREQUAL "ssl3" OR _CIPHER STREQUAL "ssl3-method")
+        # OpenSSL 4.0 removed SSLv3.
+        set("${_CIPHER_STR}" OFF CACHE BOOL "${_CIPHER_HELP}" FORCE)
     elseif (_CIPHER STREQUAL "dtls")
         cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "OPENSSL_DGRAM" OFF)
     elseif (_CIPHER STREQUAL "sctp")
@@ -396,11 +398,8 @@ foreach (_CIPHER IN ITEMS
     elseif (_CIPHER STREQUAL "tls1_2-method")
         cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "OPENSSL_TLS" OFF)
     elseif (_CIPHER STREQUAL "engine")
-        if (NOT OPENSSL_DEPRECATED_3_0)
-            set("${_CIPHER_STR}" OFF CACHE BOOL "${_CIPHER_HELP}" FORCE)
-        else()
-            cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "NOT OPENSSL_STATIC_ENGINE" ON)
-        endif()
+        # OpenSSL 4.0 removed engines; OPENSSL_NO_ENGINE is always defined.
+        set("${_CIPHER_STR}" OFF CACHE BOOL "${_CIPHER_HELP}" FORCE)
     elseif (_CIPHER STREQUAL "devcryptoeng")
         cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "OPENSSL_ENGINE" OFF)
     elseif (_CIPHER STREQUAL "autoalginit")
@@ -766,7 +765,8 @@ endif()
 add_subdirectory(crypto)
 add_subdirectory(ssl)
 add_subdirectory(apps)
-add_subdirectory(engines)
+# Engines were removed in OpenSSL 4.0
+# add_subdirectory(engines)
 add_subdirectory(tools)
 add_subdirectory(exporters)
 

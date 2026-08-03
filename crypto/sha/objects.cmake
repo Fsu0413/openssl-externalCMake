@@ -58,6 +58,7 @@ set(LIBCRYPTO_CURRENTDIR_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/crypto/sha/sha256.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/sha/sha512.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/sha/sha3.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/sha/sha3_encode.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/sha/sha_local.h
 )
 

@@ -36,7 +36,9 @@ add_custom_command(
         ${CMAKE_SOURCE_DIR}/openssl/apps/ec.c
         ${CMAKE_SOURCE_DIR}/openssl/apps/ecparam.c
         ${CMAKE_SOURCE_DIR}/openssl/apps/enc.c
-        ${CMAKE_SOURCE_DIR}/openssl/apps/engine.c
+        ${CMAKE_SOURCE_DIR}/openssl/apps/ech.c
+        ${CMAKE_SOURCE_DIR}/openssl/apps/configutl.c
+        ${CMAKE_SOURCE_DIR}/openssl/apps/skeyutl.c
         ${CMAKE_SOURCE_DIR}/openssl/apps/errstr.c
         ${CMAKE_SOURCE_DIR}/openssl/apps/fipsinstall.c
         ${CMAKE_SOURCE_DIR}/openssl/apps/gendsa.c
@@ -91,7 +93,9 @@ add_custom_command(
         ${CMAKE_SOURCE_DIR}/openssl/apps/ec.c
         ${CMAKE_SOURCE_DIR}/openssl/apps/ecparam.c
         ${CMAKE_SOURCE_DIR}/openssl/apps/enc.c
-        ${CMAKE_SOURCE_DIR}/openssl/apps/engine.c
+        ${CMAKE_SOURCE_DIR}/openssl/apps/ech.c
+        ${CMAKE_SOURCE_DIR}/openssl/apps/configutl.c
+        ${CMAKE_SOURCE_DIR}/openssl/apps/skeyutl.c
         ${CMAKE_SOURCE_DIR}/openssl/apps/errstr.c
         ${CMAKE_SOURCE_DIR}/openssl/apps/fipsinstall.c
         ${CMAKE_SOURCE_DIR}/openssl/apps/gendsa.c
@@ -163,8 +167,6 @@ set(OPENSSL_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/apps/lib/app_provider.c
     ${CMAKE_SOURCE_DIR}/openssl/apps/lib/app_x509.c
     ${CMAKE_SOURCE_DIR}/openssl/apps/lib/http_server.c
-    ${CMAKE_SOURCE_DIR}/openssl/apps/lib/engine.c
-    ${CMAKE_SOURCE_DIR}/openssl/apps/lib/engine_loader.c
     ${CMAKE_SOURCE_DIR}/openssl/apps/lib/app_libctx.c
     ${CMAKE_SOURCE_DIR}/openssl/apps/lib/log.c
     ${CMAKE_SOURCE_DIR}/openssl/apps/lib/apps_opt_printf.c
@@ -249,7 +251,6 @@ if (OPENSSL_DSA)
 endif()
 if (OPENSSL_ENGINE)
     list(APPEND OPENSSL_OPTIONAL_SOURCES
-        ${CMAKE_SOURCE_DIR}/openssl/apps/engine.c
     )
 endif()
 if (OPENSSL_RSA)
@@ -262,6 +263,17 @@ if (OPENSSL_RSA)
             ${CMAKE_SOURCE_DIR}/openssl/apps/rsautl.c
         )
     endif()
+endif()
+if (OPENSSL_ECH)
+    list(APPEND OPENSSL_OPTIONAL_SOURCES
+        ${CMAKE_SOURCE_DIR}/openssl/apps/ech.c
+    )
+endif()
+if (TRUE)
+    list(APPEND OPENSSL_OPTIONAL_SOURCES
+        ${CMAKE_SOURCE_DIR}/openssl/apps/configutl.c
+        ${CMAKE_SOURCE_DIR}/openssl/apps/skeyutl.c
+    )
 endif()
 if (OPENSSL_CMS)
     list(APPEND OPENSSL_OPTIONAL_SOURCES

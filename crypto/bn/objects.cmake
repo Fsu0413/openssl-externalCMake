@@ -65,7 +65,7 @@ set(LIBCRYPTO_CURRENTDIR_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/crypto/bn/bn_nist.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/bn/bn_intern.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/bn/bn_dh.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/bn/bn_rsa_fips186_4.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/bn/bn_rsa_fips186_5.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/bn/bn_const.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/bn/bn_print.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/bn/bn_err.c

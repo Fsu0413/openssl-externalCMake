@@ -52,3 +52,19 @@ Note: On Apple platform, `CMAKE_OSX_ARCHITECTURES` (when number of values is gre
 | Any BSD (unknown architecture, sizeof pointer equals 8) | `BSD-generic64` | |
 | Any BSD (unknown architecture, sizeof pointer equals 4) | `BSD-generic32` | |
 | Others | (unknown) | Will be added when supported |
+
+## OpenSSL 4.0 notes
+
+| Feature | CMake | Default | Notes |
+|-|-|-|-|
+| Engines | always off | — | Removed in OpenSSL 4.0 (`OPENSSL_NO_ENGINE` always) |
+| SSLv3 | always off | — | Removed in OpenSSL 4.0 |
+| `ml-kem` | `-DOPENSSL_ML_KEM=` | ON | Post-quantum KEM |
+| `ml-dsa` | `-DOPENSSL_ML_DSA=` | ON | Post-quantum signature |
+| `slh-dsa` | `-DOPENSSL_SLH_DSA=` | ON | Post-quantum hash-based signature |
+| `lms` | `-DOPENSSL_LMS=` | OFF | LMS signatures |
+| `ech` | `-DOPENSSL_ECH=` | ON | Encrypted Client Hello |
+| `snmpkdf` / `srtpkdf` | `-DOPENSSL_SNMPKDF=` / `-DOPENSSL_SRTPKDF=` | ON | New KDFs |
+| `ec_explicit_curves` | `-DOPENSSL_EC_EXPLICIT_CURVES=` | OFF | Disabled by default in 4.0 |
+| `tls-deprecated-ec` | `-DOPENSSL_TLS_DEPRECATED_EC=` | OFF | Disabled by default in 4.0 |
+| `c_rehash` | — | removed | Use `openssl rehash` |

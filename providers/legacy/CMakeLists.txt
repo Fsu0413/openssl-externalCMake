@@ -43,10 +43,14 @@ set(LIBLEGACY_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/cipher_seed.h
     ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/cipher_tdes.h
     ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/cipher_tdes_default.h
-    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/include/prov/ciphercommon.h
-    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/include/prov/digestcommon.h
-    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/include/prov/implementations.h
-    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/include/prov/names.h
+    ${CMAKE_BINARY_DIR}/providers/implementations/include
+            ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/include/prov/ciphercommon.h
+    ${CMAKE_BINARY_DIR}/providers/implementations/include
+            ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/include/prov/digestcommon.h
+    ${CMAKE_BINARY_DIR}/providers/implementations/include
+            ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/include/prov/implementations.h
+    ${CMAKE_BINARY_DIR}/providers/implementations/include
+            ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/include/prov/names.h
 )
 
 set(LIBLEGACY_SOURCES_MODULE
@@ -301,12 +305,14 @@ if ( OPENSSL_MODULE AND NOT WIN32 AND ( CMAKE_C_COMPILER_ID MATCHES "GNU" OR CMA
         DEPENDS ../../crypto/mkdef.cmake
     )
     add_custom_target(legacy_map SOURCES legacy.ld)
-    add_dependencies(legacy legacy_map)
+    add_dependencies(legacy legacy_map generate_provider_inc)
     target_link_options(legacy PRIVATE "LINKER:--version-script=${CMAKE_CURRENT_BINARY_DIR}/legacy.ld")
 endif()
 
 target_include_directories(legacy
-    PRIVATE ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/include
+    PRIVATE ${CMAKE_BINARY_DIR}
+    PRIVATE ${CMAKE_BINARY_DIR}/providers/implementations/include
+            ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/include
             ${CMAKE_SOURCE_DIR}/openssl/providers/common/include
             ${CMAKE_BINARY_DIR}/include
             ${CMAKE_SOURCE_DIR}/openssl

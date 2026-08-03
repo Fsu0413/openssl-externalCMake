@@ -29,6 +29,9 @@ set(LIBSSL_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/ssl/quic/quic_channel.c
     ${CMAKE_SOURCE_DIR}/openssl/ssl/quic/quic_tserver.c
     ${CMAKE_SOURCE_DIR}/openssl/ssl/quic/quic_tls.c
+    ${CMAKE_SOURCE_DIR}/openssl/ssl/quic/quic_tls_api.c
+    ${CMAKE_SOURCE_DIR}/openssl/ssl/quic/quic_obj.c
+    ${CMAKE_SOURCE_DIR}/openssl/ssl/quic/quic_reactor_wait_ctx.c
     ${CMAKE_SOURCE_DIR}/openssl/ssl/quic/quic_thread_assist.c
     ${CMAKE_SOURCE_DIR}/openssl/ssl/quic/quic_trace.c
     ${CMAKE_SOURCE_DIR}/openssl/ssl/quic/quic_channel_local.h

@@ -51,10 +51,14 @@ set(LIBCOMMON_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/providers/common/include/prov/provider_ctx.h
     ${CMAKE_SOURCE_DIR}/openssl/providers/common/include/prov/providercommon.h
     ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/ciphercommon_local.h
-    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/include/prov/ciphercommon.h
-    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/include/prov/ciphercommon_ccm.h
-    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/include/prov/ciphercommon_gcm.h
-    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/include/prov/digestcommon.h
+    ${CMAKE_BINARY_DIR}/providers/implementations/include
+            ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/include/prov/ciphercommon.h
+    ${CMAKE_BINARY_DIR}/providers/implementations/include
+            ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/include/prov/ciphercommon_ccm.h
+    ${CMAKE_BINARY_DIR}/providers/implementations/include
+            ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/include/prov/ciphercommon_gcm.h
+    ${CMAKE_BINARY_DIR}/providers/implementations/include
+            ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/include/prov/digestcommon.h
 )
 
 if (OPENSSL_EC)
@@ -89,10 +93,12 @@ add_library(libcommon STATIC
     ${LIBCOMMON_SOURCES}
 )
 
-add_dependencies(libcommon generate_crypto_src generate_der)
+add_dependencies(libcommon generate_crypto_src generate_der generate_provider_inc)
 
 target_include_directories(libcommon
-    PRIVATE ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/include
+    PRIVATE ${CMAKE_BINARY_DIR}
+    PRIVATE ${CMAKE_BINARY_DIR}/providers/implementations/include
+            ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/include
             ${CMAKE_SOURCE_DIR}/openssl/providers/common/include
             ${CMAKE_BINARY_DIR}/include
             ${CMAKE_SOURCE_DIR}/openssl

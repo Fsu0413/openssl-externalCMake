@@ -1,7 +1,4 @@
 # SPDX-License-Identifier: Unlicense
 
-configure_file(c_rehash.cmake.in c_rehash @ONLY)
-
-install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/c_rehash
-    TYPE BIN
-)
+# c_rehash was removed in OpenSSL 4.0 — use `openssl rehash` instead.
+# Keep this directory so add_subdirectory(tools) remains valid.

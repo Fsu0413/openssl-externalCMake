@@ -12,7 +12,6 @@ set(LIBCRYPTO_CURRENTDIR_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/crypto/dsa/dsa_asn1.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/dsa/dsa_err.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/dsa/dsa_ameth.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/dsa/dsa_pmeth.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/dsa/dsa_prn.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/dsa/dsa_meth.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/dsa/dsa_local.h

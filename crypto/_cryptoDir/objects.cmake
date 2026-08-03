@@ -47,7 +47,6 @@ set(LIBCRYPTO_CURRENTDIR_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/crypto/cpt_err.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/ebcdic.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/uid.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/o_time.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/o_dir.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/o_fopen.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/getenv.c
@@ -66,9 +65,12 @@ set(LIBCRYPTO_CURRENTDIR_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/crypto/time.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/sleep.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/deterministic_nonce.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/array_alloc.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/aligned_alloc.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/threads_common.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/ssl_err.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/quic_vlint.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/defaults.c
-    params_idx.c
     buildinf.h
 )
 
