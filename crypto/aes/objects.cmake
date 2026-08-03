@@ -29,6 +29,9 @@ perlasm_generate_src(aes-mips.S ${CMAKE_SOURCE_DIR}/openssl/crypto/aes/asm/aes-m
 perlasm_generate_src(aesv8-armx.S ${CMAKE_SOURCE_DIR}/openssl/crypto/aes/asm/aesv8-armx.pl)
 perlasm_generate_src(bsaes-armv8.S ${CMAKE_SOURCE_DIR}/openssl/crypto/aes/asm/bsaes-armv8.pl)
 perlasm_generate_src(vpaes-armv8.S ${CMAKE_SOURCE_DIR}/openssl/crypto/aes/asm/vpaes-armv8.pl)
+perlasm_generate_src(aes-sha1-armv8.S ${CMAKE_SOURCE_DIR}/openssl/crypto/aes/asm/aes-sha1-armv8.pl)
+perlasm_generate_src(aes-sha256-armv8.S ${CMAKE_SOURCE_DIR}/openssl/crypto/aes/asm/aes-sha256-armv8.pl)
+perlasm_generate_src(aes-sha512-armv8.S ${CMAKE_SOURCE_DIR}/openssl/crypto/aes/asm/aes-sha512-armv8.pl)
 perlasm_generate_src(aes-armv4.S ${CMAKE_SOURCE_DIR}/openssl/crypto/aes/asm/aes-armv4.pl)
 perlasm_generate_src(bsaes-armv7.S ${CMAKE_SOURCE_DIR}/openssl/crypto/aes/asm/bsaes-armv7.pl)
 perlasm_generate_src(aes-s390x.S ${CMAKE_SOURCE_DIR}/openssl/crypto/aes/asm/aes-s390x.pl)
@@ -84,6 +87,9 @@ if (OPENSSL_ASM)
             aesv8-armx.S
             bsaes-armv8.S
             vpaes-armv8.S
+            aes-sha1-armv8.S
+            aes-sha256-armv8.S
+            aes-sha512-armv8.S
         )
     endif()
 endif()

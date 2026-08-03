@@ -35,7 +35,6 @@ set(LIBCRYPTO_CURRENTDIR_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/crypto/ec/ec_backend.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/ec/ecdh_kdf.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/ec/ec_ameth.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/ec/ec_pmeth.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/ec/ec_err.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/ec/eck_prn.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/ec/ec_deprecated.c

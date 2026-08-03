@@ -1,3 +1,4 @@
 .FsEnv.cmake
 /CMakeLists.txt.user*
 .DS_Store
+/build-4.0

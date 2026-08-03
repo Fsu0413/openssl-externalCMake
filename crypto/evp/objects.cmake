@@ -33,6 +33,11 @@ set(LIBCRYPTO_CURRENTDIR_SOURCES ${LIBCRYPTO_CURRENTDIR_SOURCES}
     ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/evp_rand.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/asymcipher.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/kem.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/skeymgmt_meth.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/s_lib.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/evp_pkey_type.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/enc_b64_scalar.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/enc_b64_avx2.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/dh_support.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/ec_support.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/pmeth_check.c
@@ -64,7 +69,6 @@ set(LIBCRYPTO_CURRENTDIR_SOURCES ${LIBCRYPTO_CURRENTDIR_SOURCES}
     ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/e_null.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/c_allc.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/c_alld.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/bio_ok.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/evp_pkey.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/evp_pbe.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/p5_crpt.c
@@ -76,7 +80,6 @@ set(LIBCRYPTO_CURRENTDIR_SOURCES ${LIBCRYPTO_CURRENTDIR_SOURCES}
     ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/e_chacha20_poly1305.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/legacy_sha.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/ctrl_params_translate.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/cmeth_lib.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/dh_ctrl.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/dsa_ctrl.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/ec_ctrl.c

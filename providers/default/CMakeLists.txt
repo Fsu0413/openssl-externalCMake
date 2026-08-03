@@ -71,7 +71,6 @@ set(LIBDEFAULT_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/kdfs/kbkdf.c
     ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/kdfs/krb5kdf.c
     ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/kdfs/pbkdf2.c
-    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/kdfs/pbkdf2_fips.c
     ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/kdfs/pkcs12kdf.c
     ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/kdfs/sskdf.c
     ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/kdfs/scrypt.c
@@ -79,6 +78,17 @@ set(LIBDEFAULT_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/kdfs/x942kdf.c
     ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/kdfs/hmacdrbg_kdf.c
     ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/kdfs/argon2.c
+
+    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/kdfs/snmpkdf.c
+    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/kdfs/srtpkdf.c
+    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/digests/cshake_prov.c
+    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/cipher_aes_cbc_hmac_sha_etm.c
+    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/cipher_aes_cbc_hmac_sha1_etm_hw.c
+    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/cipher_aes_cbc_hmac_sha256_etm_hw.c
+    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/cipher_aes_cbc_hmac_sha512_etm_hw.c
+    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/cipher_aes_cfb_hw.c
+    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/skeymgmt/aes_skmgmt.c
+    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/skeymgmt/generic.c
     ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/kem/rsa_kem.c
     ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/keymgmt/rsa_kmgmt.c
     ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/keymgmt/kdf_legacy_kmgmt.c
@@ -127,19 +137,28 @@ set(LIBDEFAULT_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/cipher_tdes.h
     ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/cipher_tdes_default.h
     ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/digests/blake2_impl.h
-    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/encode_decode/endecoder_local.h
-    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/include/prov/blake2.h
-    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/include/prov/ciphercommon.h
-    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/include/prov/ciphercommon_aead.h
-    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/include/prov/digestcommon.h
-    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/include/prov/implementations.h
-    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/include/prov/kdfexchange.h
-    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/include/prov/macsignature.h
-    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/include/prov/md5_sha1.h
-    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/include/prov/seeding.h
-    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/kdfs/pbkdf2.h
-    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/rands/drbg_local.h
-    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/storemgmt/file_store_local.h
+    ${CMAKE_BINARY_DIR}/providers/implementations/include
+            ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/include/prov/endecoder_local.h
+    ${CMAKE_BINARY_DIR}/providers/implementations/include
+            ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/include/prov/blake2.h
+    ${CMAKE_BINARY_DIR}/providers/implementations/include
+            ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/include/prov/ciphercommon.h
+    ${CMAKE_BINARY_DIR}/providers/implementations/include
+            ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/include/prov/ciphercommon_aead.h
+    ${CMAKE_BINARY_DIR}/providers/implementations/include
+            ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/include/prov/digestcommon.h
+    ${CMAKE_BINARY_DIR}/providers/implementations/include
+            ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/include/prov/implementations.h
+    ${CMAKE_BINARY_DIR}/providers/implementations/include
+            ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/include/prov/kdfexchange.h
+    ${CMAKE_BINARY_DIR}/providers/implementations/include
+            ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/include/prov/macsignature.h
+    ${CMAKE_BINARY_DIR}/providers/implementations/include
+            ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/include/prov/md5_sha1.h
+    ${CMAKE_BINARY_DIR}/providers/implementations/include
+            ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/include/prov/seeding.h
+    ${CMAKE_BINARY_DIR}/providers/implementations/include
+            ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/include/prov/file_store_local.h
 )
 
 if ( OPENSSL_ASM AND ( OPENSSL_TARGET_ARCH MATCHES "aarch64" ) )
@@ -354,14 +373,65 @@ if (OPENSSL_WINSTORE)
     )
 endif()
 
+
+if (OPENSSL_ML_KEM)
+    set(LIBDEFAULT_SOURCES
+        ${LIBDEFAULT_SOURCES}
+        ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/keymgmt/ml_kem_kmgmt.c
+        ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/keymgmt/mlx_kmgmt.c
+        ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/kem/ml_kem_kem.c
+        ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/kem/mlx_kem.c
+        ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/encode_decode/ml_kem_codecs.c
+        ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/encode_decode/ml_common_codecs.c
+        ${CMAKE_BINARY_DIR}/providers/common/der/der_hkdf_gen.c
+        ${CMAKE_BINARY_DIR}/providers/common/include/prov/der_hkdf.h
+    )
+endif()
+
+if (OPENSSL_ML_DSA)
+    set(LIBDEFAULT_SOURCES
+        ${LIBDEFAULT_SOURCES}
+        ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/keymgmt/ml_dsa_kmgmt.c
+        ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/signature/ml_dsa_sig.c
+        ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/encode_decode/ml_dsa_codecs.c
+        ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/digests/ml_dsa_mu_prov.c
+        ${CMAKE_SOURCE_DIR}/openssl/providers/common/der/der_ml_dsa_key.c
+        ${CMAKE_BINARY_DIR}/providers/common/der/der_ml_dsa_gen.c
+        ${CMAKE_BINARY_DIR}/providers/common/include/prov/der_ml_dsa.h
+    )
+endif()
+
+if (OPENSSL_SLH_DSA)
+    set(LIBDEFAULT_SOURCES
+        ${LIBDEFAULT_SOURCES}
+        ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/keymgmt/slh_dsa_kmgmt.c
+        ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/signature/slh_dsa_sig.c
+        ${CMAKE_SOURCE_DIR}/openssl/providers/common/der/der_slh_dsa_key.c
+        ${CMAKE_BINARY_DIR}/providers/common/der/der_slh_dsa_gen.c
+        ${CMAKE_BINARY_DIR}/providers/common/include/prov/der_slh_dsa.h
+    )
+endif()
+
+if (OPENSSL_LMS)
+    set(LIBDEFAULT_SOURCES
+        ${LIBDEFAULT_SOURCES}
+        ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/keymgmt/lms_kmgmt.c
+        ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/signature/lms_signature.c
+        ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/encode_decode/decode_lmsxdr2key.c
+        ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/encode_decode/lms_codecs.c
+    )
+endif()
+
 add_library(libdefault STATIC
     ${LIBDEFAULT_SOURCES}
 )
 
-add_dependencies(libdefault generate_crypto_src generate_der)
+add_dependencies(libdefault generate_crypto_src generate_der generate_provider_inc)
 
 target_include_directories(libdefault
-    PRIVATE ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/include
+    PRIVATE ${CMAKE_BINARY_DIR}
+    PRIVATE ${CMAKE_BINARY_DIR}/providers/implementations/include
+            ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/include
             ${CMAKE_SOURCE_DIR}/openssl/providers/common/include
             ${CMAKE_BINARY_DIR}/include
             ${CMAKE_SOURCE_DIR}/openssl

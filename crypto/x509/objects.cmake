@@ -97,6 +97,12 @@ set(LIBCRYPTO_CURRENTDIR_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/v3_battcons.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/v3_audit_id.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/v3_iobo.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/v3_aaa.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/v3_attrdesc.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/v3_attrmap.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/v3_authattid.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/v3_rolespec.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/v3_timespec.c
 )
 
 if ( OPENSSL_DEPRECATED_3_0 )

@@ -32,8 +32,6 @@ set(LIBSSL_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/ssl/ssl_conf.c
     ${CMAKE_SOURCE_DIR}/openssl/ssl/ssl_mcnf.c
     ${CMAKE_SOURCE_DIR}/openssl/ssl/bio_ssl.c
-    ${CMAKE_SOURCE_DIR}/openssl/ssl/ssl_err.c
-    ${CMAKE_SOURCE_DIR}/openssl/ssl/ssl_err_legacy.c
     ${CMAKE_SOURCE_DIR}/openssl/ssl/tls_srp.c
     ${CMAKE_SOURCE_DIR}/openssl/ssl/t1_trce.c
     ${CMAKE_SOURCE_DIR}/openssl/ssl/ssl_utst.c
@@ -43,7 +41,6 @@ set(LIBSSL_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/crypto/packet.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/quic_vlint.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/time.c
-    ${CMAKE_SOURCE_DIR}/openssl/ssl/sslerr.h
     ${CMAKE_SOURCE_DIR}/openssl/ssl/ssl_cert_table.h
     ${CMAKE_SOURCE_DIR}/openssl/ssl/ssl_local.h
     ${CMAKE_SOURCE_DIR}/openssl/ssl/statem/statem_local.h
@@ -63,10 +60,25 @@ set(LIBSSL_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/include/internal/statem.h
 )
 
+# ssl_err.c lives in libcrypto in OpenSSL 4.0; legacy remains in libssl when present.
+if (EXISTS "${CMAKE_SOURCE_DIR}/openssl/ssl/ssl_err_legacy.c")
+    list(APPEND LIBSSL_SOURCES "${CMAKE_SOURCE_DIR}/openssl/ssl/ssl_err_legacy.c")
+endif()
+
 if (OPENSSL_DEPRECATED_3_0)
     set(LIBSSL_SOURCES
         ${LIBSSL_SOURCES}
         ${CMAKE_SOURCE_DIR}/openssl/ssl/ssl_rsa_legacy.c
+    )
+endif()
+
+if (OPENSSL_ECH)
+    set(LIBSSL_SOURCES
+        ${LIBSSL_SOURCES}
+        ${CMAKE_SOURCE_DIR}/openssl/ssl/ech/ech_helper.c
+        ${CMAKE_SOURCE_DIR}/openssl/ssl/ech/ech_internal.c
+        ${CMAKE_SOURCE_DIR}/openssl/ssl/ech/ech_ssl_apis.c
+        ${CMAKE_SOURCE_DIR}/openssl/ssl/ech/ech_store.c
     )
 endif()
 
@@ -86,9 +98,9 @@ if (WIN32)
     configure_file(ssl.rc.cmake.in ssl.rc @ONLY)
     set(LIBSSL_SOURCES ${LIBSSL_SOURCES} ssl.rc)
     if (OPENSSL_TARGET_ARCH STREQUAL x64)
-        set(LIBSSL_RUNTIME_OUTPUT_NAME libssl-3-x64)
+        set(LIBSSL_RUNTIME_OUTPUT_NAME libssl-${PROJECT_VERSION_MAJOR}-x64)
     else()
-        set(LIBSSL_RUNTIME_OUTPUT_NAME libssl-3)
+        set(LIBSSL_RUNTIME_OUTPUT_NAME libssl-${PROJECT_VERSION_MAJOR})
     endif()
 
     if (BUILD_SHARED_LIBS)
@@ -135,7 +147,7 @@ elseif ( ( CMAKE_C_COMPILER_ID MATCHES "GNU" OR CMAKE_C_COMPILER_ID MATCHES "[Cc
     endif()
 endif()
 set_target_properties(ssl PROPERTIES
-    SOVERSION 3
+    SOVERSION ${PROJECT_VERSION_MAJOR}
     VERSION ${OPENSSL_VERSION_REAL}
 )
 

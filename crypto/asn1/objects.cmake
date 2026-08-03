@@ -6,6 +6,7 @@ set(LIBCRYPTO_CURRENTDIR_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/crypto/asn1/a_utctm.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/asn1/a_gentm.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/asn1/a_time.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/asn1/a_time_posix.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/asn1/a_int.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/asn1/a_octet.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/asn1/a_print.c

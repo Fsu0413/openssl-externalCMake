@@ -231,6 +231,19 @@ extern "C"
 #cmakedefine OPENSSL_NO_ZSTD
 #cmakedefine OPENSSL_NO_ZSTD_DYNAMIC
 
+#cmakedefine OPENSSL_NO_ML_KEM
+#cmakedefine OPENSSL_NO_ML_DSA
+#cmakedefine OPENSSL_NO_SLH_DSA
+#cmakedefine OPENSSL_NO_LMS
+#cmakedefine OPENSSL_NO_ECH
+#cmakedefine OPENSSL_NO_SNMPKDF
+#cmakedefine OPENSSL_NO_SRTPKDF
+#cmakedefine OPENSSL_NO_EC_EXPLICIT_CURVES
+#cmakedefine OPENSSL_NO_TLS_DEPRECATED_EC
+#cmakedefine OPENSSL_NO_SKEYMGMT
+#cmakedefine OPENSSL_NO_STATIC_ENGINE
+#cmakedefine OPENSSL_NO_DYNAMIC_ENGINE
+
 /* Generate 80386 code? */
 #cmakedefine I386_ONLY
 
@@ -246,6 +259,12 @@ extern "C"
 #endif
 
 #define RC4_INT unsigned @OPENSSL_RC4_INT@
+
+#if defined(OPENSSL_NO_COMP) || (defined(OPENSSL_NO_BROTLI) && defined(OPENSSL_NO_ZSTD) && defined(OPENSSL_NO_ZLIB))
+#define OPENSSL_NO_COMP_ALG
+#else
+#undef OPENSSL_NO_COMP_ALG
+#endif
 
 #ifdef __cplusplus
 }

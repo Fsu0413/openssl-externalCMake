@@ -7,6 +7,7 @@ perlasm_generate_src(poly1305-ppc${OPENSSL_ASM_PREPROCESSED} ${CMAKE_SOURCE_DIR}
 perlasm_generate_src(poly1305-ppcfp${OPENSSL_ASM_PREPROCESSED} ${CMAKE_SOURCE_DIR}/openssl/crypto/poly1305/asm/poly1305-ppcfp.pl)
 perlasm_generate_src(poly1305-armv4.S ${CMAKE_SOURCE_DIR}/openssl/crypto/poly1305/asm/poly1305-armv4.pl)
 perlasm_generate_src(poly1305-armv8.S ${CMAKE_SOURCE_DIR}/openssl/crypto/poly1305/asm/poly1305-armv8.pl)
+perlasm_generate_src(poly1305-armv9-sve2.S ${CMAKE_SOURCE_DIR}/openssl/crypto/poly1305/asm/poly1305-armv9-sve2.pl)
 perlasm_generate_src(poly1305-mips.S ${CMAKE_SOURCE_DIR}/openssl/crypto/poly1305/asm/poly1305-mips.pl)
 perlasm_generate_src(poly1305-s390x.S ${CMAKE_SOURCE_DIR}/openssl/crypto/poly1305/asm/poly1305-s390x.pl)
 perlasm_generate_src(poly1305-c64xplus.S ${CMAKE_SOURCE_DIR}/openssl/crypto/poly1305/asm/poly1305-c64xplus.pl)
@@ -34,6 +35,7 @@ if (OPENSSL_ASM)
     elseif ( OPENSSL_TARGET_ARCH STREQUAL "arm64" )
         set(LIBCRYPTO_CURRENTDIR_ASM_SOURCES
             poly1305-armv8.S
+            poly1305-armv9-sve2.S
         )
     endif()
 endif()

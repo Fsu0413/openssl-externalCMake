@@ -334,9 +334,9 @@ if (OPENSSL_LEGACY AND ( NOT OPENSSL_MODULE ) )
 endif()
 
 foreach (_DIRECTORY IN ITEMS
-        aes aria asn1 bf bio bn buffer camellia cast chacha cmac cmp cms comp conf crmf ct des dh dsa ec encode_decode engine ess evp ffc hmac hpke http idea kdf lhash md2 md4 md5
+        aes aria asn1 bf bio bn buffer camellia cast chacha cmac cmp cms comp conf crmf ct des dh dsa ec encode_decode ess evp ffc hmac hpke http idea kdf lhash md2 md4 md5
         mdc2 modes objects ocsp pem pkcs7 pkcs12 poly1305 property rand rc2 rc4 rc5 ripemd rsa seed sha siphash sm2 sm3 sm4 srp stack store thread ts txt_db ui whrlpool x509 uplink
-        hashtable
+        hashtable ml_kem ml_dsa slh_dsa lms
     )
     set(_CIPHER ${_DIRECTORY})
     if (_CIPHER STREQUAL "whrlpool")
@@ -345,6 +345,12 @@ foreach (_DIRECTORY IN ITEMS
         set(_CIPHER "rmd160")
     elseif (_CIPHER STREQUAL "ui")
         set(_CIPHER "ui-console")
+    elseif (_CIPHER STREQUAL "ml_kem")
+        set(_CIPHER "ml-kem")
+    elseif (_CIPHER STREQUAL "ml_dsa")
+        set(_CIPHER "ml-dsa")
+    elseif (_CIPHER STREQUAL "slh_dsa")
+        set(_CIPHER "slh-dsa")
     endif()
     string(TOUPPER ${_CIPHER} _CIPHER_UPPER)
     string(REPLACE "-" "_" _CIPHER_SYMBOL ${_CIPHER_UPPER})
@@ -391,19 +397,14 @@ foreach (_STACKHASH_HEADER_FILE_PATH IN ITEMS
         USES_TERMINAL
     )
 endforeach()
+# OpenSSL 4.0: only core_names.h is generated from paramnames; param_names.h / params_idx.c were removed.
 foreach (_PARAMNAMES_FILE_PATH IN ITEMS
     ${CMAKE_SOURCE_DIR}/openssl/include/openssl/core_names.h.in
-    ${CMAKE_SOURCE_DIR}/openssl/include/internal/param_names.h.in
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/params_idx.c.in
 )
     get_filename_component(_PARAMNAMES_FILE_NAME "${_PARAMNAMES_FILE_PATH}" NAME_WLE)
-    get_filename_component(_PARAMNAMES_FILE_NAME_EXT "${_PARAMNAMES_FILE_NAME}" LAST_EXT)
-    set(_PARAMNAMES_FILE_OUTPUT_PATH "")
-    if (NOT _PARAMNAMES_FILE_NAME_EXT STREQUAL ".c")
-        get_filename_component(_PARAMNAMES_FILE_DIR "${_PARAMNAMES_FILE_PATH}" DIRECTORY)
-        get_filename_component(_PARAMNAMES_FILE_DIRNAME "${_PARAMNAMES_FILE_DIR}" NAME)
-        set(_PARAMNAMES_FILE_OUTPUT_PATH "${CMAKE_BINARY_DIR}/include/${_PARAMNAMES_FILE_DIRNAME}/")
-    endif()
+    get_filename_component(_PARAMNAMES_FILE_DIR "${_PARAMNAMES_FILE_PATH}" DIRECTORY)
+    get_filename_component(_PARAMNAMES_FILE_DIRNAME "${_PARAMNAMES_FILE_DIR}" NAME)
+    set(_PARAMNAMES_FILE_OUTPUT_PATH "${CMAKE_BINARY_DIR}/include/${_PARAMNAMES_FILE_DIRNAME}/")
     add_custom_command(
         OUTPUT "${_PARAMNAMES_FILE_OUTPUT_PATH}${_PARAMNAMES_FILE_NAME}"
         COMMAND ${CMAKE_COMMAND} -DOUTPUT_FILE_NAME="${_PARAMNAMES_FILE_OUTPUT_PATH}${_PARAMNAMES_FILE_NAME}" -P "${CMAKE_CURRENT_SOURCE_DIR}/paramnames.cmake" "${_PARAMNAMES_FILE_PATH}"
@@ -441,8 +442,6 @@ add_custom_target(generate_crypto_src SOURCES
 
     # Generate param names
     ${CMAKE_BINARY_DIR}/include/openssl/core_names.h
-    ${CMAKE_BINARY_DIR}/include/internal/param_names.h
-    params_idx.c
 )
 
 foreach (_DIRECTORY IN LISTS LIBCRYPTO_DIRECTORIES)
@@ -541,9 +540,9 @@ if (WIN32)
     set(LIBCRYPTO_SOURCES ${LIBCRYPTO_SOURCES} crypto.rc)
     set(LIBCRYPTO_RUNTIME_OUTPUT_NAME )
     if (OPENSSL_TARGET_ARCH STREQUAL x64)
-        set(LIBCRYPTO_RUNTIME_OUTPUT_NAME libcrypto-3-x64)
+        set(LIBCRYPTO_RUNTIME_OUTPUT_NAME libcrypto-${PROJECT_VERSION_MAJOR}-x64)
     else()
-        set(LIBCRYPTO_RUNTIME_OUTPUT_NAME libcrypto-3)
+        set(LIBCRYPTO_RUNTIME_OUTPUT_NAME libcrypto-${PROJECT_VERSION_MAJOR})
     endif()
 
     if (BUILD_SHARED_LIBS)
@@ -588,7 +587,6 @@ add_library(crypto
     ${CMAKE_BINARY_DIR}/include/openssl/x509v3.h
     ${CMAKE_BINARY_DIR}/include/crypto/bn_conf.h
     ${CMAKE_BINARY_DIR}/include/crypto/dso_conf.h
-    ${CMAKE_BINARY_DIR}/include/internal/param_names.h
     ${CMAKE_SOURCE_DIR}/openssl/include/crypto/aes_platform.h
     ${CMAKE_SOURCE_DIR}/openssl/include/crypto/aria.h
     ${CMAKE_SOURCE_DIR}/openssl/include/crypto/asn1.h
@@ -627,8 +625,6 @@ add_library(crypto
     ${CMAKE_SOURCE_DIR}/openssl/include/crypto/ecx.h
     ${CMAKE_SOURCE_DIR}/openssl/include/crypto/encoder.h
     ${CMAKE_SOURCE_DIR}/openssl/include/crypto/encodererr.h
-    ${CMAKE_SOURCE_DIR}/openssl/include/crypto/engine.h
-    ${CMAKE_SOURCE_DIR}/openssl/include/crypto/engineerr.h
     ${CMAKE_SOURCE_DIR}/openssl/include/crypto/err.h
     ${CMAKE_SOURCE_DIR}/openssl/include/crypto/ess.h
     ${CMAKE_SOURCE_DIR}/openssl/include/crypto/esserr.h
@@ -774,7 +770,6 @@ add_library(crypto
     ${CMAKE_SOURCE_DIR}/openssl/include/internal/uint_set.h
     ${CMAKE_SOURCE_DIR}/openssl/include/internal/unicode.h
     ${CMAKE_SOURCE_DIR}/openssl/include/openssl/aes.h
-    ${CMAKE_SOURCE_DIR}/openssl/include/openssl/asn1_mac.h
     ${CMAKE_SOURCE_DIR}/openssl/include/openssl/asn1err.h
     ${CMAKE_SOURCE_DIR}/openssl/include/openssl/async.h
     ${CMAKE_SOURCE_DIR}/openssl/include/openssl/asyncerr.h
@@ -890,7 +885,7 @@ add_library(crypto
     ${LIBCRYPTO_PROVIDER_SOURCES}
 )
 
-add_dependencies(crypto generate_crypto_src)
+add_dependencies(crypto generate_crypto_src generate_provider_inc)
 
 if (BUILD_SHARED_LIBS)
     target_link_libraries(crypto
@@ -950,12 +945,14 @@ elseif ( ( CMAKE_C_COMPILER_ID MATCHES "GNU" OR CMAKE_C_COMPILER_ID MATCHES "[Cc
     endif()
 endif()
 set_target_properties(crypto PROPERTIES
-    SOVERSION 3
+    SOVERSION ${PROJECT_VERSION_MAJOR}
     VERSION ${OPENSSL_VERSION_REAL}
 )
 
 target_include_directories(crypto
-    PRIVATE ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/include
+    PRIVATE ${CMAKE_BINARY_DIR}
+    PRIVATE ${CMAKE_BINARY_DIR}/providers/implementations/include
+            ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/include
             ${CMAKE_SOURCE_DIR}/openssl/providers/common/include
     PUBLIC  ${CMAKE_BINARY_DIR}/include
             ${CMAKE_CURRENT_BINARY_DIR}
@@ -964,7 +961,7 @@ target_include_directories(crypto
             ${CMAKE_SOURCE_DIR}/openssl/crypto
 )
 
-get_filename_component(OPENSSL_ENGINESDIR_ABSOLUTE ${CMAKE_INSTALL_LIBDIR}/engine-3 ABSOLUTE BASE_DIR ${CMAKE_INSTALL_PREFIX})
+get_filename_component(OPENSSL_ENGINESDIR_ABSOLUTE ${CMAKE_INSTALL_LIBDIR}/engine-${PROJECT_VERSION_MAJOR} ABSOLUTE BASE_DIR ${CMAKE_INSTALL_PREFIX})
 get_filename_component(OPENSSL_MODULESDIR_ABSOLUTE ${CMAKE_INSTALL_LIBDIR}/ossl-modules ABSOLUTE BASE_DIR ${CMAKE_INSTALL_PREFIX})
 
 target_compile_definitions(crypto
