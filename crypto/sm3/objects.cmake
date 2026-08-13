@@ -1,6 +1,7 @@
 # SPDX-License-Identifier: Unlicense
 
 perlasm_generate_src(sm3-armv8.S ${CMAKE_SOURCE_DIR}/openssl/crypto/sm3/asm/sm3-armv8.pl)
+perlasm_generate_src(sm3-x86_64${OPENSSL_ASM_PREPROCESSED} ${CMAKE_SOURCE_DIR}/openssl/crypto/sm3/asm/sm3-x86_64.pl)
 
 set(LIBCRYPTO_CURRENTDIR_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/crypto/sm3/sm3.c
@@ -13,7 +14,9 @@ set(LIBCRYPTO_CURRENTDIR_ASM_SOURCES
 )
 if (OPENSSL_ASM)
     if ( OPENSSL_TARGET_ARCH STREQUAL "x64" )
-        # no-asm
+        set(LIBCRYPTO_CURRENTDIR_ASM_SOURCES
+            sm3-x86_64${OPENSSL_ASM_PREPROCESSED}
+        )
     elseif ( OPENSSL_TARGET_ARCH STREQUAL "x86" )
         # no-asm
     elseif ( OPENSSL_TARGET_ARCH STREQUAL "arm32" )

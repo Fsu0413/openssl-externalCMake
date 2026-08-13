@@ -2,3 +2,6 @@
 /CMakeLists.txt.user*
 .DS_Store
 /build-4.0
+/build_4.0
+/build-3.5
+/build_3.5
