@@ -137,28 +137,17 @@ set(LIBDEFAULT_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/cipher_tdes.h
     ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/cipher_tdes_default.h
     ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/digests/blake2_impl.h
-    ${CMAKE_BINARY_DIR}/providers/implementations/include
-            ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/include/prov/endecoder_local.h
-    ${CMAKE_BINARY_DIR}/providers/implementations/include
-            ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/include/prov/blake2.h
-    ${CMAKE_BINARY_DIR}/providers/implementations/include
-            ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/include/prov/ciphercommon.h
-    ${CMAKE_BINARY_DIR}/providers/implementations/include
-            ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/include/prov/ciphercommon_aead.h
-    ${CMAKE_BINARY_DIR}/providers/implementations/include
-            ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/include/prov/digestcommon.h
-    ${CMAKE_BINARY_DIR}/providers/implementations/include
-            ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/include/prov/implementations.h
-    ${CMAKE_BINARY_DIR}/providers/implementations/include
-            ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/include/prov/kdfexchange.h
-    ${CMAKE_BINARY_DIR}/providers/implementations/include
-            ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/include/prov/macsignature.h
-    ${CMAKE_BINARY_DIR}/providers/implementations/include
-            ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/include/prov/md5_sha1.h
-    ${CMAKE_BINARY_DIR}/providers/implementations/include
-            ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/include/prov/seeding.h
-    ${CMAKE_BINARY_DIR}/providers/implementations/include
-            ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/include/prov/file_store_local.h
+    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/include/prov/endecoder_local.h
+    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/include/prov/blake2.h
+    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/include/prov/ciphercommon.h
+    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/include/prov/ciphercommon_aead.h
+    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/include/prov/digestcommon.h
+    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/include/prov/implementations.h
+    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/include/prov/kdfexchange.h
+    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/include/prov/macsignature.h
+    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/include/prov/md5_sha1.h
+    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/include/prov/seeding.h
+    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/include/prov/file_store_local.h
 )
 
 if ( OPENSSL_ASM AND ( OPENSSL_TARGET_ARCH MATCHES "aarch64" ) )

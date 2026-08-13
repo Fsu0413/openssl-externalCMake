@@ -51,14 +51,10 @@ set(LIBCOMMON_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/providers/common/include/prov/provider_ctx.h
     ${CMAKE_SOURCE_DIR}/openssl/providers/common/include/prov/providercommon.h
     ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/ciphercommon_local.h
-    ${CMAKE_BINARY_DIR}/providers/implementations/include
-            ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/include/prov/ciphercommon.h
-    ${CMAKE_BINARY_DIR}/providers/implementations/include
-            ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/include/prov/ciphercommon_ccm.h
-    ${CMAKE_BINARY_DIR}/providers/implementations/include
-            ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/include/prov/ciphercommon_gcm.h
-    ${CMAKE_BINARY_DIR}/providers/implementations/include
-            ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/include/prov/digestcommon.h
+    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/include/prov/ciphercommon.h
+    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/include/prov/ciphercommon_ccm.h
+    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/include/prov/ciphercommon_gcm.h
+    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/include/prov/digestcommon.h
 )
 
 if (OPENSSL_EC)
