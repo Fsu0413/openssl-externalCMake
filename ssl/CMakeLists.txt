@@ -41,6 +41,7 @@ set(LIBSSL_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/crypto/packet.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/quic_vlint.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/time.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/rbtree/rbtree.c
     ${CMAKE_SOURCE_DIR}/openssl/ssl/ssl_cert_table.h
     ${CMAKE_SOURCE_DIR}/openssl/ssl/ssl_local.h
     ${CMAKE_SOURCE_DIR}/openssl/ssl/statem/statem_local.h

@@ -1,0 +1,9 @@
+# SPDX-License-Identifier: Unlicense
+# Pinned official OpenSSL release. Update this file together with the openssl gitlink.
+VERSION=4.0.2
+GIT_TAG=openssl-4.0.2
+GIT_COMMIT=f089acdf4bc7ba94a79f4bf6eb7362c3e7d14aa9
+TARBALL_SHA256=736b467530f916737b7031310ccb21d8218c6229e61e8e160cd1d3458cd543a8
+TARBALL_URL=https://github.com/openssl/openssl/releases/download/openssl-4.0.2/openssl-4.0.2.tar.gz
+SHA256_URL=https://github.com/openssl/openssl/releases/download/openssl-4.0.2/openssl-4.0.2.tar.gz.sha256
+SHA256_URL_MIRROR=https://www.openssl.org/source/openssl-4.0.2.tar.gz.sha256

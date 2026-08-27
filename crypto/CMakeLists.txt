@@ -279,7 +279,7 @@ endmacro()
 # original OpenSSL building progress made archive of static libraries, and link the static libraries to the final shared / dynamic loaded libraries
 # we create a variable for recording the C / S files...
 set(LIBCRYPTO_SOURCES)
-set(LIBCRYPTO_DIRECTORIES _cryptoDir async err dso)
+set(LIBCRYPTO_DIRECTORIES _cryptoDir async err dso rbtree)
 set(LIBCRYPTO_CFLAGS)
 if (WIN32)
     set(LIBCRYPTO_CFLAGS ${LIBCRYPTO_CFLAGS} "-DOPENSSL_SYS_WIN32" "-DWIN32_LEAN_AND_MEAN" "-D_WINSOCK_DEPRECATED_NO_WARNINGS" "-DUNICODE" "-D_UNICODE")
@@ -692,6 +692,7 @@ add_library(crypto
     ${CMAKE_SOURCE_DIR}/openssl/include/internal/err.h
     ${CMAKE_SOURCE_DIR}/openssl/include/internal/ffc.h
     ${CMAKE_SOURCE_DIR}/openssl/include/internal/hashtable.h
+    ${CMAKE_SOURCE_DIR}/openssl/include/internal/ossl_rbtree.h
     ${CMAKE_SOURCE_DIR}/openssl/include/internal/hpke_util.h
     ${CMAKE_SOURCE_DIR}/openssl/include/internal/json_enc.h
     ${CMAKE_SOURCE_DIR}/openssl/include/internal/ktls.h

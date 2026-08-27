@@ -4,8 +4,20 @@ on:
   push:
 
 jobs:
+  verify-upstream:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+          path: openssl-externalCMake
+      - name: Verify OpenSSL upstream SHA-256
+        run: |
+          "${{ github.workspace }}/openssl-externalCMake/scripts/verify-openssl-upstream.sh" --download
+
   get-version:
     runs-on: ubuntu-latest
+    needs: verify-upstream
     steps:
       - uses: actions/checkout@v4
         with:

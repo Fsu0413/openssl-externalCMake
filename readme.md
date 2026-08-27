@@ -104,6 +104,18 @@ They are not even released to users. Maybe they are some kinds of internal test 
 
 Just typical CMake procedure will work. See [Mapping.md](Mapping.md) for argument mapping for OpenSSL original build parameters and CMake one.
 
+The `openssl/` tree is pinned in `openssl.upstream` to an official OpenSSL git tag and the SHA-256 of that release tarball (as published by the OpenSSL project on GitHub and openssl.org). Check the pin with:
+
+```
+./scripts/verify-openssl-upstream.sh --download
+```
+
+To move the submodule to a newer official release (downloads the tarball, checks SHA-256, then checks out the matching git tag):
+
+```
+./scripts/pull-openssl-upstream.sh 4.0.2
+```
+
 ## TODOs
 
 Sort by priority
