@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: Unlicense
 
-# Regenerated from openssl/util/perl/OpenSSL/paramnames.pm for OpenSSL 4.0.1
+# Regenerated from openssl/util/perl/OpenSSL/paramnames.pm for OpenSSL 4.0.2
 # usage: cmake -DOUTPUT_FILE_NAME=<output.h> -P paramnames.cmake <input.h.in>
 
 set(PARAM_NAMES
