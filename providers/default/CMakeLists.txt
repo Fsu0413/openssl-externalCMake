@@ -465,3 +465,7 @@ target_compile_definitions(libdefault
             "-DENGINESDIR=\"${OPENSSL_ENGINESDIR_ABSOLUTE}\""
             "-DMODULESDIR=\"${OPENSSL_MODULESDIR_ABSOLUTE}\""
 )
+
+if (OPENSSL_JITTER)
+    target_link_libraries(libdefault PRIVATE OpenSSLJitter)
+endif()

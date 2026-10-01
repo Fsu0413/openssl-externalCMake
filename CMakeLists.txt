@@ -816,6 +816,8 @@ if (BUILD_TESTING AND OPENSSL_TESTS)
     add_custom_target(check ${CMAKE_CTEST_COMMAND})
 endif()
 
+include(OpenSslJitter)
+
 add_subdirectory(crypto)
 add_subdirectory(ssl)
 if (OPENSSL_APPS)

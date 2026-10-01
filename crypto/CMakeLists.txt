@@ -1025,3 +1025,7 @@ install(DIRECTORY ${CMAKE_SOURCE_DIR}/openssl/include/openssl
     REGEX "^.+\\.in$" EXCLUDE
     REGEX "^(.*[/\\])?__DECC_INCLUDE.+$" EXCLUDE
 )
+
+if (OPENSSL_JITTER)
+    target_link_libraries(crypto PRIVATE OpenSSLJitter)
+endif()
