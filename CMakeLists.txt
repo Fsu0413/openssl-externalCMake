@@ -452,6 +452,8 @@ foreach (_CIPHER IN ITEMS
         cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "OPENSSL_FIPS" OFF)
     elseif (_CIPHER STREQUAL "acvp-tests")
         cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "OPENSSL_FIPS" OFF)
+    elseif (_CIPHER STREQUAL "tls-deprecated-ec")
+        cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "OPENSSL_EC;OPENSSL_DEPRECATED" OFF)
     elseif (_CIPHER STREQUAL "srp")
         cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "OPENSSL_DEPRECATED_3_0" OFF)
     elseif (_CIPHER STREQUAL "brotli-dynamic")
