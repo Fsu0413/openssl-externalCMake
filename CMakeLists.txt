@@ -422,7 +422,7 @@ foreach (_CIPHER IN ITEMS
         if (OPENSSL_FIPS)
             set("${_CIPHER_STR}" ON CACHE BOOL "${_CIPHER_HELP}" FORCE)
         else()
-            cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "BUILD_SHARED_LIBS" OFF)
+            option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}") # static autoalginit
         endif()
     elseif (_CIPHER STREQUAL "capieng")
         cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "OPENSSL_STDIO;OPENSSL_ENGINE" OFF)
