@@ -364,6 +364,7 @@ foreach (_CIPHER IN ITEMS
     kbkdf
     krb5kdf
     pvkkdf
+    sshkdf
     ml-kem ml-dsa slh-dsa lms ech snmpkdf srtpkdf ec_explicit_curves tls-deprecated-ec skeymgmt
 )
 
