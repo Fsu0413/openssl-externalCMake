@@ -221,7 +221,7 @@ unset(OPENSSL_KNOWN_RAND_SEED)
 # no-<cipher>
 set(OPENSSL_DEFAULT_DISABLED_CIPHERS asan buildtest-c++ crypto-mdebug crypto-mdebug-backtrace devcryptoeng ec_nistp_64_gcc_128 egd external-tests fuzz-afl fuzz-libfuzzer ktls md2
                                      msan rc5 sctp ssl3 ssl3-method trace ubsan unit-test weak-ssl-ciphers brotli brotli-dynamic tfo zstd zstd-dynamic zlib zlib-dynamic jitter
-                                     demos h3demo pie fips-jitter lms ec_explicit_curves tls-deprecated-ec engine static-engine dynamic-engine
+                                     demos h3demo pie sslkeylog fips-jitter lms ec_explicit_curves tls-deprecated-ec engine static-engine dynamic-engine
 )
 
 set(OPENSSL_MIN_API_LEVEL "3.0.0" CACHE STRING "OpenSSL SSL minimum API LEVEL")
@@ -368,6 +368,7 @@ foreach (_CIPHER IN ITEMS
     sskdf
     x942kdf
     x963kdf
+    sslkeylog
     ml-kem ml-dsa slh-dsa lms ech snmpkdf srtpkdf ec_explicit_curves tls-deprecated-ec skeymgmt
 )
 
