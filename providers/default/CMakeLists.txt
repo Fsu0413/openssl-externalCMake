@@ -1,4 +1,8 @@
 set(LIBDEFAULT_SOURCES
+    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/ciphercommon.c
+    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/ciphercommon_gcm.c
+    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/ciphercommon_ccm.c
+    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/digests/digestcommon.c
     ${CMAKE_BINARY_DIR}/include/openssl/opensslv.h
     ${CMAKE_BINARY_DIR}/include/openssl/configuration.h
     ${CMAKE_BINARY_DIR}/include/openssl/asn1.h
@@ -25,9 +29,6 @@ set(LIBDEFAULT_SOURCES
     ${CMAKE_BINARY_DIR}/include/openssl/x509v3.h
     ${CMAKE_BINARY_DIR}/providers/common/include/prov/der_rsa.h
     ${CMAKE_BINARY_DIR}/providers/common/include/prov/der_dsa.h
-    ${CMAKE_BINARY_DIR}/providers/common/include/prov/der_ec.h
-    ${CMAKE_BINARY_DIR}/providers/common/include/prov/der_ecx.h
-    ${CMAKE_BINARY_DIR}/providers/common/include/prov/der_sm2.h
 
     ${CMAKE_SOURCE_DIR}/openssl/providers/common/bio_prov.c
     ${CMAKE_SOURCE_DIR}/openssl/providers/common/capabilities.c
@@ -68,15 +69,9 @@ set(LIBDEFAULT_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/exchange/kdf_exch.c
     ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/kdfs/tls1_prf.c
     ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/kdfs/hkdf.c
-    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/kdfs/kbkdf.c
-    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/kdfs/krb5kdf.c
     ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/kdfs/pbkdf2.c
     ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/kdfs/pkcs12kdf.c
-    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/kdfs/sskdf.c
     ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/kdfs/scrypt.c
-    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/kdfs/sshkdf.c
-    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/kdfs/x942kdf.c
-    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/kdfs/hmacdrbg_kdf.c
     ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/kdfs/argon2.c
 
     ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/kdfs/snmpkdf.c
@@ -150,6 +145,36 @@ set(LIBDEFAULT_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/include/prov/file_store_local.h
 )
 
+if (OPENSSL_SSKDF OR OPENSSL_X963KDF)
+    list(APPEND LIBDEFAULT_SOURCES
+        ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/kdfs/sskdf.c)
+endif()
+
+if (OPENSSL_HMAC_DRBG_KDF)
+    list(APPEND LIBDEFAULT_SOURCES
+        ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/kdfs/hmacdrbg_kdf.c)
+endif()
+
+if (OPENSSL_KBKDF)
+    list(APPEND LIBDEFAULT_SOURCES
+        ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/kdfs/kbkdf.c)
+endif()
+
+if (OPENSSL_KRB5KDF)
+    list(APPEND LIBDEFAULT_SOURCES
+        ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/kdfs/krb5kdf.c)
+endif()
+
+if (OPENSSL_SSHKDF)
+    list(APPEND LIBDEFAULT_SOURCES
+        ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/kdfs/sshkdf.c)
+endif()
+
+if (OPENSSL_X942KDF)
+    list(APPEND LIBDEFAULT_SOURCES
+        ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/kdfs/x942kdf.c)
+endif()
+
 if ( OPENSSL_ASM AND ( OPENSSL_TARGET_ARCH MATCHES "aarch64" ) )
     set(LIBDEFAULT_SOURCES
         ${LIBDEFAULT_SOURCES}
@@ -163,13 +188,13 @@ else()
 endif()
 
 if (OPENSSL_SM2)
+    list(APPEND LIBDEFAULT_SOURCES ${CMAKE_BINARY_DIR}/providers/common/include/prov/der_sm2.h)
     set(LIBDEFAULT_SOURCES
         ${LIBDEFAULT_SOURCES}
         ${CMAKE_SOURCE_DIR}/openssl/providers/common/der/der_sm2_key.c
         ${CMAKE_SOURCE_DIR}/openssl/providers/common/der/der_sm2_sig.c
         ${CMAKE_BINARY_DIR}/providers/common/der/der_sm2_gen.c
-        ${CMAKE_BINARY_DIR}/providers/common/include/prov/der_sm2.h
-        ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/asymciphers/sm2_enc.c
+            ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/asymciphers/sm2_enc.c
         ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/signature/sm2_sig.c
     )
 endif()
@@ -291,6 +316,7 @@ if (OPENSSL_RMD160)
 endif()
 
 if (OPENSSL_EC)
+    list(APPEND LIBDEFAULT_SOURCES ${CMAKE_BINARY_DIR}/providers/common/include/prov/der_ec.h)
     set(LIBDEFAULT_SOURCES
         ${LIBDEFAULT_SOURCES}
         ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/encode_decode/encode_key2blob.c
@@ -301,6 +327,7 @@ if (OPENSSL_EC)
         ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/kem/ec_kem.c
     )
     if (OPENSSL_ECX)
+    list(APPEND LIBDEFAULT_SOURCES ${CMAKE_BINARY_DIR}/providers/common/include/prov/der_ecx.h)
         set(LIBDEFAULT_SOURCES
             ${LIBDEFAULT_SOURCES}
             ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/keymgmt/ecx_kmgmt.c
@@ -438,3 +465,7 @@ target_compile_definitions(libdefault
             "-DENGINESDIR=\"${OPENSSL_ENGINESDIR_ABSOLUTE}\""
             "-DMODULESDIR=\"${OPENSSL_MODULESDIR_ABSOLUTE}\""
 )
+
+if (OPENSSL_JITTER)
+    target_link_libraries(libdefault PRIVATE OpenSSLJitter)
+endif()

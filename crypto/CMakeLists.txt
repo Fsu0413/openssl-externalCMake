@@ -1,3 +1,18 @@
+# OPENSSL_FIPS_KEY_EXTRACTED
+
+set(OPENSSL_FIPS_KEY_EXTRACTED_LIST)
+set(OPENSSL_FIPS_KEY_REMAINDER "${OPENSSL_FIPS_KEY}")
+string(LENGTH "${OPENSSL_FIPS_KEY}" OPENSSL_FIPS_KEY_LENGTH)
+while (OPENSSL_FIPS_KEY_LENGTH GREATER 0)
+    string(SUBSTRING "${OPENSSL_FIPS_KEY_REMAINDER}" 0 2 OPENSSL_FIPS_KEY_2)
+    string(SUBSTRING "${OPENSSL_FIPS_KEY_REMAINDER}" 2 -1 OPENSSL_FIPS_KEY_REMAINDER_2)
+    set(OPENSSL_FIPS_KEY_REMAINDER "${OPENSSL_FIPS_KEY_REMAINDER_2}")
+    list(APPEND OPENSSL_FIPS_KEY_EXTRACTED_LIST "0x${OPENSSL_FIPS_KEY_2}")
+    string(LENGTH "${OPENSSL_FIPS_KEY_REMAINDER}" OPENSSL_FIPS_KEY_LENGTH)
+endwhile()
+list(JOIN OPENSSL_FIPS_KEY_EXTRACTED_LIST ", " OPENSSL_FIPS_KEY_EXTRACTED)
+configure_file(${CMAKE_SOURCE_DIR}/apps/fipskey.h.cmake.in ${CMAKE_BINARY_DIR}/include/openssl/fipskey.h @ONLY)
+
 # SPDX-License-Identifier: Unlicense
 
 set(OPENSSL_SYS_DEFINE)
@@ -185,7 +200,7 @@ if (OPENSSL_ASM OR OPENSSL_UPLINK)
             set(OPENSSL_PERLASM_SCHEME "masm")
         elseif ( ANDROID OR BSD OR LINUX OR ( CMAKE_SYSTEM_NAME MATCHES "SunOS" ) )
             set(OPENSSL_PERLASM_SCHEME "elf")
-        elseif ( APPLE AND NOT IOS )
+        elseif ( APPLE AND ( NOT IOS OR PLATFORM MATCHES "MAC_CATALYST" ) )
             set(OPENSSL_PERLASM_SCHEME "macosx")
         elseif (IOS)
             set(OPENSSL_PERLASM_SCHEME "osx32")
@@ -279,7 +294,7 @@ endmacro()
 # original OpenSSL building progress made archive of static libraries, and link the static libraries to the final shared / dynamic loaded libraries
 # we create a variable for recording the C / S files...
 set(LIBCRYPTO_SOURCES)
-set(LIBCRYPTO_DIRECTORIES _cryptoDir async err dso)
+set(LIBCRYPTO_DIRECTORIES _cryptoDir async err dso rbtree)
 set(LIBCRYPTO_CFLAGS)
 if (WIN32)
     set(LIBCRYPTO_CFLAGS ${LIBCRYPTO_CFLAGS} "-DOPENSSL_SYS_WIN32" "-DWIN32_LEAN_AND_MEAN" "-D_WINSOCK_DEPRECATED_NO_WARNINGS" "-DUNICODE" "-D_UNICODE")
@@ -692,6 +707,7 @@ add_library(crypto
     ${CMAKE_SOURCE_DIR}/openssl/include/internal/err.h
     ${CMAKE_SOURCE_DIR}/openssl/include/internal/ffc.h
     ${CMAKE_SOURCE_DIR}/openssl/include/internal/hashtable.h
+    ${CMAKE_SOURCE_DIR}/openssl/include/internal/ossl_rbtree.h
     ${CMAKE_SOURCE_DIR}/openssl/include/internal/hpke_util.h
     ${CMAKE_SOURCE_DIR}/openssl/include/internal/json_enc.h
     ${CMAKE_SOURCE_DIR}/openssl/include/internal/ktls.h
@@ -730,7 +746,7 @@ add_library(crypto
     ${CMAKE_SOURCE_DIR}/openssl/include/internal/quic_record_tx.h
     ${CMAKE_SOURCE_DIR}/openssl/include/internal/quic_record_util.h
     ${CMAKE_SOURCE_DIR}/openssl/include/internal/quic_rx_depack.h
-    ${CMAKE_SOURCE_DIR}/openssl/include/internal/quic_sf_list.h
+    ${CMAKE_SOURCE_DIR}/openssl/include/internal/quic_strm_reas.h
     ${CMAKE_SOURCE_DIR}/openssl/include/internal/quic_srt_gen.h
     ${CMAKE_SOURCE_DIR}/openssl/include/internal/quic_srtm.h
     ${CMAKE_SOURCE_DIR}/openssl/include/internal/quic_ssl.h
@@ -1009,3 +1025,7 @@ install(DIRECTORY ${CMAKE_SOURCE_DIR}/openssl/include/openssl
     REGEX "^.+\\.in$" EXCLUDE
     REGEX "^(.*[/\\])?__DECC_INCLUDE.+$" EXCLUDE
 )
+
+if (OPENSSL_JITTER)
+    target_link_libraries(crypto PRIVATE OpenSSLJitter)
+endif()

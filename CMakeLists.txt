@@ -25,6 +25,22 @@ foreach (i IN LISTS OPENSSL_VERSION_DAT)
     endif()
 endforeach()
 
+set(_OPENSSL_UPSTREAM_FILE "${CMAKE_CURRENT_SOURCE_DIR}/openssl.upstream")
+if (EXISTS "${_OPENSSL_UPSTREAM_FILE}")
+    file(STRINGS "${_OPENSSL_UPSTREAM_FILE}" _OPENSSL_UPSTREAM_VERSION_LINE REGEX "^VERSION=")
+    if (_OPENSSL_UPSTREAM_VERSION_LINE)
+        string(REGEX REPLACE "^VERSION=" "" _OPENSSL_UPSTREAM_VERSION "${_OPENSSL_UPSTREAM_VERSION_LINE}")
+        set(_OPENSSL_TREE_VERSION "${OPENSSL_VERSION_DAT_MAJOR}.${OPENSSL_VERSION_DAT_MINOR}.${OPENSSL_VERSION_DAT_PATCH}")
+        if (NOT _OPENSSL_UPSTREAM_VERSION STREQUAL _OPENSSL_TREE_VERSION)
+            message(FATAL_ERROR "openssl.upstream VERSION ${_OPENSSL_UPSTREAM_VERSION} does not match openssl/VERSION.dat ${_OPENSSL_TREE_VERSION}")
+        endif()
+    endif()
+    unset(_OPENSSL_UPSTREAM_VERSION)
+    unset(_OPENSSL_TREE_VERSION)
+    unset(_OPENSSL_UPSTREAM_VERSION_LINE)
+endif()
+unset(_OPENSSL_UPSTREAM_FILE)
+
 project(OpenSSL
     VERSION "${OPENSSL_VERSION_DAT_MAJOR}.${OPENSSL_VERSION_DAT_MINOR}.${OPENSSL_VERSION_DAT_PATCH}"
     DESCRIPTION "TLS/SSL and crypto library"
@@ -117,25 +133,34 @@ get_filename_component(OPENSSL_OPENSSLDIR_ABSOLUTE ${OPENSSL_OPENSSLDIR} ABSOLUT
 # [no-]threads
 cmake_dependent_option(OPENSSL_THREADS "Build with threads supported" ON "NOT MSVC" ON)
 
+option(OPENSSL_FIPS_JITTER "enable jitter entropy in the FIPS provider" OFF)
+if (OPENSSL_FIPS_JITTER)
+    set(OPENSSL_FIPS ON CACHE BOOL "use FIPS" FORCE)
+    set(OPENSSL_JITTER ON CACHE BOOL "enable OpenSSL cipher jitter" FORCE)
+endif()
+
+# no-autoalginit also disables shared libraries, applications, and FIPS.
+option(OPENSSL_AUTOALGINIT "enable automatic algorithm initialization" ON)
+
 # [no-]shared
 # iOS supports only static libraries
-cmake_dependent_option(BUILD_SHARED_LIBS "Build Shared Libraries" ON "NOT IOS" OFF)
+cmake_dependent_option(BUILD_SHARED_LIBS "Build Shared Libraries" ON "NOT IOS;OPENSSL_AUTOALGINIT;NOT DEFINED CMAKE_POSITION_INDEPENDENT_CODE OR CMAKE_POSITION_INDEPENDENT_CODE" OFF)
 
 # pic - WHY this is a separate option since OpenSSL 3.0?
 # answer is simple - the providers are static libraries but are linked to shared libraries
-cmake_dependent_option(CMAKE_POSITION_INDEPENDENT_CODE "Build Position independent code" OFF "NOT ANDROID;NOT BUILD_SHARED_LIBS" ON)
+option(CMAKE_POSITION_INDEPENDENT_CODE "Build position independent code" ON)
 
-# module
-cmake_dependent_option(OPENSSL_MODULE "Build module" ON "BUILD_SHARED_LIBS" OFF)
+# no-dso
+option(OPENSSL_DSO "use dynamic shared object loader code" ON)
+
+# Modules can be built against static libcrypto when PIC and DSO are enabled.
+cmake_dependent_option(OPENSSL_MODULE "Build module" ON "OPENSSL_DSO;CMAKE_POSITION_INDEPENDENT_CODE;NOT IOS" OFF)
 
 # static_engine
 cmake_dependent_option(OPENSSL_STATIC_ENGINE "generate static engine library" OFF "OPENSSL_MODULE" ON)
 
-# no-dso
-cmake_dependent_option(OPENSSL_DSO "use dymamic shared object loader code" ON "BUILD_SHARED_LIBS" OFF)
-
 # fips
-cmake_dependent_option(OPENSSL_FIPS "use FIPS" OFF "OPENSSL_MODULE;OPENSSL_DSO" OFF)
+cmake_dependent_option(OPENSSL_FIPS "use FIPS" OFF "OPENSSL_MODULE;OPENSSL_DSO;OPENSSL_AUTOALGINIT" OFF)
 
 set(OPENSSL_FIPS_KEY "f4556650ac31d35461610bac4ed81b1a181b2d8a43ea2854cbae22ca74560813" CACHE STRING "echo -n 'holy hand grenade of antioch' | openssl sha256")
 
@@ -196,7 +221,7 @@ unset(OPENSSL_KNOWN_RAND_SEED)
 # no-<cipher>
 set(OPENSSL_DEFAULT_DISABLED_CIPHERS asan buildtest-c++ crypto-mdebug crypto-mdebug-backtrace devcryptoeng ec_nistp_64_gcc_128 egd external-tests fuzz-afl fuzz-libfuzzer ktls md2
                                      msan rc5 sctp ssl3 ssl3-method trace ubsan unit-test weak-ssl-ciphers brotli brotli-dynamic tfo zstd zstd-dynamic zlib zlib-dynamic jitter
-                                     demos h3demo pie jitter lms ec_explicit_curves tls-deprecated-ec engine static-engine dynamic-engine
+                                     demos h3demo allocfail-tests hqinterop pie sslkeylog fips-jitter lms ec_explicit_curves tls-deprecated-ec engine static-engine dynamic-engine
 )
 
 set(OPENSSL_MIN_API_LEVEL "3.0.0" CACHE STRING "OpenSSL SSL minimum API LEVEL")
@@ -325,16 +350,27 @@ foreach (_CIPHER IN ITEMS ssl2 buf-freelists crypto-mdebug-backtrace hw-padlock 
 endforeach()
 
 foreach (_CIPHER IN ITEMS
-    bulk ssl des ec sock dgram dtls tls engine stdio tests sm3 unit-test msan cmac legacy cmp comp brotli-dynamic zstd-dynamic zlib-dynamic thread-pool blake2 # dependent
+    bulk ssl des ec sock dgram dtls tls engine stdio apps tests sm3 unit-test msan cmac legacy cmp comp brotli-dynamic zstd-dynamic zlib-dynamic thread-pool blake2 # dependent
     dtls1_2-method dtls1-method tls1_2-method tls1_1-method tls1-method ssl3-method # method
     aes asn1 bio bn buffer conf crmf encode_decode ess evp ffc hmac hpke http kdf lhash md5 modes objects pem pkcs7 pkcs12 property rand rsa sha stack store thread txt_db
     x509 hashtable # directories
     dtls1_2 dtls1 tls1_3 tls1_2 tls1_1 tls1 ssl3 # TLS protocol
-    acvp-tests afalgeng aria apps argon2 asan async atexit autoalginit autoerrinit autoload-config bf brotli buildtest-c++ cached-fetch camellia capieng winstore cast chacha cms
+    acvp-tests afalgeng aria argon2 asan async atexit autoalginit autoerrinit autoload-config bf brotli buildtest-c++ cached-fetch camellia capieng winstore cast chacha cms
     crypto-mdebug ct default-thread-pool devcryptoeng dh dsa docs ec2m ec_nistp_64_gcc_128 ecdh ecdsa ecx egd external-tests filenames fips fips-securitychecks fuzz-afl
     fuzz-libfuzzer gost idea ktls loadereng makedepend md2 md4 mdc2 multiblock nextprotoneg ocb ocsp padlockeng pinshared poly1305 posix-io psk quic unstable-qlog qlog rc2 rc4 rc5
     rdrand rfc3779 rmd160 scrypt sctp secure-memory seed siphash siv sm2 sm2-precomp sm4 srp srtp ssl-trace tfo trace ts ubsan ui-console uplink weak-ssl-ciphers whirlpool zlib
-    zstd jitter demos h3demo fips-post pie integrity-only-ciphers
+    zstd jitter fips-jitter demos h3demo fips-post pie integrity-only-ciphers
+    hmac-drbg-kdf
+    kbkdf
+    krb5kdf
+    pvkkdf
+    sshkdf
+    sskdf
+    x942kdf
+    x963kdf
+    sslkeylog
+    allocfail-tests
+    hqinterop
     ml-kem ml-dsa slh-dsa lms ech snmpkdf srtpkdf ec_explicit_curves tls-deprecated-ec skeymgmt
 )
 
@@ -354,7 +390,9 @@ foreach (_CIPHER IN ITEMS
         cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "LINUX;OPENSSL_ENGINE" OFF)
     elseif (_CIPHER STREQUAL "mdc2")
         cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "OPENSSL_DES" OFF)
-    elseif (_CIPHER STREQUAL "ed2m")
+    elseif (_CIPHER STREQUAL "ec2m")
+        cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "OPENSSL_EC" OFF)
+    elseif (_CIPHER STREQUAL "ec_explicit_curves")
         cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "OPENSSL_EC" OFF)
     elseif (_CIPHER STREQUAL "ecdsa")
         cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "OPENSSL_EC" OFF)
@@ -403,11 +441,9 @@ foreach (_CIPHER IN ITEMS
     elseif (_CIPHER STREQUAL "devcryptoeng")
         cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "OPENSSL_ENGINE" OFF)
     elseif (_CIPHER STREQUAL "autoalginit")
-        if (OPENSSL_FIPS)
-            set("${_CIPHER_STR}" ON CACHE BOOL "${_CIPHER_HELP}" FORCE)
-        else()
-            cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "BUILD_SHARED_LIBS" OFF)
-        endif()
+        # Declared before BUILD_SHARED_LIBS so its cascades apply there too.
+    elseif (_CIPHER STREQUAL "apps")
+        cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "OPENSSL_AUTOALGINIT;OPENSSL_STDIO" OFF)
     elseif (_CIPHER STREQUAL "capieng")
         cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "OPENSSL_STDIO;OPENSSL_ENGINE" OFF)
     elseif (_CIPHER STREQUAL "padlockeng")
@@ -421,6 +457,14 @@ foreach (_CIPHER IN ITEMS
         # cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "NOT OPENSSL_RAND_SEED_EGD" ON)
     elseif (_CIPHER STREQUAL "heartbeats")
         cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "OPENSSL_NO_UNITTEST" OFF)
+    elseif (_CIPHER STREQUAL "allocfail-tests")
+        cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "OPENSSL_CRYPTO_MDEBUG;OPENSSL_TESTS" OFF)
+    elseif (_CIPHER STREQUAL "hqinterop")
+        cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "OPENSSL_TESTS;OPENSSL_QUIC" OFF)
+    elseif (_CIPHER STREQUAL "tests")
+        cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "OPENSSL_APPS" OFF)
+    elseif (_CIPHER STREQUAL "external-tests")
+        cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "OPENSSL_TESTS" OFF)
     elseif (_CIPHER STREQUAL "msan")
         cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "NOT OPENSSL_ASM" OFF)
     elseif (_CIPHER STREQUAL "siv")
@@ -429,10 +473,14 @@ foreach (_CIPHER IN ITEMS
         cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "OPENSSL_LEGACY" OFF)
     elseif (_CIPHER STREQUAL "crmf")
         cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "OPENSSL_CMP" OFF)
-    elseif (_CIPHER STREQUAL "fips-securitychecks")
+    elseif (_CIPHER STREQUAL "fips-securitychecks" OR _CIPHER STREQUAL "fips-post")
         cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "OPENSSL_FIPS" OFF)
+    elseif (_CIPHER STREQUAL "fips-jitter")
+        cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "OPENSSL_FIPS;OPENSSL_JITTER" OFF)
     elseif (_CIPHER STREQUAL "acvp-tests")
         cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "OPENSSL_FIPS" OFF)
+    elseif (_CIPHER STREQUAL "tls-deprecated-ec")
+        cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "OPENSSL_EC;OPENSSL_DEPRECATED" OFF)
     elseif (_CIPHER STREQUAL "srp")
         cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "OPENSSL_DEPRECATED_3_0" OFF)
     elseif (_CIPHER STREQUAL "brotli-dynamic")
@@ -658,6 +706,12 @@ elseif (CYGWIN)
     elseif (OPENSSL_TARGET_ARCH STREQUAL "x86")
         set(OPENSSL_BUILD_PLATFORM "Cygwin-x86")
     endif()
+elseif (APPLE AND PLATFORM MATCHES "MAC_CATALYST")
+    if (OPENSSL_TARGET_ARCH STREQUAL "x64")
+        set(OPENSSL_BUILD_PLATFORM "darwin64-x86_64")
+    elseif (OPENSSL_TARGET_ARCH STREQUAL "arm64")
+        set(OPENSSL_BUILD_PLATFORM "darwin64-arm64")
+    endif()
 elseif (APPLE AND NOT IOS)
     if (OPENSSL_OSX_ARCHITECTURES_LENGTH GREATER 1)
         # set in buildinf.h.appleUnified.cmake.in
@@ -758,15 +812,27 @@ elseif (CMAKE_SYSTEM_NAME MATCHES "SunOS")
     endif()
 endif()
 
-if (BUILD_TESTING)
+if (BUILD_TESTING AND OPENSSL_TESTS)
+    enable_testing()
     add_custom_target(check ${CMAKE_CTEST_COMMAND})
 endif()
 
+include(OpenSslJitter)
+
 add_subdirectory(crypto)
 add_subdirectory(ssl)
-add_subdirectory(apps)
+if (OPENSSL_APPS)
+    add_subdirectory(apps)
+endif()
 # Engines were removed in OpenSSL 4.0
 # add_subdirectory(engines)
+if (OPENSSL_TESTS AND (OPENSSL_ALLOCFAIL_TESTS OR OPENSSL_HQINTEROP))
+    enable_testing()
+    add_subdirectory(test/optional)
+endif()
+if (BUILD_TESTING AND OPENSSL_TESTS)
+    add_subdirectory(test/smoke)
+endif()
 add_subdirectory(tools)
 add_subdirectory(exporters)
 

@@ -1,1 +1,109 @@
-message(FATAL_ERROR "Will be done later")
+# Keep FIPS source selection and generated files in the upstream build system.
+# The module is built out of tree, independently of the CMake libcrypto objects.
+if (NOT Perl_FOUND)
+    message(FATAL_ERROR "Building the FIPS provider requires Perl")
+endif()
+if (NOT OPENSSL_BUILD_PLATFORM)
+    message(FATAL_ERROR "Building the FIPS provider requires an OpenSSL build platform")
+endif()
+if (MSVC)
+    find_program(OPENSSL_FIPS_MAKE NAMES nmake REQUIRED)
+else()
+    find_program(OPENSSL_FIPS_MAKE NAMES gmake make REQUIRED)
+endif()
+set(OPENSSL_FIPS_BUILD_JOBS "4" CACHE STRING "Parallel jobs for the upstream FIPS provider build")
+set(_fips_build "${CMAKE_CURRENT_BINARY_DIR}/upstream")
+file(MAKE_DIRECTORY "${_fips_build}")
+set(_fips_args "${OPENSSL_BUILD_PLATFORM}" "--fips-key=${OPENSSL_FIPS_KEY}")
+
+# Translate supported feature settings instead of inheriting upstream defaults.
+file(STRINGS "${CMAKE_SOURCE_DIR}/openssl/Configure" _configure_lines)
+set(_in_disablables OFF)
+foreach (_line IN LISTS _configure_lines)
+    if (_line MATCHES "^my @disablables = ")
+        set(_in_disablables ON)
+    elseif (_in_disablables AND _line MATCHES "^[ ]*\\);")
+        break()
+    elseif (_in_disablables AND _line MATCHES "^[ ]*\"([^\"]+)\",")
+        set(_feature "${CMAKE_MATCH_1}")
+        string(TOUPPER "${_feature}" _symbol)
+        string(REPLACE "-" "_" _symbol "${_symbol}")
+        if (DEFINED OPENSSL_${_symbol})
+            if (OPENSSL_${_symbol})
+                list(APPEND _fips_args "enable-${_feature}")
+            else()
+                list(APPEND _fips_args "no-${_feature}")
+            endif()
+        endif()
+    endif()
+endforeach()
+list(APPEND _fips_args enable-fips no-tests no-apps no-docs no-legacy)
+if (BUILD_SHARED_LIBS)
+    list(APPEND _fips_args shared)
+else()
+    list(APPEND _fips_args no-shared)
+endif()
+if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+    list(APPEND _fips_args --debug)
+endif()
+if (OPENSSL_JITTER)
+    list(APPEND _fips_args "--with-jitter-include=${OPENSSL_JITTER_INCLUDE_DIR}")
+endif()
+set(_fips_cflags "${CMAKE_C_FLAGS}")
+if (APPLE AND CMAKE_OSX_ARCHITECTURES)
+    list(LENGTH CMAKE_OSX_ARCHITECTURES _arch_count)
+    if (_arch_count GREATER 1)
+        message(FATAL_ERROR "Build the FIPS provider separately for each macOS architecture")
+    endif()
+    string(APPEND _fips_cflags " -arch ${CMAKE_OSX_ARCHITECTURES}")
+endif()
+if (APPLE AND CMAKE_OSX_SYSROOT)
+    string(APPEND _fips_cflags " -isysroot ${CMAKE_OSX_SYSROOT}")
+endif()
+if (APPLE AND CMAKE_OSX_DEPLOYMENT_TARGET)
+    string(APPEND _fips_cflags " -mmacosx-version-min=${CMAKE_OSX_DEPLOYMENT_TARGET}")
+endif()
+execute_process(
+    COMMAND "${CMAKE_COMMAND}" -E env "CC=${CMAKE_C_COMPILER}" "CFLAGS=${_fips_cflags}"
+        "${PERL_EXECUTABLE}" "${CMAKE_SOURCE_DIR}/openssl/Configure" ${_fips_args}
+    WORKING_DIRECTORY "${_fips_build}"
+    RESULT_VARIABLE _configure_result
+    OUTPUT_FILE "${_fips_build}/configure.log"
+    ERROR_FILE "${_fips_build}/configure-errors.log")
+if (NOT _configure_result EQUAL 0)
+    message(FATAL_ERROR "FIPS Configure failed; see ${_fips_build}/configure-errors.log")
+endif()
+file(STRINGS "${_fips_build}/Makefile" _module_line REGEX "^FIPSMODULE=")
+string(REGEX REPLACE "^FIPSMODULE=" "" _module "${_module_line}")
+if (NOT _module)
+    message(FATAL_ERROR "Upstream Configure did not produce a FIPS module target")
+endif()
+# Upstream's GNU -l: archive syntax is not portable to Darwin's linker.
+# Use the exact static dependency found by CMake on every platform.
+if (OPENSSL_JITTER)
+    file(READ "${_fips_build}/Makefile" _makefile)
+    string(REPLACE "-l:libjitterentropy.a" "\"${OPENSSL_JITTER_LIBRARY}\"" _makefile "${_makefile}")
+    file(WRITE "${_fips_build}/Makefile" "${_makefile}")
+endif()
+if (MSVC)
+    set(_make_parallel)
+else()
+    set(_make_parallel "-j${OPENSSL_FIPS_BUILD_JOBS}")
+endif()
+add_custom_target(fips ALL
+    COMMAND "${OPENSSL_FIPS_MAKE}" ${_make_parallel} build_generated
+    COMMAND "${OPENSSL_FIPS_MAKE}" ${_make_parallel} "${_module}"
+    WORKING_DIRECTORY "${_fips_build}"
+    BYPRODUCTS "${_fips_build}/${_module}"
+    USES_TERMINAL
+    VERBATIM)
+set(OPENSSL_FIPS_MODULE "${_fips_build}/${_module}" CACHE INTERNAL "Built FIPS provider module" FORCE)
+install(FILES "${_fips_build}/${_module}" DESTINATION "${CMAKE_INSTALL_LIBDIR}/ossl-modules")
+
+if (BUILD_TESTING AND OPENSSL_TESTS AND OPENSSL_APPS)
+    add_test(NAME openssl-fips-selftest
+        COMMAND $<TARGET_FILE:openssl> fipsinstall
+            -module "${OPENSSL_FIPS_MODULE}"
+            -out "${CMAKE_CURRENT_BINARY_DIR}/fipsmodule-test.cnf"
+            -macopt "hexkey:${OPENSSL_FIPS_KEY}")
+endif()

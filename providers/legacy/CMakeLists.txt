@@ -27,7 +27,6 @@ set(LIBLEGACY_SOURCES
 
     ${CMAKE_SOURCE_DIR}/openssl/providers/legacyprov.c
     ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/kdfs/pbkdf1.c
-    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/kdfs/pvkkdf.c
 
     ${CMAKE_SOURCE_DIR}/openssl/providers/common/include/prov/provider_ctx.h
     ${CMAKE_SOURCE_DIR}/openssl/providers/common/include/prov/provider_util.h
@@ -159,6 +158,11 @@ if (OPENSSL_WHIRLPOOL)
     )
 endif()
 
+if (OPENSSL_PVKKDF)
+    list(APPEND LIBLEGACY_SOURCES
+        ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/kdfs/pvkkdf.c)
+endif()
+
 if (OPENSSL_RMD160)
     set(LIBLEGACY_SOURCES
         ${LIBLEGACY_SOURCES}
@@ -166,7 +170,10 @@ if (OPENSSL_RMD160)
     )
 endif()
 
-if (OPENSSL_MODULE AND BUILD_SHARED_LIBS)
+if (OPENSSL_MODULE)
+    list(APPEND LIBLEGACY_SOURCES
+        ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/ciphercommon.c
+        ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/digests/digestcommon.c)
     set(LIBCRYPTO_CURRENTDIR_SOURCES)
     include("../../crypto/_cryptoDir/objects.cmake")
     set(LIBLEGACY_SOURCES_MODULE ${LIBLEGACY_SOURCES_MODULE} ${OPENSSL_CPUID_SRCS})
