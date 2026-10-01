@@ -133,6 +133,12 @@ get_filename_component(OPENSSL_OPENSSLDIR_ABSOLUTE ${OPENSSL_OPENSSLDIR} ABSOLUT
 # [no-]threads
 cmake_dependent_option(OPENSSL_THREADS "Build with threads supported" ON "NOT MSVC" ON)
 
+option(OPENSSL_FIPS_JITTER "enable jitter entropy in the FIPS provider" OFF)
+if (OPENSSL_FIPS_JITTER)
+    set(OPENSSL_FIPS ON CACHE BOOL "use FIPS" FORCE)
+    set(OPENSSL_JITTER ON CACHE BOOL "enable OpenSSL cipher jitter" FORCE)
+endif()
+
 # no-autoalginit also disables shared libraries, applications, and FIPS.
 option(OPENSSL_AUTOALGINIT "enable automatic algorithm initialization" ON)
 
@@ -215,7 +221,7 @@ unset(OPENSSL_KNOWN_RAND_SEED)
 # no-<cipher>
 set(OPENSSL_DEFAULT_DISABLED_CIPHERS asan buildtest-c++ crypto-mdebug crypto-mdebug-backtrace devcryptoeng ec_nistp_64_gcc_128 egd external-tests fuzz-afl fuzz-libfuzzer ktls md2
                                      msan rc5 sctp ssl3 ssl3-method trace ubsan unit-test weak-ssl-ciphers brotli brotli-dynamic tfo zstd zstd-dynamic zlib zlib-dynamic jitter
-                                     demos h3demo pie jitter lms ec_explicit_curves tls-deprecated-ec engine static-engine dynamic-engine
+                                     demos h3demo pie fips-jitter lms ec_explicit_curves tls-deprecated-ec engine static-engine dynamic-engine
 )
 
 set(OPENSSL_MIN_API_LEVEL "3.0.0" CACHE STRING "OpenSSL SSL minimum API LEVEL")
@@ -353,7 +359,7 @@ foreach (_CIPHER IN ITEMS
     crypto-mdebug ct default-thread-pool devcryptoeng dh dsa docs ec2m ec_nistp_64_gcc_128 ecdh ecdsa ecx egd external-tests filenames fips fips-securitychecks fuzz-afl
     fuzz-libfuzzer gost idea ktls loadereng makedepend md2 md4 mdc2 multiblock nextprotoneg ocb ocsp padlockeng pinshared poly1305 posix-io psk quic unstable-qlog qlog rc2 rc4 rc5
     rdrand rfc3779 rmd160 scrypt sctp secure-memory seed siphash siv sm2 sm2-precomp sm4 srp srtp ssl-trace tfo trace ts ubsan ui-console uplink weak-ssl-ciphers whirlpool zlib
-    zstd jitter demos h3demo fips-post pie integrity-only-ciphers
+    zstd jitter fips-jitter demos h3demo fips-post pie integrity-only-ciphers
     ml-kem ml-dsa slh-dsa lms ech snmpkdf srtpkdf ec_explicit_curves tls-deprecated-ec skeymgmt
 )
 
@@ -450,6 +456,8 @@ foreach (_CIPHER IN ITEMS
         cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "OPENSSL_CMP" OFF)
     elseif (_CIPHER STREQUAL "fips-securitychecks" OR _CIPHER STREQUAL "fips-post")
         cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "OPENSSL_FIPS" OFF)
+    elseif (_CIPHER STREQUAL "fips-jitter")
+        cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "OPENSSL_FIPS;OPENSSL_JITTER" OFF)
     elseif (_CIPHER STREQUAL "acvp-tests")
         cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "OPENSSL_FIPS" OFF)
     elseif (_CIPHER STREQUAL "tls-deprecated-ec")
