@@ -70,3 +70,16 @@ Note: On Apple platform, `CMAKE_OSX_ARCHITECTURES` (when number of values is gre
 | `c_rehash` | — | removed | Use `openssl rehash` |
 
 Current tree: OpenSSL **4.0.3**. The gitlink and tarball SHA-256 are recorded in `openssl.upstream` and checked by `scripts/verify-openssl-upstream.sh`.
+
+## Initialization and entropy defaults
+
+| CMake option | Default | Generated configuration |
+|---|---|---|
+| `OPENSSL_JITTER` | OFF | `OPENSSL_NO_JITTER` defined |
+| `OPENSSL_FIPS_JITTER` | OFF | `OPENSSL_NO_FIPS_JITTER` defined |
+| `OPENSSL_AUTOALGINIT` | ON | `OPENSSL_NO_AUTOALGINIT` undefined |
+
+These defaults also apply to static libraries. Configure the positive options;
+the `OPENSSL_NO_*` variables are derived automatically. With `BUILD_TESTING=ON`,
+`openssl-default-init` tests random generation, TLS context construction,
+digest/cipher name lookup, and certificate verification at security level 2.

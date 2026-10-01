@@ -123,3 +123,28 @@ Sort by priority
 ### On 4.0 branch:
 
 1. `make check` support
+
+## Optional providers and test programs
+
+`OPENSSL_HQINTEROP=ON` builds `quic-hq-interop` and
+`quic-hq-interop-server`. Both programs honor `FILEPREFIX`; the local client
+defaults to the working directory for downloaded files.
+
+`OPENSSL_ALLOCFAIL_TESTS=ON` with `OPENSSL_CRYPTO_MDEBUG=ON` builds the three
+upstream allocation-failure workloads. CTest runs each workload normally and
+injects allocation failures at the beginning, middle, and end. For an exhaustive
+run, invoke `cmake/run_memfail_test.pl` with the executable, fixture path, and
+`--all`. Both optional program groups depend on `OPENSSL_TESTS`.
+
+`OPENSSL_FIPS=ON` builds the provider out of tree using the bundled OpenSSL
+Configure/Make build, requiring Perl and make (nmake with MSVC). The module path
+is recorded in `OPENSSL_FIPS_MODULE`; installation copies it to `lib/ossl-modules`.
+Generate its configuration using `openssl fipsinstall` on the target machine.
+
+`OPENSSL_FIPS_JITTER=ON` also enables `OPENSSL_FIPS` and `OPENSSL_JITTER`.
+Jitter entropy requires a static jitterentropy library. Set
+`OPENSSL_JITTER_INCLUDE_DIR` to the directory containing `jitterentropy.h` and
+`OPENSSL_JITTER_LIBRARY` to the static archive. These dependencies are optional
+and are not downloaded by this project. Jitter and FIPS jitter are disabled by
+default; algorithm auto-initialization is enabled for both shared and static
+libraries. See [Mapping.md](Mapping.md) for the generated configuration defines.
