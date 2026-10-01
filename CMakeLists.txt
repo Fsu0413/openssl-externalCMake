@@ -448,7 +448,7 @@ foreach (_CIPHER IN ITEMS
         cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "OPENSSL_LEGACY" OFF)
     elseif (_CIPHER STREQUAL "crmf")
         cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "OPENSSL_CMP" OFF)
-    elseif (_CIPHER STREQUAL "fips-securitychecks")
+    elseif (_CIPHER STREQUAL "fips-securitychecks" OR _CIPHER STREQUAL "fips-post")
         cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "OPENSSL_FIPS" OFF)
     elseif (_CIPHER STREQUAL "acvp-tests")
         cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "OPENSSL_FIPS" OFF)
