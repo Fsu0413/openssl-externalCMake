@@ -362,6 +362,7 @@ foreach (_CIPHER IN ITEMS
     zstd jitter fips-jitter demos h3demo fips-post pie integrity-only-ciphers
     hmac-drbg-kdf
     kbkdf
+    krb5kdf
     ml-kem ml-dsa slh-dsa lms ech snmpkdf srtpkdf ec_explicit_curves tls-deprecated-ec skeymgmt
 )
 
