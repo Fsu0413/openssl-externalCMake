@@ -27,7 +27,6 @@ set(LIBLEGACY_SOURCES
 
     ${CMAKE_SOURCE_DIR}/openssl/providers/legacyprov.c
     ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/kdfs/pbkdf1.c
-    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/kdfs/pvkkdf.c
 
     ${CMAKE_SOURCE_DIR}/openssl/providers/common/include/prov/provider_ctx.h
     ${CMAKE_SOURCE_DIR}/openssl/providers/common/include/prov/provider_util.h
@@ -157,6 +156,11 @@ if (OPENSSL_WHIRLPOOL)
         ${LIBLEGACY_SOURCES}
         ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/digests/wp_prov.c
     )
+endif()
+
+if (OPENSSL_PVKKDF)
+    list(APPEND LIBLEGACY_SOURCES
+        ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/kdfs/pvkkdf.c)
 endif()
 
 if (OPENSSL_RMD160)
