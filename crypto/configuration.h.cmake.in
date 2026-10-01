@@ -147,6 +147,7 @@ extern "C"
 #cmakedefine OPENSSL_NO_KRB5KDF
 #cmakedefine OPENSSL_NO_PVKKDF
 #cmakedefine OPENSSL_NO_SSHKDF
+#cmakedefine OPENSSL_NO_SSKDF
 #cmakedefine OPENSSL_NO_KDF
 #cmakedefine OPENSSL_NO_KTLS
 #cmakedefine OPENSSL_NO_LEGACY
