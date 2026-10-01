@@ -70,7 +70,6 @@ set(LIBDEFAULT_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/kdfs/hkdf.c
     ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/kdfs/pbkdf2.c
     ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/kdfs/pkcs12kdf.c
-    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/kdfs/sskdf.c
     ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/kdfs/scrypt.c
     ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/kdfs/argon2.c
 
@@ -144,6 +143,11 @@ set(LIBDEFAULT_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/include/prov/seeding.h
     ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/include/prov/file_store_local.h
 )
+
+if (OPENSSL_SSKDF OR OPENSSL_X963KDF)
+    list(APPEND LIBDEFAULT_SOURCES
+        ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/kdfs/sskdf.c)
+endif()
 
 if (OPENSSL_HMAC_DRBG_KDF)
     list(APPEND LIBDEFAULT_SOURCES
