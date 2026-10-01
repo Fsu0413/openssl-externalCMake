@@ -373,7 +373,7 @@ foreach (_CIPHER IN ITEMS
         cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "LINUX;OPENSSL_ENGINE" OFF)
     elseif (_CIPHER STREQUAL "mdc2")
         cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "OPENSSL_DES" OFF)
-    elseif (_CIPHER STREQUAL "ed2m")
+    elseif (_CIPHER STREQUAL "ec2m")
         cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "OPENSSL_EC" OFF)
     elseif (_CIPHER STREQUAL "ecdsa")
         cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "OPENSSL_EC" OFF)
