@@ -25,8 +25,6 @@ set(LIBDEFAULT_SOURCES
     ${CMAKE_BINARY_DIR}/include/openssl/x509v3.h
     ${CMAKE_BINARY_DIR}/providers/common/include/prov/der_rsa.h
     ${CMAKE_BINARY_DIR}/providers/common/include/prov/der_dsa.h
-    ${CMAKE_BINARY_DIR}/providers/common/include/prov/der_ec.h
-    ${CMAKE_BINARY_DIR}/providers/common/include/prov/der_ecx.h
     ${CMAKE_BINARY_DIR}/providers/common/include/prov/der_sm2.h
 
     ${CMAKE_SOURCE_DIR}/openssl/providers/common/bio_prov.c
@@ -315,6 +313,7 @@ if (OPENSSL_RMD160)
 endif()
 
 if (OPENSSL_EC)
+    list(APPEND LIBDEFAULT_SOURCES ${CMAKE_BINARY_DIR}/providers/common/include/prov/der_ec.h)
     set(LIBDEFAULT_SOURCES
         ${LIBDEFAULT_SOURCES}
         ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/encode_decode/encode_key2blob.c
@@ -325,6 +324,7 @@ if (OPENSSL_EC)
         ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/kem/ec_kem.c
     )
     if (OPENSSL_ECX)
+    list(APPEND LIBDEFAULT_SOURCES ${CMAKE_BINARY_DIR}/providers/common/include/prov/der_ecx.h)
         set(LIBDEFAULT_SOURCES
             ${LIBDEFAULT_SOURCES}
             ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/keymgmt/ecx_kmgmt.c
