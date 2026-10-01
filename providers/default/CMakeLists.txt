@@ -72,7 +72,6 @@ set(LIBDEFAULT_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/kdfs/pkcs12kdf.c
     ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/kdfs/sskdf.c
     ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/kdfs/scrypt.c
-    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/kdfs/x942kdf.c
     ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/kdfs/argon2.c
 
     ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/kdfs/snmpkdf.c
@@ -164,6 +163,11 @@ endif()
 if (OPENSSL_SSHKDF)
     list(APPEND LIBDEFAULT_SOURCES
         ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/kdfs/sshkdf.c)
+endif()
+
+if (OPENSSL_X942KDF)
+    list(APPEND LIBDEFAULT_SOURCES
+        ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/kdfs/x942kdf.c)
 endif()
 
 if ( OPENSSL_ASM AND ( OPENSSL_TARGET_ARCH MATCHES "aarch64" ) )
