@@ -350,12 +350,12 @@ foreach (_CIPHER IN ITEMS ssl2 buf-freelists crypto-mdebug-backtrace hw-padlock 
 endforeach()
 
 foreach (_CIPHER IN ITEMS
-    bulk ssl des ec sock dgram dtls tls engine stdio tests sm3 unit-test msan cmac legacy cmp comp brotli-dynamic zstd-dynamic zlib-dynamic thread-pool blake2 # dependent
+    bulk ssl des ec sock dgram dtls tls engine stdio apps tests sm3 unit-test msan cmac legacy cmp comp brotli-dynamic zstd-dynamic zlib-dynamic thread-pool blake2 # dependent
     dtls1_2-method dtls1-method tls1_2-method tls1_1-method tls1-method ssl3-method # method
     aes asn1 bio bn buffer conf crmf encode_decode ess evp ffc hmac hpke http kdf lhash md5 modes objects pem pkcs7 pkcs12 property rand rsa sha stack store thread txt_db
     x509 hashtable # directories
     dtls1_2 dtls1 tls1_3 tls1_2 tls1_1 tls1 ssl3 # TLS protocol
-    acvp-tests afalgeng aria apps argon2 asan async atexit autoalginit autoerrinit autoload-config bf brotli buildtest-c++ cached-fetch camellia capieng winstore cast chacha cms
+    acvp-tests afalgeng aria argon2 asan async atexit autoalginit autoerrinit autoload-config bf brotli buildtest-c++ cached-fetch camellia capieng winstore cast chacha cms
     crypto-mdebug ct default-thread-pool devcryptoeng dh dsa docs ec2m ec_nistp_64_gcc_128 ecdh ecdsa ecx egd external-tests filenames fips fips-securitychecks fuzz-afl
     fuzz-libfuzzer gost idea ktls loadereng makedepend md2 md4 mdc2 multiblock nextprotoneg ocb ocsp padlockeng pinshared poly1305 posix-io psk quic unstable-qlog qlog rc2 rc4 rc5
     rdrand rfc3779 rmd160 scrypt sctp secure-memory seed siphash siv sm2 sm2-precomp sm4 srp srtp ssl-trace tfo trace ts ubsan ui-console uplink weak-ssl-ciphers whirlpool zlib
@@ -467,6 +467,10 @@ foreach (_CIPHER IN ITEMS
         if (${_CIPHER_STR})
             message(FATAL_ERROR "hqinterop requires the upstream OpenSSL test build, which this CMake project does not implement")
         endif()
+    elseif (_CIPHER STREQUAL "tests")
+        cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "OPENSSL_APPS" OFF)
+    elseif (_CIPHER STREQUAL "external-tests")
+        cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "OPENSSL_TESTS" OFF)
     elseif (_CIPHER STREQUAL "msan")
         cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "NOT OPENSSL_ASM" OFF)
     elseif (_CIPHER STREQUAL "siv")
@@ -814,7 +818,7 @@ elseif (CMAKE_SYSTEM_NAME MATCHES "SunOS")
     endif()
 endif()
 
-if (BUILD_TESTING)
+if (BUILD_TESTING AND OPENSSL_TESTS)
     add_custom_target(check ${CMAKE_CTEST_COMMAND})
 endif()
 
