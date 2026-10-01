@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: verify-upstream
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           submodules: true
           path: openssl-externalCMake
@@ -38,7 +38,7 @@ jobs:
     env:
       FS_OPENSSL_VERSION_STR: ${{ needs.get-version.outputs.openssl_version }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           submodules: true
           path: openssl-externalCMake
@@ -54,7 +54,7 @@ jobs:
           cd "build"
           cmake -GNinja -DCMAKE_BUILD_TYPE=Release "${{ github.workspace }}/openssl-externalCMake"
           cmake --build . --parallel -t package_source
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         with:
           name: openssl${{ env.FS_OPENSSL_VERSION_STR }}-Source-LF
           path: build/OpenSSL-${{ env.FS_OPENSSL_VERSION_STR }}-Source.tar.xz
@@ -70,7 +70,7 @@ jobs:
       - name: configure
         shell: cmd
         run: git config --global core.autocrlf true
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           submodules: true
           path: openssl-externalCMake
@@ -87,7 +87,7 @@ jobs:
           cd "build"
           cmake -GNinja -DCMAKE_BUILD_TYPE=Release "${{ github.workspace }}/openssl-externalCMake"
           cmake --build . --parallel -t package_source
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         with:
           name: openssl${{ env.FS_OPENSSL_VERSION_STR }}-Source-CRLF
           path: build/OpenSSL-${{ env.FS_OPENSSL_VERSION_STR }}-Source.7z
@@ -102,7 +102,7 @@ jobs:
       FS_OPENSSL_PACKAGE_STR: Ubuntu-x86_64
       FS_OPENSSL_VERSION_STR: ${{ needs.get-version.outputs.openssl_version }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           submodules: true
           path: openssl-externalCMake
@@ -119,7 +119,7 @@ jobs:
           cmake -GNinja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}/openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}" -DOPENSSL_ASM=ON -DOPENSSL_ZLIB=ON -DOPENSSL_THREADS=ON "${{ github.workspace }}/openssl-externalCMake"
           cmake --build . --parallel
           cmake --build . --parallel -t package
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         with:
           name: openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}
           path: build/OpenSSL-${{ env.FS_OPENSSL_VERSION_STR }}-linux-x86_64.tar.xz
@@ -162,7 +162,7 @@ jobs:
       FS_OPENSSL_PACKAGE_STR: iOS-${{ matrix.toolchain.name }}
       FS_OPENSSL_VERSION_STR: ${{ needs.get-version.outputs.openssl_version }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           submodules: true
           path: openssl-externalCMake
@@ -177,7 +177,7 @@ jobs:
           cmake -GNinja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}/openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}" ${{ matrix.toolchain.simulator_argument }} -DCMAKE_OSX_ARCHITECTURES="${{ matrix.toolchain.arch }}" -DCMAKE_SYSTEM_NAME=iOS -DOPENSSL_ASM="${{ matrix.toolchain.asm }}" -DOPENSSL_ZLIB=ON -DOPENSSL_THREADS=ON "${{ github.workspace }}/openssl-externalCMake"
           cmake --build . --parallel
           cmake --build . --parallel -t package
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         with:
           name: openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}
           path: build/OpenSSL-${{ env.FS_OPENSSL_VERSION_STR }}-${{ matrix.toolchain.OPENSSL_BUILD_PLATFORM }}.tar.xz
@@ -189,17 +189,17 @@ jobs:
         toolchain:
           - arch: "x86_64"
             name: "x86_64"
-            runson: "13"
+            runson: "15-intel"
             asm: "ON"
             OPENSSL_BUILD_PLATFORM: "darwin64-x86_64"
           - arch: "arm64"
             name: "arm64"
-            runson: "14"
+            runson: "15"
             asm: "ON"
             OPENSSL_BUILD_PLATFORM: "darwin64-arm64"
           - arch: "x86_64;arm64"
             name: "unified"
-            runson: "14"
+            runson: "15"
             asm: "OFF"
             OPENSSL_BUILD_PLATFORM: "darwin64-unified64"
     name: build-macOS-${{ matrix.toolchain.name }}
@@ -210,7 +210,7 @@ jobs:
       FS_OPENSSL_PACKAGE_STR: macOS-${{ matrix.toolchain.name }}
       FS_OPENSSL_VERSION_STR: ${{ needs.get-version.outputs.openssl_version }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           submodules: true
           path: openssl-externalCMake
@@ -225,7 +225,7 @@ jobs:
           cmake -GNinja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}/openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}" -DCMAKE_OSX_ARCHITECTURES="${{ matrix.toolchain.arch }}" -DOPENSSL_ASM="${{ matrix.toolchain.asm }}" -DOPENSSL_ZLIB=ON -DOPENSSL_THREADS=ON "${{ github.workspace }}/openssl-externalCMake"
           cmake --build . --parallel
           cmake --build . --parallel -t package
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         with:
           name: openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}
           path: build/OpenSSL-${{ env.FS_OPENSSL_VERSION_STR }}-${{ matrix.toolchain.OPENSSL_BUILD_PLATFORM }}.tar.xz
@@ -253,7 +253,7 @@ jobs:
       FS_OPENSSL_PACKAGE_STR: MinGW-GCC${{ matrix.toolchain.version }}-${{ matrix.toolchain.arch }}
       FS_OPENSSL_VERSION_STR: ${{ needs.get-version.outputs.openssl_version }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           submodules: true
           path: openssl-externalCMake
@@ -276,7 +276,7 @@ jobs:
           cmake -GNinja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}/openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}" -DOPENSSL_ASM=ON -DOPENSSL_THREADS=ON "${{ github.workspace }}/openssl-externalCMake"
           cmake --build . --parallel
           cmake --build . --parallel -t package
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         with:
           name: openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}
           path: build/OpenSSL-${{ env.FS_OPENSSL_VERSION_STR }}-${{ matrix.toolchain.OPENSSL_BUILD_PLATFORM }}.7z
@@ -292,9 +292,9 @@ jobs:
             bit: "64"
             arch: "x86_64"
             OPENSSL_BUILD_PLATFORM: VC-WIN64A
-          - version: "2019"
-            runson: "2019"
-            call: C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvarsamd64_x86.bat
+          - version: "2022"
+            runson: "2022"
+            call: C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvarsamd64_x86.bat
             bit: "32"
             arch: "i686"
             OPENSSL_BUILD_PLATFORM: VC-WIN32
@@ -306,7 +306,7 @@ jobs:
       FS_OPENSSL_PACKAGE_STR: MSVC${{ matrix.toolchain.version }}-${{ matrix.toolchain.arch }}
       FS_OPENSSL_VERSION_STR: ${{ needs.get-version.outputs.openssl_version }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           submodules: true
           path: openssl-externalCMake
@@ -325,7 +325,7 @@ jobs:
           cmake -GNinja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}/openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}" -DOPENSSL_ASM=ON -DOPENSSL_NASM=ON "${{ github.workspace }}/openssl-externalCMake"
           cmake --build . --parallel
           cmake --build . --parallel -t package
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         with:
           name: openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}
           path: build/OpenSSL-${{ env.FS_OPENSSL_VERSION_STR }}-${{ matrix.toolchain.OPENSSL_BUILD_PLATFORM }}.7z
@@ -352,7 +352,7 @@ jobs:
       FS_OPENSSL_PACKAGE_STR: Android-${{ matrix.toolchain.arch }}
       FS_OPENSSL_VERSION_STR: ${{ needs.get-version.outputs.openssl_version }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           submodules: true
           path: openssl-externalCMake
@@ -369,7 +369,7 @@ jobs:
           cmake -GNinja -DCMAKE_TOOLCHAIN_FILE="${ANDROID_NDK_HOME}/build/cmake/android.toolchain.cmake" -DANDROID_ABI=${{ matrix.toolchain.arch }} -DANDROID_PLATFORM=27 -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}/openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}" -DOPENSSL_ASM=ON -DOPENSSL_ZLIB=ON -DOPENSSL_THREADS=ON "${{ github.workspace }}/openssl-externalCMake"
           cmake --build . --parallel
           cmake --build . --parallel -t package
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         with:
           name: openssl${{ env.FS_OPENSSL_VERSION_STR }}-${{ env.FS_OPENSSL_PACKAGE_STR }}
           path: build/OpenSSL-${{ env.FS_OPENSSL_VERSION_STR }}-${{ matrix.toolchain.OPENSSL_BUILD_PLATFORM }}.tar.xz
