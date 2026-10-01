@@ -113,7 +113,7 @@ The `openssl/` tree is pinned in `openssl.upstream` to an official OpenSSL git t
 To move the submodule to a newer official release (downloads the tarball, checks SHA-256, then checks out the matching git tag):
 
 ```
-./scripts/pull-openssl-upstream.sh 4.0.2
+./scripts/pull-openssl-upstream.sh 4.0.3
 ```
 
 ## TODOs

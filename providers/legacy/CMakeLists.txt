@@ -171,6 +171,9 @@ if (OPENSSL_RMD160)
 endif()
 
 if (OPENSSL_MODULE)
+    list(APPEND LIBLEGACY_SOURCES
+        ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/ciphercommon.c
+        ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/digests/digestcommon.c)
     set(LIBCRYPTO_CURRENTDIR_SOURCES)
     include("../../crypto/_cryptoDir/objects.cmake")
     set(LIBLEGACY_SOURCES_MODULE ${LIBLEGACY_SOURCES_MODULE} ${OPENSSL_CPUID_SRCS})

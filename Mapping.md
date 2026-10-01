@@ -69,4 +69,4 @@ Note: On Apple platform, `CMAKE_OSX_ARCHITECTURES` (when number of values is gre
 | `tls-deprecated-ec` | `-DOPENSSL_TLS_DEPRECATED_EC=` | OFF | Disabled by default in 4.0 |
 | `c_rehash` | — | removed | Use `openssl rehash` |
 
-Current tree: OpenSSL **4.0.2**. The gitlink and tarball SHA-256 are recorded in `openssl.upstream` and checked by `scripts/verify-openssl-upstream.sh`.
+Current tree: OpenSSL **4.0.3**. The gitlink and tarball SHA-256 are recorded in `openssl.upstream` and checked by `scripts/verify-openssl-upstream.sh`.

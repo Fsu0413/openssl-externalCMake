@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: Unlicense
 
-# Regenerated from openssl/util/perl/OpenSSL/paramnames.pm for OpenSSL 4.0.2
+# Regenerated from openssl/util/perl/OpenSSL/paramnames.pm for OpenSSL 4.0.3
 # usage: cmake -DOUTPUT_FILE_NAME=<output.h> -P paramnames.cmake <input.h.in>
 
 set(PARAM_NAMES
@@ -117,6 +117,7 @@ set(PARAM_NAMES
     "DIGEST_PARAM_ALGID_ABSENT"
     "DIGEST_PARAM_FUNCTION_NAME"
     "DIGEST_PARAM_CUSTOMIZATION"
+    "DIGEST_PARAM_FIPS_APPROVED_INDICATOR"
     "DIGEST_PARAM_PROPERTIES"
     "DIGEST_PARAM_MU_PUB_KEY"
     "DIGEST_PARAM_MU_CONTEXT_STRING"
@@ -590,6 +591,7 @@ set(DIGEST_PARAM_XOF "xof")
 set(DIGEST_PARAM_ALGID_ABSENT "algid-absent")
 set(DIGEST_PARAM_FUNCTION_NAME "function-name")
 set(DIGEST_PARAM_CUSTOMIZATION "customization")
+set(DIGEST_PARAM_FIPS_APPROVED_INDICATOR "*ALG_PARAM_FIPS_APPROVED_INDICATOR")
 set(DIGEST_PARAM_PROPERTIES "*ALG_PARAM_PROPERTIES")
 set(DIGEST_PARAM_MU_PUB_KEY "pub")
 set(DIGEST_PARAM_MU_CONTEXT_STRING "context-string")

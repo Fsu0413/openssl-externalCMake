@@ -26,14 +26,10 @@ set(LIBCOMMON_SOURCES
 
     ${CMAKE_SOURCE_DIR}/openssl/providers/common/provider_ctx.c
     ${CMAKE_SOURCE_DIR}/openssl/providers/common/provider_err.c
-    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/ciphercommon.c
     ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/ciphercommon_hw.c
     ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/ciphercommon_block.c
-    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/ciphercommon_gcm.c
     ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/ciphercommon_gcm_hw.c
-    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/ciphercommon_ccm.c
     ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/ciphercommon_ccm_hw.c
-    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/digests/digestcommon.c
 
     ${CMAKE_SOURCE_DIR}/openssl/providers/common/der/der_rsa_key.c
     ${CMAKE_SOURCE_DIR}/openssl/providers/common/der/der_rsa_sig.c

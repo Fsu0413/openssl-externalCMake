@@ -22,7 +22,7 @@ set(LIBSSL_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/ssl/quic/quic_fifd.c
     ${CMAKE_SOURCE_DIR}/openssl/ssl/quic/quic_txp.c
     ${CMAKE_SOURCE_DIR}/openssl/ssl/quic/quic_stream_map.c
-    ${CMAKE_SOURCE_DIR}/openssl/ssl/quic/quic_sf_list.c
+    ${CMAKE_SOURCE_DIR}/openssl/ssl/quic/quic_strm_reas.c
     ${CMAKE_SOURCE_DIR}/openssl/ssl/quic/quic_rstream.c
     ${CMAKE_SOURCE_DIR}/openssl/ssl/quic/quic_sstream.c
     ${CMAKE_SOURCE_DIR}/openssl/ssl/quic/quic_reactor.c

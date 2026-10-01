@@ -746,7 +746,7 @@ add_library(crypto
     ${CMAKE_SOURCE_DIR}/openssl/include/internal/quic_record_tx.h
     ${CMAKE_SOURCE_DIR}/openssl/include/internal/quic_record_util.h
     ${CMAKE_SOURCE_DIR}/openssl/include/internal/quic_rx_depack.h
-    ${CMAKE_SOURCE_DIR}/openssl/include/internal/quic_sf_list.h
+    ${CMAKE_SOURCE_DIR}/openssl/include/internal/quic_strm_reas.h
     ${CMAKE_SOURCE_DIR}/openssl/include/internal/quic_srt_gen.h
     ${CMAKE_SOURCE_DIR}/openssl/include/internal/quic_srtm.h
     ${CMAKE_SOURCE_DIR}/openssl/include/internal/quic_ssl.h

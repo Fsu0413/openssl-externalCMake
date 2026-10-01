@@ -1,4 +1,8 @@
 set(LIBDEFAULT_SOURCES
+    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/ciphercommon.c
+    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/ciphercommon_gcm.c
+    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/ciphercommon_ccm.c
+    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/digests/digestcommon.c
     ${CMAKE_BINARY_DIR}/include/openssl/opensslv.h
     ${CMAKE_BINARY_DIR}/include/openssl/configuration.h
     ${CMAKE_BINARY_DIR}/include/openssl/asn1.h
