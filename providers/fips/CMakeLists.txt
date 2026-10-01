@@ -99,3 +99,11 @@ add_custom_target(fips ALL
     VERBATIM)
 set(OPENSSL_FIPS_MODULE "${_fips_build}/${_module}" CACHE INTERNAL "Built FIPS provider module" FORCE)
 install(FILES "${_fips_build}/${_module}" DESTINATION "${CMAKE_INSTALL_LIBDIR}/ossl-modules")
+
+if (BUILD_TESTING AND OPENSSL_TESTS AND OPENSSL_APPS)
+    add_test(NAME openssl-fips-selftest
+        COMMAND $<TARGET_FILE:openssl> fipsinstall
+            -module "${OPENSSL_FIPS_MODULE}"
+            -out "${CMAKE_CURRENT_BINARY_DIR}/fipsmodule-test.cnf"
+            -macopt "hexkey:${OPENSSL_FIPS_KEY}")
+endif()
