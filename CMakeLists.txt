@@ -138,20 +138,20 @@ option(OPENSSL_AUTOALGINIT "enable automatic algorithm initialization" ON)
 
 # [no-]shared
 # iOS supports only static libraries
-cmake_dependent_option(BUILD_SHARED_LIBS "Build Shared Libraries" ON "NOT IOS;OPENSSL_AUTOALGINIT" OFF)
+cmake_dependent_option(BUILD_SHARED_LIBS "Build Shared Libraries" ON "NOT IOS;OPENSSL_AUTOALGINIT;NOT DEFINED CMAKE_POSITION_INDEPENDENT_CODE OR CMAKE_POSITION_INDEPENDENT_CODE" OFF)
 
 # pic - WHY this is a separate option since OpenSSL 3.0?
 # answer is simple - the providers are static libraries but are linked to shared libraries
-cmake_dependent_option(CMAKE_POSITION_INDEPENDENT_CODE "Build Position independent code" OFF "NOT ANDROID;NOT BUILD_SHARED_LIBS" ON)
+option(CMAKE_POSITION_INDEPENDENT_CODE "Build position independent code" ON)
 
-# module
-cmake_dependent_option(OPENSSL_MODULE "Build module" ON "BUILD_SHARED_LIBS" OFF)
+# no-dso
+option(OPENSSL_DSO "use dynamic shared object loader code" ON)
+
+# Modules can be built against static libcrypto when PIC and DSO are enabled.
+cmake_dependent_option(OPENSSL_MODULE "Build module" ON "OPENSSL_DSO;CMAKE_POSITION_INDEPENDENT_CODE;NOT IOS" OFF)
 
 # static_engine
 cmake_dependent_option(OPENSSL_STATIC_ENGINE "generate static engine library" OFF "OPENSSL_MODULE" ON)
-
-# no-dso
-cmake_dependent_option(OPENSSL_DSO "use dymamic shared object loader code" ON "BUILD_SHARED_LIBS" OFF)
 
 # fips
 cmake_dependent_option(OPENSSL_FIPS "use FIPS" OFF "OPENSSL_MODULE;OPENSSL_DSO;OPENSSL_AUTOALGINIT" OFF)
