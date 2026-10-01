@@ -221,7 +221,7 @@ unset(OPENSSL_KNOWN_RAND_SEED)
 # no-<cipher>
 set(OPENSSL_DEFAULT_DISABLED_CIPHERS asan buildtest-c++ crypto-mdebug crypto-mdebug-backtrace devcryptoeng ec_nistp_64_gcc_128 egd external-tests fuzz-afl fuzz-libfuzzer ktls md2
                                      msan rc5 sctp ssl3 ssl3-method trace ubsan unit-test weak-ssl-ciphers brotli brotli-dynamic tfo zstd zstd-dynamic zlib zlib-dynamic jitter
-                                     demos h3demo allocfail-tests pie sslkeylog fips-jitter lms ec_explicit_curves tls-deprecated-ec engine static-engine dynamic-engine
+                                     demos h3demo allocfail-tests hqinterop pie sslkeylog fips-jitter lms ec_explicit_curves tls-deprecated-ec engine static-engine dynamic-engine
 )
 
 set(OPENSSL_MIN_API_LEVEL "3.0.0" CACHE STRING "OpenSSL SSL minimum API LEVEL")
@@ -370,6 +370,7 @@ foreach (_CIPHER IN ITEMS
     x963kdf
     sslkeylog
     allocfail-tests
+    hqinterop
     ml-kem ml-dsa slh-dsa lms ech snmpkdf srtpkdf ec_explicit_curves tls-deprecated-ec skeymgmt
 )
 
@@ -460,6 +461,11 @@ foreach (_CIPHER IN ITEMS
         cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "OPENSSL_CRYPTO_MDEBUG;OPENSSL_TESTS" OFF)
         if (${_CIPHER_STR})
             message(FATAL_ERROR "allocfail-tests requires the upstream OpenSSL test build, which this CMake project does not implement")
+        endif()
+    elseif (_CIPHER STREQUAL "hqinterop")
+        cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "OPENSSL_TESTS;OPENSSL_QUIC" OFF)
+        if (${_CIPHER_STR})
+            message(FATAL_ERROR "hqinterop requires the upstream OpenSSL test build, which this CMake project does not implement")
         endif()
     elseif (_CIPHER STREQUAL "msan")
         cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "NOT OPENSSL_ASM" OFF)
