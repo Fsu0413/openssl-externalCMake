@@ -25,7 +25,6 @@ set(LIBDEFAULT_SOURCES
     ${CMAKE_BINARY_DIR}/include/openssl/x509v3.h
     ${CMAKE_BINARY_DIR}/providers/common/include/prov/der_rsa.h
     ${CMAKE_BINARY_DIR}/providers/common/include/prov/der_dsa.h
-    ${CMAKE_BINARY_DIR}/providers/common/include/prov/der_sm2.h
 
     ${CMAKE_SOURCE_DIR}/openssl/providers/common/bio_prov.c
     ${CMAKE_SOURCE_DIR}/openssl/providers/common/capabilities.c
@@ -185,13 +184,13 @@ else()
 endif()
 
 if (OPENSSL_SM2)
+    list(APPEND LIBDEFAULT_SOURCES ${CMAKE_BINARY_DIR}/providers/common/include/prov/der_sm2.h)
     set(LIBDEFAULT_SOURCES
         ${LIBDEFAULT_SOURCES}
         ${CMAKE_SOURCE_DIR}/openssl/providers/common/der/der_sm2_key.c
         ${CMAKE_SOURCE_DIR}/openssl/providers/common/der/der_sm2_sig.c
         ${CMAKE_BINARY_DIR}/providers/common/der/der_sm2_gen.c
-        ${CMAKE_BINARY_DIR}/providers/common/include/prov/der_sm2.h
-        ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/asymciphers/sm2_enc.c
+            ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/asymciphers/sm2_enc.c
         ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/signature/sm2_sig.c
     )
 endif()
