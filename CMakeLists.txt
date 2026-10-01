@@ -361,6 +361,7 @@ foreach (_CIPHER IN ITEMS
     rdrand rfc3779 rmd160 scrypt sctp secure-memory seed siphash siv sm2 sm2-precomp sm4 srp srtp ssl-trace tfo trace ts ubsan ui-console uplink weak-ssl-ciphers whirlpool zlib
     zstd jitter fips-jitter demos h3demo fips-post pie integrity-only-ciphers
     hmac-drbg-kdf
+    kbkdf
     ml-kem ml-dsa slh-dsa lms ech snmpkdf srtpkdf ec_explicit_curves tls-deprecated-ec skeymgmt
 )
 

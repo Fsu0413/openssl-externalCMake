@@ -143,6 +143,7 @@ extern "C"
 #cmakedefine OPENSSL_NO_JITTER
 #cmakedefine OPENSSL_NO_FIPS_JITTER
 #cmakedefine OPENSSL_NO_HMAC_DRBG_KDF
+#cmakedefine OPENSSL_NO_KBKDF
 #cmakedefine OPENSSL_NO_KDF
 #cmakedefine OPENSSL_NO_KTLS
 #cmakedefine OPENSSL_NO_LEGACY
