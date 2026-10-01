@@ -133,9 +133,12 @@ get_filename_component(OPENSSL_OPENSSLDIR_ABSOLUTE ${OPENSSL_OPENSSLDIR} ABSOLUT
 # [no-]threads
 cmake_dependent_option(OPENSSL_THREADS "Build with threads supported" ON "NOT MSVC" ON)
 
+# no-autoalginit also disables shared libraries, applications, and FIPS.
+option(OPENSSL_AUTOALGINIT "enable automatic algorithm initialization" ON)
+
 # [no-]shared
 # iOS supports only static libraries
-cmake_dependent_option(BUILD_SHARED_LIBS "Build Shared Libraries" ON "NOT IOS" OFF)
+cmake_dependent_option(BUILD_SHARED_LIBS "Build Shared Libraries" ON "NOT IOS;OPENSSL_AUTOALGINIT" OFF)
 
 # pic - WHY this is a separate option since OpenSSL 3.0?
 # answer is simple - the providers are static libraries but are linked to shared libraries
@@ -151,7 +154,7 @@ cmake_dependent_option(OPENSSL_STATIC_ENGINE "generate static engine library" OF
 cmake_dependent_option(OPENSSL_DSO "use dymamic shared object loader code" ON "BUILD_SHARED_LIBS" OFF)
 
 # fips
-cmake_dependent_option(OPENSSL_FIPS "use FIPS" OFF "OPENSSL_MODULE;OPENSSL_DSO" OFF)
+cmake_dependent_option(OPENSSL_FIPS "use FIPS" OFF "OPENSSL_MODULE;OPENSSL_DSO;OPENSSL_AUTOALGINIT" OFF)
 
 set(OPENSSL_FIPS_KEY "f4556650ac31d35461610bac4ed81b1a181b2d8a43ea2854cbae22ca74560813" CACHE STRING "echo -n 'holy hand grenade of antioch' | openssl sha256")
 
@@ -419,11 +422,9 @@ foreach (_CIPHER IN ITEMS
     elseif (_CIPHER STREQUAL "devcryptoeng")
         cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "OPENSSL_ENGINE" OFF)
     elseif (_CIPHER STREQUAL "autoalginit")
-        if (OPENSSL_FIPS)
-            set("${_CIPHER_STR}" ON CACHE BOOL "${_CIPHER_HELP}" FORCE)
-        else()
-            option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}") # static autoalginit
-        endif()
+        # Declared before BUILD_SHARED_LIBS so its cascades apply there too.
+    elseif (_CIPHER STREQUAL "apps")
+        cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "OPENSSL_AUTOALGINIT;OPENSSL_STDIO" OFF)
     elseif (_CIPHER STREQUAL "capieng")
         cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "OPENSSL_STDIO;OPENSSL_ENGINE" OFF)
     elseif (_CIPHER STREQUAL "padlockeng")
@@ -786,7 +787,9 @@ endif()
 
 add_subdirectory(crypto)
 add_subdirectory(ssl)
-add_subdirectory(apps)
+if (OPENSSL_APPS)
+    add_subdirectory(apps)
+endif()
 # Engines were removed in OpenSSL 4.0
 # add_subdirectory(engines)
 add_subdirectory(tools)
