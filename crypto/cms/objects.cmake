@@ -6,7 +6,7 @@ set(LIBCRYPTO_CURRENTDIR_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/crypto/cms/cms_att.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/cms/cms_io.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/cms/cms_smime.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/cms/cms_err.c
+    ${CMAKE_BINARY_DIR}/crypto/cms/cms_err.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/cms/cms_sd.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/cms/cms_dd.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/cms/cms_cd.c

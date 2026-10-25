@@ -25,7 +25,7 @@ set(LIBCOMMON_SOURCES
     ${CMAKE_BINARY_DIR}/include/openssl/x509v3.h
 
     ${CMAKE_SOURCE_DIR}/openssl/providers/common/provider_ctx.c
-    ${CMAKE_SOURCE_DIR}/openssl/providers/common/provider_err.c
+    ${CMAKE_BINARY_DIR}/providers/common/provider_err.c
     ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/ciphercommon_hw.c
     ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/ciphercommon_block.c
     ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/ciphercommon_gcm_hw.c
@@ -43,7 +43,7 @@ set(LIBCOMMON_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/ssl/record/methods/tls_pad.c
 
     ${CMAKE_SOURCE_DIR}/openssl/providers/common/include/prov/bio.h
-    ${CMAKE_SOURCE_DIR}/openssl/providers/common/include/prov/proverr.h
+    ${CMAKE_BINARY_DIR}/providers/common/include/prov/proverr.h
     ${CMAKE_SOURCE_DIR}/openssl/providers/common/include/prov/provider_ctx.h
     ${CMAKE_SOURCE_DIR}/openssl/providers/common/include/prov/providercommon.h
     ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/ciphercommon_local.h

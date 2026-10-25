@@ -9,7 +9,7 @@ set(LIBCRYPTO_CURRENTDIR_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/crypto/dh/dh_gen.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/dh/dh_kdf.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/dh/dh_asn1.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/dh/dh_err.c
+    ${CMAKE_BINARY_DIR}/crypto/dh/dh_err.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/dh/dh_ameth.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/dh/dh_prn.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/dh/dh_rfc5114.c

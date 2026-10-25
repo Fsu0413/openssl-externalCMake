@@ -65,7 +65,7 @@ set(LIBCRYPTO_CURRENTDIR_SOURCES ${LIBCRYPTO_CURRENTDIR_SOURCES}
     ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/bio_md.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/bio_b64.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/bio_enc.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/evp_err.c
+    ${CMAKE_BINARY_DIR}/crypto/evp/evp_err.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/e_null.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/c_allc.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/evp/c_alld.c

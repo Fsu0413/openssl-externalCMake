@@ -28,8 +28,6 @@ set(LIBSSL_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/ssl/quic/quic_reactor.c
     ${CMAKE_SOURCE_DIR}/openssl/ssl/quic/quic_channel.c
     ${CMAKE_SOURCE_DIR}/openssl/ssl/quic/quic_tserver.c
-    ${CMAKE_SOURCE_DIR}/openssl/ssl/quic/quic_tls.c
-    ${CMAKE_SOURCE_DIR}/openssl/ssl/quic/quic_tls_api.c
     ${CMAKE_SOURCE_DIR}/openssl/ssl/quic/quic_obj.c
     ${CMAKE_SOURCE_DIR}/openssl/ssl/quic/quic_reactor_wait_ctx.c
     ${CMAKE_SOURCE_DIR}/openssl/ssl/quic/quic_thread_assist.c
@@ -56,16 +54,5 @@ if (OPENSSL_QLOG)
         ${CMAKE_SOURCE_DIR}/openssl/ssl/quic/qlog.c
         ${CMAKE_SOURCE_DIR}/openssl/crypto/getenv.c
         ${CMAKE_SOURCE_DIR}/openssl/crypto/ctype.c
-    )
-endif()
-
-if (BUILD_SHARED_LIBS)
-    # WHY the hell is the libssl thread code in libcrypto?
-    set(LIBSSL_SOURCES
-        ${LIBSSL_SOURCES}
-        ${CMAKE_SOURCE_DIR}/openssl/crypto/thread/arch.c
-        ${CMAKE_SOURCE_DIR}/openssl/crypto/thread/arch/thread_none.c
-        ${CMAKE_SOURCE_DIR}/openssl/crypto/thread/arch/thread_posix.c
-        ${CMAKE_SOURCE_DIR}/openssl/crypto/thread/arch/thread_win.c
     )
 endif()

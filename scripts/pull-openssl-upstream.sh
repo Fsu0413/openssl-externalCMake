@@ -6,13 +6,13 @@
 # Usage:
 #   scripts/pull-openssl-upstream.sh <version>
 # Example:
-#   scripts/pull-openssl-upstream.sh 4.0.3
+#   scripts/pull-openssl-upstream.sh 4.1.0
 
 set -eu
 
 if [ "$#" -ne 1 ] || [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
     echo "Usage: $0 <version>" >&2
-    echo "Example: $0 4.0.3" >&2
+    echo "Example: $0 4.1.0" >&2
     exit 2
 fi
 

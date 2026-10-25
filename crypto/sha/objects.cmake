@@ -19,6 +19,7 @@ perlasm_generate_src(sha256-x86_64${OPENSSL_ASM_PREPROCESSED} ${CMAKE_SOURCE_DIR
 perlasm_generate_src(sha256-mb-x86_64${OPENSSL_ASM_PREPROCESSED} ${CMAKE_SOURCE_DIR}/openssl/crypto/sha/asm/sha256-mb-x86_64.pl)
 perlasm_generate_src(sha512-x86_64${OPENSSL_ASM_PREPROCESSED} ${CMAKE_SOURCE_DIR}/openssl/crypto/sha/asm/sha512-x86_64.pl)
 perlasm_generate_src(keccak1600-x86_64${OPENSSL_ASM_PREPROCESSED} ${CMAKE_SOURCE_DIR}/openssl/crypto/sha/asm/keccak1600-x86_64.pl)
+perlasm_generate_src(keccak1600x4-avx512vl${OPENSSL_ASM_PREPROCESSED} ${CMAKE_SOURCE_DIR}/openssl/crypto/sha/asm/keccak1600x4-avx512vl.pl)
 perlasm_generate_src(sha1-sparcv9.S ${CMAKE_SOURCE_DIR}/openssl/crypto/sha/asm/sha1-sparcv9.pl)
 perlasm_generate_src(sha256-sparcv9.S ${CMAKE_SOURCE_DIR}/openssl/crypto/sha/asm/sha512-sparcv9.pl)
 perlasm_generate_src(sha512-sparcv9.S ${CMAKE_SOURCE_DIR}/openssl/crypto/sha/asm/sha512-sparcv9.pl)
@@ -74,6 +75,8 @@ if (OPENSSL_ASM)
             sha256-mb-x86_64${OPENSSL_ASM_PREPROCESSED}
             sha512-x86_64${OPENSSL_ASM_PREPROCESSED}
             keccak1600-x86_64${OPENSSL_ASM_PREPROCESSED}
+            keccak1600x4-avx512vl${OPENSSL_ASM_PREPROCESSED}
+            ${CMAKE_SOURCE_DIR}/openssl/crypto/sha/sha3_x4_avx512vl.c
         )
     elseif ( OPENSSL_TARGET_ARCH STREQUAL "x86" )
         set(LIBCRYPTO_CURRENTDIR_ASM_SOURCES

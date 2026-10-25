@@ -3,7 +3,7 @@
 set(LIBCRYPTO_CURRENTDIR_SOURCES ${LIBCRYPTO_CURRENTDIR_SOURCES}
     ${CMAKE_SOURCE_DIR}/openssl/crypto/rand/rand_lib.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/rand/randfile.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/rand/rand_err.c
+    ${CMAKE_BINARY_DIR}/crypto/rand/rand_err.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/rand/rand_deprecated.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/rand/prov_seed.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/rand/rand_pool.c

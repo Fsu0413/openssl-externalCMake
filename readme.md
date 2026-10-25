@@ -1,10 +1,10 @@
 # openssl-externalCMake
 
-![Build Status](https://github.com/Fsu0413/openssl-externalCMake/actions/workflows/cmake.yml/badge.svg?branch=4.0)
+![Build Status](https://github.com/Fsu0413/openssl-externalCMake/actions/workflows/cmake.yml/badge.svg?branch=4.1)
 
 This is a totally external CMake project for building OpenSSL.
 
-This branch is for OpenSSL 4.0 series.
+This branch is for OpenSSL 4.1 series.
 
 ## Disclaimer
 
@@ -113,14 +113,14 @@ The `openssl/` tree is pinned in `openssl.upstream` to an official OpenSSL git t
 To move the submodule to a newer official release (downloads the tarball, checks SHA-256, then checks out the matching git tag):
 
 ```
-./scripts/pull-openssl-upstream.sh 4.0.3
+./scripts/pull-openssl-upstream.sh 4.1.0
 ```
 
 ## TODOs
 
 Sort by priority
 
-### On 4.0 branch:
+### On 4.1 branch:
 
 1. `make check` support
 
@@ -130,8 +130,8 @@ Sort by priority
 `quic-hq-interop-server`. Both programs honor `FILEPREFIX`; the local client
 defaults to the working directory for downloaded files.
 
-`OPENSSL_ALLOCFAIL_TESTS=ON` with `OPENSSL_CRYPTO_MDEBUG=ON` builds the three
-upstream allocation-failure workloads. CTest runs each workload normally and
+`OPENSSL_ALLOCFAIL_TESTS=ON` with `OPENSSL_CRYPTO_MDEBUG=ON` builds the two
+upstream allocation-failure workloads (OpenSSL 4.1 dropped `x509-memfail`). CTest runs each workload normally and
 injects allocation failures at the beginning, middle, and end. For an exhaustive
 run, invoke `cmake/run_memfail_test.pl` with the executable, fixture path, and
 `--all`. Both optional program groups depend on `OPENSSL_TESTS`.

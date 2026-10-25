@@ -44,7 +44,7 @@ set(LIBCRYPTO_CURRENTDIR_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/crypto/comp_methods.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/cversion.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/info.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/cpt_err.c
+    ${CMAKE_BINARY_DIR}/crypto/cpt_err.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/ebcdic.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/uid.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/o_dir.c
@@ -57,10 +57,10 @@ set(LIBCRYPTO_CURRENTDIR_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/crypto/provider_child.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/punycode.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/passphrase.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/arm_arch.h
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/mips_arch.h
+    ${CMAKE_SOURCE_DIR}/openssl/include/arch/arm_arch.h
+    ${CMAKE_SOURCE_DIR}/openssl/include/arch/mips_arch.h
     ${CMAKE_SOURCE_DIR}/openssl/crypto/provider_local.h
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/s390x_arch.h
+    ${CMAKE_SOURCE_DIR}/openssl/include/arch/s390x_arch.h
     ${CMAKE_SOURCE_DIR}/openssl/crypto/vms_rms.h
     ${CMAKE_SOURCE_DIR}/openssl/crypto/time.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/sleep.c
@@ -68,7 +68,7 @@ set(LIBCRYPTO_CURRENTDIR_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/crypto/array_alloc.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/aligned_alloc.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/threads_common.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/ssl_err.c
+    ${CMAKE_BINARY_DIR}/crypto/ssl_err.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/quic_vlint.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/defaults.c
     buildinf.h
@@ -97,13 +97,13 @@ if (OPENSSL_ASM)
         set(OPENSSL_CPUID_SRCS
             armv4cpuid.S
             ${CMAKE_SOURCE_DIR}/openssl/crypto/armcap.c
-            ${CMAKE_SOURCE_DIR}/openssl/crypto/arm_arch.h
+            ${CMAKE_SOURCE_DIR}/openssl/include/arch/arm_arch.h
         )
     elseif ( OPENSSL_TARGET_ARCH STREQUAL "arm64" )
         set(OPENSSL_CPUID_SRCS
             arm64cpuid.S
             ${CMAKE_SOURCE_DIR}/openssl/crypto/armcap.c
-            ${CMAKE_SOURCE_DIR}/openssl/crypto/arm_arch.h
+            ${CMAKE_SOURCE_DIR}/openssl/include/arch/arm_arch.h
         )
     endif()
 endif()

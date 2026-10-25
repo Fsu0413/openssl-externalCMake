@@ -35,7 +35,7 @@ set(LIBCRYPTO_CURRENTDIR_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/crypto/ec/ec_backend.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/ec/ecdh_kdf.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/ec/ec_ameth.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/ec/ec_err.c
+    ${CMAKE_BINARY_DIR}/crypto/ec/ec_err.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/ec/eck_prn.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/ec/ec_deprecated.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/ec/ec_print.c
@@ -56,10 +56,8 @@ if ( OPENSSL_ECX )
         ${CMAKE_SOURCE_DIR}/openssl/crypto/ec/curve448/curve448.c
         ${CMAKE_SOURCE_DIR}/openssl/crypto/ec/ecx_key.c
         ${CMAKE_SOURCE_DIR}/openssl/crypto/ec/ecx_meth.c
-        ${CMAKE_SOURCE_DIR}/openssl/crypto/ec/curve448/arch_32/arch_intrinsics.h
-        ${CMAKE_SOURCE_DIR}/openssl/crypto/ec/curve448/arch_32/f_impl.h
-        ${CMAKE_SOURCE_DIR}/openssl/crypto/ec/curve448/arch_64/arch_intrinsics.h
-        ${CMAKE_SOURCE_DIR}/openssl/crypto/ec/curve448/arch_64/f_impl.h
+        ${CMAKE_SOURCE_DIR}/openssl/crypto/ec/curve448/arch_32/arch_intrinsics.inc
+        ${CMAKE_SOURCE_DIR}/openssl/crypto/ec/curve448/arch_64/arch_intrinsics.inc
         ${CMAKE_SOURCE_DIR}/openssl/crypto/ec/curve448/curve448_local.h
         ${CMAKE_SOURCE_DIR}/openssl/crypto/ec/curve448/ed448.h
         ${CMAKE_SOURCE_DIR}/openssl/crypto/ec/curve448/field.h

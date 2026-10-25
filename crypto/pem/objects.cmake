@@ -5,7 +5,7 @@ set(LIBCRYPTO_CURRENTDIR_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/crypto/pem/pem_info.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/pem/pem_lib.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/pem/pem_all.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/pem/pem_err.c
+    ${CMAKE_BINARY_DIR}/crypto/pem/pem_err.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/pem/pem_x509.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/pem/pem_xaux.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/pem/pem_oth.c

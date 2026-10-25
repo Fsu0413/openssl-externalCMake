@@ -3,7 +3,7 @@
 set(LIBCRYPTO_CURRENTDIR_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/crypto/bio/bio_lib.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/bio/bio_cb.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/bio/bio_err.c
+    ${CMAKE_BINARY_DIR}/crypto/bio/bio_err.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/bio/bio_print.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/bio/bio_dump.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/bio/bio_addr.c

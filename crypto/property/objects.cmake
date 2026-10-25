@@ -6,6 +6,6 @@ set(LIBCRYPTO_CURRENTDIR_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/crypto/property/property_query.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/property/property.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/property/defn_cache.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/property/property_err.c
+    ${CMAKE_BINARY_DIR}/crypto/property/property_err.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/property/property_local.h
 )

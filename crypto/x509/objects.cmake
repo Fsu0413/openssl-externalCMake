@@ -12,7 +12,7 @@ set(LIBCRYPTO_CURRENTDIR_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/x509_set.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/x509cset.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/x509rset.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/x509_err.c
+    ${CMAKE_BINARY_DIR}/crypto/x509/x509_err.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/x509name.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/x509_v3.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/x509_ext.c
@@ -46,7 +46,7 @@ set(LIBCRYPTO_CURRENTDIR_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/v3_lib.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/v3_prn.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/v3_utl.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/v3err.c
+    ${CMAKE_BINARY_DIR}/crypto/x509/v3err.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/v3_genn.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/v3_san.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/x509/v3_skid.c

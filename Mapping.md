@@ -69,7 +69,23 @@ Note: On Apple platform, `CMAKE_OSX_ARCHITECTURES` (when number of values is gre
 | `tls-deprecated-ec` | `-DOPENSSL_TLS_DEPRECATED_EC=` | OFF | Disabled by default in 4.0 |
 | `c_rehash` | — | removed | Use `openssl rehash` |
 
-Current tree: OpenSSL **4.0.3**. The gitlink and tarball SHA-256 are recorded in `openssl.upstream` and checked by `scripts/verify-openssl-upstream.sh`.
+## OpenSSL 4.1 notes
+
+| Feature | CMake | Default | Notes |
+|-|-|-|-|
+| `ikev2kdf` | `-DOPENSSL_IKEV2KDF=` | ON | New IKEv2 KDF |
+| `dtls1_3` | `-DOPENSSL_DTLS1_3=` | ON | DTLS 1.3 |
+| `ct-validation` | `-DOPENSSL_CT_VALIDATION=` | OFF | Valgrind constant-time validation; needs `<valgrind/memcheck.h>` |
+| `unit-tests` | always off | — | Upstream cmocka unit tests are not built |
+| `ecdh` / `ecdsa` | removed | — | No longer disablable upstream; old options warn and are ignored |
+| `atexit` | `-DOPENSSL_ATEXIT=` | OFF | Disabled by default in 4.1 |
+
+OpenSSL 4.1 generates the error tables (`*err.h`, `*_err.c`), `obj_mac.h`, `obj_dat.h`, `obj_xref.h`,
+`charmap.h`, `conf_def.h`, `bn_prime.h`, `ec_params.h` and `rsa_params.h` at build time instead of
+shipping them. `crypto/generated.cmake` runs the upstream generators for them; outputs land below the
+build directory at their source-relative paths.
+
+Current tree: OpenSSL **4.1.0**. The gitlink and tarball SHA-256 are recorded in `openssl.upstream` and checked by `scripts/verify-openssl-upstream.sh`.
 
 ## Initialization and entropy defaults
 

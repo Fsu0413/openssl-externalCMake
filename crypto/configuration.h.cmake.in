@@ -44,6 +44,8 @@ extern "C"
 #cmakedefine OPENSSL_THREADS
 #endif
 
+#cmakedefine OPENSSL_CONSTANT_TIME_VALIDATION
+
 #cmakedefine OPENSSL_RAND_SEED_GETRANDOM
 #cmakedefine OPENSSL_RAND_SEED_DEVRANDOM
 #cmakedefine OPENSSL_RAND_SEED_OS
@@ -87,6 +89,7 @@ extern "C"
 #cmakedefine OPENSSL_NO_CRMF
 #cmakedefine OPENSSL_NO_CRYPTO_MDEBUG
 #cmakedefine OPENSSL_NO_CT
+#cmakedefine OPENSSL_NO_CT_VALIDATION
 #cmakedefine OPENSSL_NO_DEFAULT_THREAD_POOL
 #cmakedefine OPENSSL_NO_DEMOS
 #cmakedefine OPENSSL_NO_DEPRECATED
@@ -109,12 +112,11 @@ extern "C"
 #cmakedefine OPENSSL_NO_DTLS1
 #cmakedefine OPENSSL_NO_DTLS1_2
 #cmakedefine OPENSSL_NO_DTLS1_2_METHOD
+#cmakedefine OPENSSL_NO_DTLS1_3
 #cmakedefine OPENSSL_NO_DTLS1_METHOD
 #cmakedefine OPENSSL_NO_DYNAMIC_ENGINE
 #cmakedefine OPENSSL_NO_EC
 #cmakedefine OPENSSL_NO_EC2M
-#cmakedefine OPENSSL_NO_ECDH
-#cmakedefine OPENSSL_NO_ECDSA
 #cmakedefine OPENSSL_NO_ECX
 #cmakedefine OPENSSL_NO_EC_NISTP_64_GCC_128
 #cmakedefine OPENSSL_NO_EGD
@@ -143,6 +145,7 @@ extern "C"
 #cmakedefine OPENSSL_NO_JITTER
 #cmakedefine OPENSSL_NO_FIPS_JITTER
 #cmakedefine OPENSSL_NO_HMAC_DRBG_KDF
+#cmakedefine OPENSSL_NO_IKEV2KDF
 #cmakedefine OPENSSL_NO_KBKDF
 #cmakedefine OPENSSL_NO_KRB5KDF
 #cmakedefine OPENSSL_NO_PVKKDF
@@ -230,6 +233,7 @@ extern "C"
 #cmakedefine OPENSSL_NO_UBSAN
 #cmakedefine OPENSSL_NO_UI_CONSOLE
 #cmakedefine OPENSSL_NO_UNIT_TEST
+#cmakedefine OPENSSL_NO_UNIT_TESTS
 #cmakedefine OPENSSL_NO_UNSTABLE_QLOG
 #cmakedefine OPENSSL_NO_UPLINK
 #cmakedefine OPENSSL_NO_WEAK_SSL_CIPHERS

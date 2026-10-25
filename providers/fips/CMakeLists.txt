@@ -14,17 +14,21 @@ endif()
 set(OPENSSL_FIPS_BUILD_JOBS "4" CACHE STRING "Parallel jobs for the upstream FIPS provider build")
 set(_fips_build "${CMAKE_CURRENT_BINARY_DIR}/upstream")
 file(MAKE_DIRECTORY "${_fips_build}")
+# OpenSSL 4.1 configdata.pm writes apps/include/configuration.h even with no-apps,
+# but does not create the directory in an out-of-tree build.
+file(MAKE_DIRECTORY "${_fips_build}/apps/include")
 set(_fips_args "${OPENSSL_BUILD_PLATFORM}" "--fips-key=${OPENSSL_FIPS_KEY}")
 
 # Translate supported feature settings instead of inheriting upstream defaults.
 file(STRINGS "${CMAKE_SOURCE_DIR}/openssl/Configure" _configure_lines)
 set(_in_disablables OFF)
+# OpenSSL 4.1 splits the list into @disablables_protocols, _algorithms and _features.
 foreach (_line IN LISTS _configure_lines)
-    if (_line MATCHES "^my @disablables = ")
+    if (_line MATCHES "^my @disablables(_protocols|_algorithms|_features)? = \\(")
         set(_in_disablables ON)
     elseif (_in_disablables AND _line MATCHES "^[ ]*\\);")
-        break()
-    elseif (_in_disablables AND _line MATCHES "^[ ]*\"([^\"]+)\",")
+        set(_in_disablables OFF)
+    elseif (_in_disablables AND _line MATCHES "^[ ]*\"([^\"]+)\",?[ ]*$")
         set(_feature "${CMAKE_MATCH_1}")
         string(TOUPPER "${_feature}" _symbol)
         string(REPLACE "-" "_" _symbol "${_symbol}")

@@ -18,6 +18,7 @@ set(LIBSSL_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/ssl/tls13_enc.c
     ${CMAKE_SOURCE_DIR}/openssl/ssl/d1_lib.c
     ${CMAKE_SOURCE_DIR}/openssl/ssl/d1_msg.c
+    ${CMAKE_SOURCE_DIR}/openssl/ssl/d1_transcript.c
     ${CMAKE_SOURCE_DIR}/openssl/ssl/statem/statem_dtls.c
     ${CMAKE_SOURCE_DIR}/openssl/ssl/d1_srtp.c
     ${CMAKE_SOURCE_DIR}/openssl/ssl/ssl_lib.c
@@ -84,6 +85,40 @@ if (OPENSSL_ECH)
 endif()
 
 include(record.cmake)
+
+if (OPENSSL_DTLS OR OPENSSL_QUIC)
+    # Datagram demux is shared between DTLS listener and QUIC
+    set(LIBSSL_SOURCES
+        ${LIBSSL_SOURCES}
+        ${CMAKE_SOURCE_DIR}/openssl/ssl/dgram_demux.c
+    )
+    if (BUILD_SHARED_LIBS)
+        # WHY the hell is the libssl thread code in libcrypto?
+        set(LIBSSL_SOURCES
+            ${LIBSSL_SOURCES}
+            ${CMAKE_SOURCE_DIR}/openssl/crypto/thread/arch.c
+            ${CMAKE_SOURCE_DIR}/openssl/crypto/thread/arch/thread_none.c
+            ${CMAKE_SOURCE_DIR}/openssl/crypto/thread/arch/thread_posix.c
+            ${CMAKE_SOURCE_DIR}/openssl/crypto/thread/arch/thread_win.c
+        )
+    endif()
+endif()
+
+if (OPENSSL_DTLS)
+    # DTLS listener support: connection lookup and RX handling
+    set(LIBSSL_SOURCES
+        ${LIBSSL_SOURCES}
+        ${CMAKE_SOURCE_DIR}/openssl/ssl/dtls_conn_lookup.c
+        ${CMAKE_SOURCE_DIR}/openssl/ssl/dtls_record_rx.c
+    )
+endif()
+
+# QUIC TLS API is available even in the event of no-quic
+set(LIBSSL_SOURCES
+    ${LIBSSL_SOURCES}
+    ${CMAKE_SOURCE_DIR}/openssl/ssl/quic/quic_tls.c
+    ${CMAKE_SOURCE_DIR}/openssl/ssl/quic/quic_tls_api.c
+)
 
 if (OPENSSL_QUIC)
     set(LIBSSL_SOURCES

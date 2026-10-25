@@ -41,10 +41,17 @@ set(LIBDEFAULT_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/cipher_null.c
     ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/cipher_aes.c
     ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/cipher_aes_hw.c
+    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/cipher_aes_hw_aesni.c
+    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/cipher_aes_hw_armv8.c
+    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/cipher_aes_hw_rv32i.c
+    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/cipher_aes_hw_rv64i.c
+    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/cipher_aes_hw_s390x.c
+    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/cipher_aes_hw_t4.c
     ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/cipher_aes_xts.c
     ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/cipher_aes_xts_hw.c
     ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/cipher_aes_gcm.c
     ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/cipher_aes_gcm_hw.c
+    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/cipher_aes_gcm_hw_ppc.c
     ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/cipher_aes_ccm.c
     ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/cipher_aes_ccm_hw.c
     ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/cipher_aes_wrp.c
@@ -81,7 +88,6 @@ set(LIBDEFAULT_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/cipher_aes_cbc_hmac_sha1_etm_hw.c
     ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/cipher_aes_cbc_hmac_sha256_etm_hw.c
     ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/cipher_aes_cbc_hmac_sha512_etm_hw.c
-    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/cipher_aes_cfb_hw.c
     ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/skeymgmt/aes_skmgmt.c
     ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/skeymgmt/generic.c
     ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/kem/rsa_kem.c
@@ -116,7 +122,6 @@ set(LIBDEFAULT_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/cipher_aes.h
     ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/cipher_aes_cbc_hmac_sha.h
     ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/cipher_aes_ccm.h
-    ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/cipher_aes_cts.inc
     ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/cipher_aes_gcm.h
     ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/cipher_aes_ocb.h
     ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/ciphers/cipher_aes_siv.h
@@ -153,6 +158,11 @@ endif()
 if (OPENSSL_HMAC_DRBG_KDF)
     list(APPEND LIBDEFAULT_SOURCES
         ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/kdfs/hmacdrbg_kdf.c)
+endif()
+
+if (OPENSSL_IKEV2KDF)
+    list(APPEND LIBDEFAULT_SOURCES
+        ${CMAKE_SOURCE_DIR}/openssl/providers/implementations/kdfs/ikev2kdf.c)
 endif()
 
 if (OPENSSL_KBKDF)

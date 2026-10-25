@@ -18,6 +18,7 @@ perlasm_generate_src(aesni-sha256-x86_64${OPENSSL_ASM_PREPROCESSED} ${CMAKE_SOUR
 perlasm_generate_src(aesni-mb-x86_64${OPENSSL_ASM_PREPROCESSED} ${CMAKE_SOURCE_DIR}/openssl/crypto/aes/asm/aesni-mb-x86_64.pl)
 perlasm_generate_src(aesni-xts-avx512${OPENSSL_ASM_PREPROCESSED} ${CMAKE_SOURCE_DIR}/openssl/crypto/aes/asm/aesni-xts-avx512.pl)
 perlasm_generate_src(aes-cfb-avx512${OPENSSL_ASM_PREPROCESSED} ${CMAKE_SOURCE_DIR}/openssl/crypto/aes/asm/aes-cfb-avx512.pl)
+perlasm_generate_src(aes-cbc-vaes-x86_64${OPENSSL_ASM_PREPROCESSED} ${CMAKE_SOURCE_DIR}/openssl/crypto/aes/asm/aes-cbc-vaes-x86_64.pl)
 perlasm_generate_src(aes-sparcv9.S ${CMAKE_SOURCE_DIR}/openssl/crypto/aes/asm/aes-sparcv9.pl)
 perlasm_generate_src(aest4-sparcv9.S ${CMAKE_SOURCE_DIR}/openssl/crypto/aes/asm/aest4-sparcv9.pl
     DEPENDENCIES ${CMAKE_SOURCE_DIR}/openssl/crypto/perlasm/sparcv9_modes.pl
@@ -46,6 +47,7 @@ set(LIBCRYPTO_CURRENTDIR_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/crypto/aes/aes_ofb.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/aes/aes_ige.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/aes/aes_wrap.c
+    ${CMAKE_SOURCE_DIR}/openssl/crypto/aes/aes_cbc_vaes_intrinsic.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/aes/aes_local.h
 )
 
@@ -65,6 +67,7 @@ if (OPENSSL_ASM)
             aesni-mb-x86_64${OPENSSL_ASM_PREPROCESSED}
             aesni-xts-avx512${OPENSSL_ASM_PREPROCESSED}
             aes-cfb-avx512${OPENSSL_ASM_PREPROCESSED}
+            aes-cbc-vaes-x86_64${OPENSSL_ASM_PREPROCESSED}
         )
     elseif ( OPENSSL_TARGET_ARCH STREQUAL "x86" )
         set(LIBCRYPTO_CURRENTDIR_ASM_SOURCES

@@ -71,10 +71,10 @@ set(LIBCRYPTO_CURRENTDIR_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/crypto/bn/bn_rsa_fips186_5.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/bn/bn_const.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/bn/bn_print.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/bn/bn_err.c
+    ${CMAKE_BINARY_DIR}/crypto/bn/bn_err.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/bn/bn_srp.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/bn/bn_local.h
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/bn/bn_prime.h
+    ${CMAKE_BINARY_DIR}/crypto/bn/bn_prime.h
 )
 
 if ( OPENSSL_DEPRECATED_0_9_8 )

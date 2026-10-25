@@ -222,6 +222,7 @@ unset(OPENSSL_KNOWN_RAND_SEED)
 set(OPENSSL_DEFAULT_DISABLED_CIPHERS asan buildtest-c++ crypto-mdebug crypto-mdebug-backtrace devcryptoeng ec_nistp_64_gcc_128 egd external-tests fuzz-afl fuzz-libfuzzer ktls md2
                                      msan rc5 sctp ssl3 ssl3-method trace ubsan unit-test weak-ssl-ciphers brotli brotli-dynamic tfo zstd zstd-dynamic zlib zlib-dynamic jitter
                                      demos h3demo allocfail-tests hqinterop pie sslkeylog fips-jitter lms ec_explicit_curves tls-deprecated-ec engine static-engine dynamic-engine
+                                     atexit ct-validation unit-tests
 )
 
 set(OPENSSL_MIN_API_LEVEL "3.0.0" CACHE STRING "OpenSSL SSL minimum API LEVEL")
@@ -323,7 +324,7 @@ macro (get_current_cipher_name_instead_of_deprecated)
     unset(CIPHERNAME)
 endmacro()
 
-foreach (_CIPHER IN ITEMS ssl2 buf-freelists crypto-mdebug-backtrace hw-padlock ripemd ui heartbeats)
+foreach (_CIPHER IN ITEMS ssl2 buf-freelists crypto-mdebug-backtrace hw-padlock ripemd ui heartbeats ecdh ecdsa)
     # option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}")
     string(TOUPPER ${_CIPHER} _CIPHER_UPPER)
     string(REPLACE "-" "_" _CIPHER_SYMBOL ${_CIPHER_UPPER})
@@ -354,13 +355,14 @@ foreach (_CIPHER IN ITEMS
     dtls1_2-method dtls1-method tls1_2-method tls1_1-method tls1-method ssl3-method # method
     aes asn1 bio bn buffer conf crmf encode_decode ess evp ffc hmac hpke http kdf lhash md5 modes objects pem pkcs7 pkcs12 property rand rsa sha stack store thread txt_db
     x509 hashtable # directories
-    dtls1_2 dtls1 tls1_3 tls1_2 tls1_1 tls1 ssl3 # TLS protocol
+    dtls1_3 dtls1_2 dtls1 tls1_3 tls1_2 tls1_1 tls1 ssl3 # TLS protocol
     acvp-tests afalgeng aria argon2 asan async atexit autoalginit autoerrinit autoload-config bf brotli buildtest-c++ cached-fetch camellia capieng winstore cast chacha cms
-    crypto-mdebug ct default-thread-pool devcryptoeng dh dsa docs ec2m ec_nistp_64_gcc_128 ecdh ecdsa ecx egd external-tests filenames fips fips-securitychecks fuzz-afl
+    crypto-mdebug ct default-thread-pool devcryptoeng dh dsa docs ec2m ec_nistp_64_gcc_128 ecx egd external-tests filenames fips fips-securitychecks fuzz-afl
     fuzz-libfuzzer gost idea ktls loadereng makedepend md2 md4 mdc2 multiblock nextprotoneg ocb ocsp padlockeng pinshared poly1305 posix-io psk quic unstable-qlog qlog rc2 rc4 rc5
     rdrand rfc3779 rmd160 scrypt sctp secure-memory seed siphash siv sm2 sm2-precomp sm4 srp srtp ssl-trace tfo trace ts ubsan ui-console uplink weak-ssl-ciphers whirlpool zlib
     zstd jitter fips-jitter demos h3demo fips-post pie integrity-only-ciphers
     hmac-drbg-kdf
+    ikev2kdf
     kbkdf
     krb5kdf
     pvkkdf
@@ -372,6 +374,7 @@ foreach (_CIPHER IN ITEMS
     allocfail-tests
     hqinterop
     ml-kem ml-dsa slh-dsa lms ech snmpkdf srtpkdf ec_explicit_curves tls-deprecated-ec skeymgmt
+    ct-validation unit-tests
 )
 
     list(FIND OPENSSL_DEFAULT_DISABLED_CIPHERS ${_CIPHER} _CIPHER_IS_DEFAULT_DISABLED)
@@ -394,10 +397,6 @@ foreach (_CIPHER IN ITEMS
         cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "OPENSSL_EC" OFF)
     elseif (_CIPHER STREQUAL "ec_explicit_curves")
         cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "OPENSSL_EC" OFF)
-    elseif (_CIPHER STREQUAL "ecdsa")
-        cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "OPENSSL_EC" OFF)
-    elseif (_CIPHER STREQUAL "ecdh")
-        cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "OPENSSL_EC" OFF)
     elseif (_CIPHER STREQUAL "ecx")
         cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "OPENSSL_EC" OFF)
     elseif (_CIPHER STREQUAL "sm2")
@@ -415,6 +414,8 @@ foreach (_CIPHER IN ITEMS
         cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "OPENSSL_SOCK" OFF)
     elseif (_CIPHER STREQUAL "dtls1")
         cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "OPENSSL_DTLS1_2;OPENSSL_DTLS;OPENSSL_DTLS_1_METHOD" OFF)
+    elseif (_CIPHER STREQUAL "dtls1_3")
+        cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "OPENSSL_DTLS" OFF)
     elseif (_CIPHER STREQUAL "dtls1_2")
         cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "OPENSSL_DTLS;OPENSSL_DTLS1_2_METHOD" OFF)
     elseif (_CIPHER STREQUAL "dtls1-method")
@@ -463,6 +464,9 @@ foreach (_CIPHER IN ITEMS
         cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "OPENSSL_TESTS;OPENSSL_QUIC" OFF)
     elseif (_CIPHER STREQUAL "tests")
         cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "OPENSSL_APPS" OFF)
+    elseif (_CIPHER STREQUAL "unit-tests")
+        # Unit tests need cmocka; they are not built by this project.
+        set("${_CIPHER_STR}" OFF CACHE BOOL "${_CIPHER_HELP}" FORCE)
     elseif (_CIPHER STREQUAL "external-tests")
         cmake_dependent_option("${_CIPHER_STR}" "${_CIPHER_HELP}" "${_CIPHER_DEFAULT}" "OPENSSL_TESTS" OFF)
     elseif (_CIPHER STREQUAL "msan")
@@ -569,11 +573,21 @@ if (OPENSSL_NO_TLS1 AND OPENSSL_NO_TLS1_1 AND OPENSSL_NO_TLS1_2 AND OPENSSL_NO_T
     set(OPENSSL_TLS OFF CACHE BOOL "enable OpenSSL cipher tls (automatically set, use one of OPENSSL_TLS* if this is to be modified)" FORCE)
     set(OPENSSL_NO_TLS ON CACHE BOOL "disable OpenSSL cipher tls (automatically set, use one of OPENSSL_TLS* if this is to be modified)" FORCE)
 endif()
-if (OPENSSL_NO_DTLS1 AND OPENSSL_NO_DTLS1_2 AND OPENSSL_NO_DTLS1_METHOD AND OPENSSL_NO_DTLS1_2_METHOD)
+if (OPENSSL_NO_DTLS1 AND OPENSSL_NO_DTLS1_2 AND OPENSSL_NO_DTLS1_3 AND OPENSSL_NO_DTLS1_METHOD AND OPENSSL_NO_DTLS1_2_METHOD)
     unset(OPENSSL_DTLS)
     unset(OPENSSL_NO_DTLS)
     set(OPENSSL_DTLS OFF CACHE BOOL "enable OpenSSL cipher dtls (automatically set, use one of OPENSSL_DTLS* if this is to be modified)" FORCE)
     set(OPENSSL_NO_DTLS ON CACHE BOOL "disable OpenSSL cipher dtls (automatically set, use one of OPENSSL_DTLS* if this is to be modified)" FORCE)
+endif()
+
+# enable-ct-validation instruments constant-time code for Valgrind
+if (OPENSSL_CT_VALIDATION)
+    include(CheckIncludeFile)
+    check_include_file("valgrind/memcheck.h" OPENSSL_HAVE_VALGRIND_MEMCHECK_H)
+    if (NOT OPENSSL_HAVE_VALGRIND_MEMCHECK_H)
+        message(FATAL_ERROR "OPENSSL_CT_VALIDATION requires <valgrind/memcheck.h> at build time.")
+    endif()
+    set(OPENSSL_CONSTANT_TIME_VALIDATION ON)
 endif()
 
 # NOT SUPPORTING SANTIZERS?

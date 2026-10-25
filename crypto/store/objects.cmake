@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: Unlicense
 
 set(LIBCRYPTO_CURRENTDIR_SOURCES
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/store/store_err.c
+    ${CMAKE_BINARY_DIR}/crypto/store/store_err.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/store/store_lib.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/store/store_result.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/store/store_strings.c

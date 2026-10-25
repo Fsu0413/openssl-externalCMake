@@ -52,7 +52,7 @@ set(LIBCRYPTO_CURRENTDIR_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/crypto/asn1/asn1_gen.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/asn1/asn1_parse.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/asn1/asn1_lib.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/asn1/asn1_err.c
+    ${CMAKE_BINARY_DIR}/crypto/asn1/asn1_err.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/asn1/a_strnid.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/asn1/evp_asn1.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/asn1/asn_pack.c
@@ -64,9 +64,8 @@ set(LIBCRYPTO_CURRENTDIR_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/crypto/asn1/asn_mstbl.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/asn1/asn1_item_list.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/asn1/d2i_param.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/asn1/asn1_item_list.h
     ${CMAKE_SOURCE_DIR}/openssl/crypto/asn1/asn1_local.h
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/asn1/charmap.h
+    ${CMAKE_BINARY_DIR}/crypto/asn1/charmap.h
     ${CMAKE_SOURCE_DIR}/openssl/crypto/asn1/standard_methods.h
     ${CMAKE_SOURCE_DIR}/openssl/crypto/asn1/tbl_standard.h
 )

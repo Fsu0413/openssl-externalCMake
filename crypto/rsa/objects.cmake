@@ -18,7 +18,7 @@ set(LIBCRYPTO_CURRENTDIR_SOURCES
     ${CMAKE_SOURCE_DIR}/openssl/crypto/rsa/rsa_mp_names.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/rsa/rsa_schemes.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/rsa/rsa_saos.c
-    ${CMAKE_SOURCE_DIR}/openssl/crypto/rsa/rsa_err.c
+    ${CMAKE_BINARY_DIR}/crypto/rsa/rsa_err.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/rsa/rsa_asn1.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/rsa/rsa_ameth.c
     ${CMAKE_SOURCE_DIR}/openssl/crypto/rsa/rsa_prn.c
